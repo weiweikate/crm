@@ -1,103 +1,130 @@
 <template>
     <div class="login-wrap">
-        <div class="ms-title">后台管理系统</div>
+        <div class="ms-title">CRM系统后台登陆</div>
         <div class="ms-login">
-            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="0px" class="demo-ruleForm">
-                <el-form-item prop="username">
-                    <el-input v-model="ruleForm.username" placeholder="username"></el-input>
-                </el-form-item>
-                <el-form-item prop="password">
-                    <el-input type="password" placeholder="password" v-model="ruleForm.password" @keyup.enter.native="submitForm('ruleForm')"></el-input>
-                </el-form-item>
-                <div class="login-btn">
-                    <el-button type="primary" @click="submitForm('ruleForm')">登录</el-button>
-                </div>
-                <p style="font-size:12px;line-height:30px;color:#999;">Tips : 用户名和密码随便填。</p>
-            </el-form>
+            <el-tabs class="tab" v-model="loginType" type="card" @tab-click="tabClick">
+                <el-tab-pane label="账号登陆" name="first">
+                    <el-form :model="form1" :rules="rules" ref="form1" label-width="0px">
+                        <el-form-item prop="username">
+                            <el-input class="login-inp" size="large" placeholder="请输入登陆手机号" v-model="form1.username">
+                                <icon slot="prefix" class="login-ico" ico="icon-zhucedengluyonghuming"></icon>
+                            </el-input>
+                        </el-form-item>
+                        <el-form-item prop="password" style="margin-top:-40px">
+                            <el-input class="login-inp" size="large" placeholder="请输入登陆密码" v-model="form1.password">
+                                <icon slot="prefix" class="login-ico" ico="icon-3denglumima"></icon>
+                            </el-input>
+                        </el-form-item>
+                        <div class="login-btn">
+                            <el-button @click="submitForm('form1')">登录</el-button>
+                        </div>
+                    </el-form>
+                </el-tab-pane>
+                <el-tab-pane label="手机验证登陆" name="second">
+                    <el-form :model="form2" :rules="rules" ref="form2" label-width="0px">
+                        <el-form-item prop="username">
+                            <el-input class="login-inp" size="large" placeholder="请输入登陆手机号" v-model="form2.username">
+                                <icon slot="prefix" class="login-ico" ico="icon-zhucedengluyonghuming"></icon>
+                            </el-input>
+                        </el-form-item>
+                        <el-form-item prop="code" style="margin-top:-40px">
+                            <el-input class="login-inp" size="large" placeholder="请输入验证码" v-model="form2.code">
+                                <icon slot="prefix" class="login-ico" ico="icon-yanzhengma"></icon>
+                            </el-input>
+                            <el-button @click="getCode" class="code-btn" type="primary" v-if="code">获取验证码</el-button>
+                            <el-button class="code-btn" type="primary" v-else>{{codeTime}}s</el-button>
+                        </el-form-item>
+                        <div class="login-btn">
+                            <el-button @click="submitForm('form1')">登录</el-button>
+                        </div>
+                    </el-form>
+                </el-tab-pane>
+                <el-tab-pane label="扫码登陆" name="third">扫码登陆</el-tab-pane>
+            </el-tabs>
         </div>
     </div>
 </template>
 
 <script>
-import * as api from '../../api/api.js';
-    export default {
-        data: function(){
-            return {
-                ruleForm: {
-                    username: 'admin',
-                    password: '123123'
-                },
-                rules: {
-                    username: [
-                        { required: true, message: '请输入用户名', trigger: 'blur' }
-                    ],
-                    password: [
-                        { required: true, message: '请输入密码', trigger: 'blur' }
-                    ]
-                }
-            }
-        },
-        methods: {
-            submitForm(formName) {
-                this.$refs[formName].validate((valid) => {
-                    if (valid) {
-                        localStorage.setItem('ms_username',this.ruleForm.username);
-                        let data = {
-                            a:1,
-                            c:6,
-                            b:88
-                        }
-                        this.$axios.post(api.LOGIN,data)
-                        .then(res=>{
-                            console.log(res);
-                        })
-                        .catch(err=>{
-                            console.log(err)
-                        })
-                        this.$router.push('/');
-                    } else {
-                        console.log('error submit!!');
-                        return false;
-                    }
-                });
-            }
+import * as api from "../../api/api.js";
+import icon from "../common/ico";
+export default {
+  components: {
+    icon
+  },
+  data() {
+    return {
+      loginType: "first",
+      code:true,
+      codeTime:5,
+      form1: {
+        username: "admin",
+        password: "123123"
+      },
+      form2: {
+        username: "admin",
+        code: ""
+      },
+      rules: {
+        username: [
+          { required: true, message: "请输入登陆手机号", trigger: "blur" }
+        ],
+        password: [
+          { required: true, message: "请输入登陆密码", trigger: "blur" }
+        ],
+        code: [
+          { required: true, message: "请输入验证码", trigger: "blur" }
+        ]
+      }
+    };
+  },
+  methods: {
+    // 提交表单
+    submitForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          let data = this[formName];
+          this.$axios
+            .post(api.LOGIN, data)
+            .then(res => {
+              if (res.data.code == 200) {
+                this.$message.success("登陆成功！");
+                localStorage.setItem("ms_username", res.data.ms_username);
+                this.$router.push("/");
+              } else {
+                this.$message.warning("登陆失败！");
+              }
+            })
+            .catch(err => {
+              console.log(err);
+            });
+        } else {
+          console.log("error submit!!");
+          return false;
         }
+      });
+    },
+    // 获取验证码
+    getCode(){
+        let that = this;
+        this.code = false;
+        this.codeTime = 5;
+        let timer = setInterval(function(){
+            that.codeTime--;
+            if(that.codeTime <=0){
+                that.code = true;
+                clearInterval(timer);
+            }
+        },1000)
+    },
+    // tab切换
+    tabClick(params) {
+      console.log(params);
     }
+  }
+};
 </script>
 
-<style scoped>
-    .login-wrap{
-        position: relative;
-        width:100%;
-        height:100%;
-        background: url('../../assets/images/bg.jpg')
-    }
-    .ms-title{
-        position: absolute;
-        top:50%;
-        width:100%;
-        margin-top: -230px;
-        text-align: center;
-        font-size:30px;
-        color: #fff;
-
-    }
-    .ms-login{
-        position: absolute;
-        left:50%;
-        top:50%;
-        width:300px;
-        height:160px;
-        margin:-150px 0 0 -190px;
-        padding:40px;
-        border-radius: 5px;
-        background: #fff;
-    }
-    .login-btn{
-        text-align: center;
-    }
-    .login-btn button{
-        width:100%;
-        height:36px;
-    }
+<style lang='less'>
+@import "../../assets/css/login.css";
 </style>

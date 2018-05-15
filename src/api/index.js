@@ -17,7 +17,11 @@ axios.interceptors.request.use(config => {
   let receiveData = config.data;
   receiveData.sessionId = sessionId;
   receiveData.sessionPwd = sessionPwd;
-  let sentData = qs.stringify(utils.encryptData(receiveData));
+  if(config.method == 'post'){
+    var sentData = qs.stringify(utils.encryptData(receiveData));
+  }else{
+    var sentData = utils.encryptData(receiveData);
+  }
   config.data = sentData;
     return config;
 });
