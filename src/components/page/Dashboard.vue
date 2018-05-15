@@ -1,10 +1,6 @@
 <template>
     <div>
-       <div class="crumbs">
-            <el-breadcrumb separator="/">
-                <el-breadcrumb-item><icon ico="icon-dingwei" />首页</el-breadcrumb-item>
-            </el-breadcrumb>
-        </div>
+        <breadcrumb :nav='["首页"]'></breadcrumb>
         <el-row>
             <el-col :span="24">
                 <el-card class="top-card clearfix">
@@ -99,9 +95,11 @@
 
 <script>
 import icon from "../common/ico";
+import breadcrumb from '../common/Breadcrumb';
 export default {
   components: {
-    icon
+    icon,
+    breadcrumb,
   },
   data() {
     return {};
