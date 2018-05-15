@@ -15,11 +15,11 @@
     }
     .top-wrap {
         display:flex;
-        justify-content:space-between;
+        justify-content:flex-start;
         .top-card-content {
             float: left;
             position: relative;
-            width: 280px;
+            width: 19%;
             height: 156px;
             border-radius: 5px;
             overflow: hidden;
@@ -69,18 +69,18 @@
     }
     .left-wrap {
         display:flex;
-        justify-content:space-between;
+        justify-content:flex-start;
         flex-wrap: wrap;
         .left-content {
             float: left;
             position: relative;
-            width: 280px;
+            width: 46%;
             height: 156px;
             border-radius: 5px;
             overflow: hidden;
             color: @000;
             font-weight: 500;
-            margin: 0 25px 52px 0;
+            margin: 0 25px 30px 0;
             background-color: #eee;
             .ico-wrap {
                 position: absolute;
@@ -110,9 +110,6 @@
                 font-size: 18px;
             }
         }
-        .left-content:nth-child(2n) {
-            margin-right: 0;
-        }
     }
     .right-wrap {
         display:flex;
@@ -121,7 +118,7 @@
         .right-content {
             float: left;
             position: relative;
-            width: 260px;
+            width: 29%;
             height: 80px;
             border-radius: 5px;
             overflow: hidden;
@@ -147,9 +144,6 @@
                 left: 80px;
                 line-height: 80px;
             }
-        }
-        .right-content:nth-child(3n) {
-            margin-right: 0px;
         }
     }
 }

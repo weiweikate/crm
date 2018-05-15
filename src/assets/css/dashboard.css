@@ -11,12 +11,12 @@
 }
 .top-card .top-wrap {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
 }
 .top-card .top-wrap .top-card-content {
   float: left;
   position: relative;
-  width: 280px;
+  width: 19%;
   height: 156px;
   border-radius: 5px;
   overflow: hidden;
@@ -65,19 +65,19 @@
 }
 .top-card .left-wrap {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   flex-wrap: wrap;
 }
 .top-card .left-wrap .left-content {
   float: left;
   position: relative;
-  width: 280px;
+  width: 46%;
   height: 156px;
   border-radius: 5px;
   overflow: hidden;
   color: #000;
   font-weight: 500;
-  margin: 0 25px 52px 0;
+  margin: 0 25px 30px 0;
   background-color: #eee;
 }
 .top-card .left-wrap .left-content .ico-wrap {
@@ -107,9 +107,6 @@
   color: #ff6868;
   font-size: 18px;
 }
-.top-card .left-wrap .left-content:nth-child(2n) {
-  margin-right: 0;
-}
 .top-card .right-wrap {
   display: flex;
   justify-content: flex-start;
@@ -118,7 +115,7 @@
 .top-card .right-wrap .right-content {
   float: left;
   position: relative;
-  width: 260px;
+  width: 29%;
   height: 80px;
   border-radius: 5px;
   overflow: hidden;
@@ -144,9 +141,6 @@
   position: absolute;
   left: 80px;
   line-height: 80px;
-}
-.top-card .right-wrap .right-content:nth-child(3n) {
-  margin-right: 0px;
 }
 .clearfix:before,
 .clearfix:after {
