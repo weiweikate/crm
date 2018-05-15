@@ -84,8 +84,8 @@
 }
 .tab .code-btn:hover,
 .tab .code-btn:focus {
-  background-color: #33b4ff;
-  border-color: #33b4ff;
+  background-color: #33b4ff!important;
+  border-color: #33b4ff!important;
 }
 .login-btn button {
   width: 380px;
@@ -98,15 +98,15 @@
 }
 .el-button:focus,
 .el-button:hover {
-  color: #fff;
-  background-color: #ff6868;
-  border-color: #ff6868;
+  color: #fff!important;
+  background-color: #ff6868!important;
+  border-color: #ff6868!important;
 }
 .el-input.is-active .el-input__inner,
 .el-input__inner:focus {
-  border-color: #ff6868;
+  border-color: #ff6868!important;
 }
 .el-form-item__error {
-  top: 75%;
-  left: 15%;
+  top: 75%!important;
+  left: 15%!important;
 }

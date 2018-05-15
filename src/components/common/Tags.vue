@@ -95,7 +95,7 @@
         position: relative;
         height: 30px;
         overflow: hidden;
-        background: #ff6868;
+        background: white;
         padding-right: 120px;
     }
 
