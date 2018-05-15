@@ -2,7 +2,7 @@
     <div>
         <div class="crumbs">
             <el-breadcrumb separator="/">
-                <el-breadcrumb-item><i class="el-icon-date"></i> 表单</el-breadcrumb-item>
+                <el-breadcrumb-item><icon ico="icon-dingwei" />表单</el-breadcrumb-item>
                 <el-breadcrumb-item>基本表单</el-breadcrumb-item>
             </el-breadcrumb>
         </div>
@@ -63,7 +63,11 @@
 </template>
 
 <script>
+import icon from '../common/ico.vue';
     export default {
+        components:{
+            icon,
+        },
         data: function(){
             return {
                 options:[

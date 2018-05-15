@@ -70,6 +70,7 @@ import * as api from '../../api/api.js';
         position: relative;
         width:100%;
         height:100%;
+        background: url('../../assets/images/bg.jpg')
     }
     .ms-title{
         position: absolute;

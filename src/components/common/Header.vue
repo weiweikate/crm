@@ -7,6 +7,9 @@
         <div class="collapse-btn" :class="{'btn-color':!isShowTitle}" @click="collapseChage">
             <i class="el-icon-menu"></i>
         </div>
+        <div class="tag">
+          <v-tags></v-tags>
+        </div>
         <div class="header-right">
             <div class="header-user-con">
                 <!-- 全屏显示 -->
@@ -42,7 +45,11 @@
 </template>
 <script>
 import bus from "../common/bus";
+import vTags from './Tags.vue';
 export default {
+  components:{
+  vTags
+  },
   data() {
     return {
       isShowTitle: true,
@@ -188,6 +195,13 @@ export default {
 }
 .bounce-leave-active {
   animation: bounce-in 0.35s;
+}
+.tag {
+  float: left;
+  margin-top: 20px;
+  left: 300px;
+  width: 70%;
+  height: 30px;
 }
 @keyframes bounce-in {
   0% {
