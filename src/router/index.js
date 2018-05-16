@@ -26,8 +26,13 @@ export default new Router({
                 },
                 {
                     path: '/brandProductClassify',
-                    component: resolve => require(['../components/page/BrandProductClassify.vue'], resolve),
+                    component: resolve => require(['../components/page/BrandProduct/BrandProductClassify.vue'], resolve),
                     meta: { title: '产品分类管理' }
+                },
+                {
+                    path: '/secondClassify',
+                    component: resolve => require(['../components/page/BrandProduct/SecondClassify.vue'], resolve),
+                    meta: { title: '二级类目' }
                 },
                 {
                     // 权限页面

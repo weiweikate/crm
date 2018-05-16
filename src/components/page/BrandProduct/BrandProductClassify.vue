@@ -65,9 +65,9 @@
 </template>
 
 <script>
-    import vBreadcrumb from '../common/Breadcrumb.vue';
-    import icon from '../common/ico.vue';
-    import * as api from '../../api/api';
+    import vBreadcrumb from '../../common/Breadcrumb.vue';
+    import icon from '../../common/ico.vue';
+    import * as api from '../../../api/api';
 
     export default {
         components: {
@@ -139,7 +139,7 @@
             },
             //跳到二级类目页面
             toSecondClassify(id){
-                this.$router.push('/')
+                this.$router.push('/secondClassify')
             },
             //删除
             delItem(id){
