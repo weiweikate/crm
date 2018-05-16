@@ -61,6 +61,20 @@ export default {
                   }
               ]
           },
+          {
+              icon: "el-icon-goods",
+              index: "5",
+              title: "会员管理",
+              subs: [
+                  {
+                      index: "levelManage",
+                      title: "经销商层级管理"
+                  },{
+                      index: "memberManage",
+                      title: "会员管理"
+                  }
+              ]
+          },
         {
           icon: "el-icon-warning",
           index: "permission",

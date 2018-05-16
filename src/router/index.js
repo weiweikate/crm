@@ -24,6 +24,7 @@ export default new Router({
                     component: resolve => require(['../components/page/BaseForm.vue'], resolve),
                     meta: { title: '基本表单' }
                 },
+                // 产品分类管理
                 {
                     path: '/brandProductClassify',
                     component: resolve => require(['../components/page/BrandProduct/BrandProductClassify.vue'], resolve),
@@ -33,6 +34,17 @@ export default new Router({
                     path: '/secondClassify',
                     component: resolve => require(['../components/page/BrandProduct/SecondClassify.vue'], resolve),
                     meta: { title: '二级类目' }
+                },
+                // 会员管理
+                {
+                    path: '/levelManage',
+                    component: resolve => require(['../components/page/MemberManage/LevelManage.vue'], resolve),
+                    meta: { title: '经销商层级管理' }
+                },
+                {
+                    path: '/memberManage',
+                    component: resolve => require(['../components/page/MemberManage/MemberManage.vue'], resolve),
+                    meta: { title: '会员管理' }
                 },
                 {
                     // 权限页面
