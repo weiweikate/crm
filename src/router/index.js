@@ -27,22 +27,7 @@ export default new Router({
                 {
                     path: '/brandProductClassify',
                     component: resolve => require(['../components/page/BrandProductClassify.vue'], resolve),
-                    meta: { title: '品牌产品类型管理' }
-                },
-                {
-                    path: '/brandManage',
-                    component: resolve => require(['../components/page/BrandManage.vue'], resolve),
-                    meta: { title: '品牌管理' }
-                },
-                {
-                    path: '/productManage',
-                    component: resolve => require(['../components/page/ProductManage.vue'], resolve),
-                    meta: { title: '品牌管理' }
-                },
-                {
-                    path: '/productAudit',
-                    component: resolve => require(['../components/page/ProductAudit.vue'], resolve),
-                    meta: { title: '产品审核' }
+                    meta: { title: '产品分类管理' }
                 },
                 {
                     // 权限页面

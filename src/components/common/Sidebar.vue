@@ -57,16 +57,7 @@ export default {
               subs: [
                   {
                       index: "brandProductClassify",
-                      title: "品牌产品类型管理"
-                  },{
-                      index: "brandManage",
-                      title: "品牌管理"
-                  },{
-                      index: "productManage",
-                      title: "产品管理"
-                  },{
-                      index: "productAudit",
-                      title: "产品审核"
+                      title: "产品分类管理"
                   }
               ]
           },
