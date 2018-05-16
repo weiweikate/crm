@@ -90,24 +90,37 @@
                 </el-card>
             </el-col>
         </el-row>
+        <!-- <act-account-pwd @status='isShow' v-if="isShowActAccPwd"></act-account-pwd> -->
+        <act-account-code @status='isShow' v-if="isShowActAccPwd"></act-account-code>
     </div>
 </template>
 
 <script>
 import icon from "../common/ico";
-import breadcrumb from '../common/Breadcrumb';
+import breadcrumb from "../common/Breadcrumb";
+import actAccountPwd from "./Dashboard/actAccountPwd";
+import actAccountCode from './Dashboard/actAccountCode';
 export default {
   components: {
     icon,
     breadcrumb,
+    actAccountPwd,
+    actAccountCode
   },
   data() {
-    return {};
+    return {
+      isShowActAccPwd: true
+    };
+  },
+  methods: {
+    isShow(msg) {
+        this.isShowActAccPwd = msg;
+    }
   }
 };
 </script>
 
 
 <style scoped>
-@import "../../assets/css/dashboard.css";
+@import "../../assets/css/dashboard/dashboard.css";
 </style>

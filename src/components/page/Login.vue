@@ -126,5 +126,5 @@ export default {
 </script>
 
 <style lang='less'>
-@import "../../assets/css/login.css";
+@import "../../assets/css/login/login.css";
 </style>
