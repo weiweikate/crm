@@ -25,6 +25,26 @@ export default new Router({
                     meta: { title: '基本表单' }
                 },
                 {
+                    path: '/brandProductClassify',
+                    component: resolve => require(['../components/page/BrandProductClassify.vue'], resolve),
+                    meta: { title: '品牌产品类型管理' }
+                },
+                {
+                    path: '/brandManage',
+                    component: resolve => require(['../components/page/BrandManage.vue'], resolve),
+                    meta: { title: '品牌管理' }
+                },
+                {
+                    path: '/productManage',
+                    component: resolve => require(['../components/page/ProductManage.vue'], resolve),
+                    meta: { title: '品牌管理' }
+                },
+                {
+                    path: '/productAudit',
+                    component: resolve => require(['../components/page/ProductAudit.vue'], resolve),
+                    meta: { title: '产品审核' }
+                },
+                {
                     // 权限页面
                     path: '/permission',
                     component: resolve => require(['../components/page/Permission.vue'], resolve),

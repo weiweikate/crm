@@ -50,6 +50,26 @@ export default {
             }
           ]
         },
+          {
+              icon: "el-icon-goods",
+              index: "4",
+              title: "品牌产品管理",
+              subs: [
+                  {
+                      index: "brandProductClassify",
+                      title: "品牌产品类型管理"
+                  },{
+                      index: "brandManage",
+                      title: "品牌管理"
+                  },{
+                      index: "productManage",
+                      title: "品牌管理"
+                  },{
+                      index: "productAudit",
+                      title: "产品审核"
+                  }
+              ]
+          },
         {
           icon: "el-icon-warning",
           index: "permission",
