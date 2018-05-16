@@ -16,7 +16,7 @@
                     <el-table-column prop="status" label="状态"></el-table-column>
                     <el-table-column label="操作">
                         <template slot-scope="scope">
-                            <el-button type="primary" size="small" @click="toSecondClassify(scope.row.id)">参数管理</el-button>
+                            <!--<el-button type="primary" size="small" @click="toSecondClassify(scope.row.id)">参数管理</el-button>-->
                             <el-button type="warning" size="small" @click="editItem(scope.row)">编辑</el-button>
                             <el-button type="danger" size="small" @click="delItem(scope.row.id)">删除</el-button>
                         </template>
@@ -37,7 +37,6 @@
 
         <!--添加/编辑类目弹窗-->
         <el-dialog :title="title" :visible.sync="addOrEditMask">
-            <icon ico="icon-yduipaibanleixingliebiao" class="iconfont"></icon>
             <el-form v-model="form">
                 <el-form-item label="类目名称" :label-width="formLabelWidth">
                     <el-input v-model="form.name" auto-complete="off"></el-input>
@@ -47,7 +46,7 @@
                     <el-upload action="https://jsonplaceholder.typicode.com/posts/" class="icon-uploader"
                             :on-success="handleIconSuccess"
                             :before-upload="beforeIconUpload">
-                        <el-button size="small" type="primary"><i class="el-icon-upload"></i>点击上传</el-button>
+                        <el-button size="small" type="primary"><i class="el-icon-upload"></i>上传</el-button>
                     </el-upload>
                 </el-form-item>
                 <el-form-item label="一级分类" :label-width="formLabelWidth">
@@ -86,7 +85,7 @@
                 },
                 height:'',
                 addOrEditMask:false,
-                formLabelWidth:'120px',
+                formLabelWidth:'100px',
                 form:{
                     name:'',
                     status:'0',
@@ -145,10 +144,6 @@
             addOrEdit(){
                 this.addOrEditMask=false;
             },
-            //跳到二级类目页面
-            toSecondClassify(id){
-                this.$router.push('/')
-            },
             //删除
             delItem(id){
 
@@ -170,17 +165,19 @@
     .block{float:right;margin-top: 10px}
 
     /*弹窗样式*/
-    .el-dialog{width: 500px;border-radius: 10px}
-    .el-dialog__header{border-bottom: 1px solid #eee}
-    .el-dialog__title{margin-left: 20px}
+    .el-dialog{width: 530px;border-radius: 10px}
+    .el-dialog__header{border-bottom: 1px solid #eee;padding: 20px 20px 10px 50px}
+    .el-dialog__title{color: #ff6868}
     .el-dialog .el-input{display: inline}
-    .el-dialog .el-input__inner{width: 280px}
+    .el-dialog .el-input__inner{width: 360px}
+    .el-select .el-input__inner{width: 200px}
     .el-dialog .el-upload--text{width: 100px;height: 40px;border: none}
-    .icon-area .el-input__inner{width: 170px}
-    .icon-uploader{float: right;margin-right: 58px;height: 33px}
+    .icon-area .el-input__inner{width: 240px}
+    .el-input__suffix{line-height: 24px}
+    .icon-uploader{float: right;margin-right: 31px;height: 33px}
+    .icon-uploader .el-button--small{border-radius: 5px;width: 100px}
     .el-upload--text .el-icon-upload{line-height:0;margin:0;color: #fff;font-size: 14px}
-    .el-dialog .iconfont{position: absolute;top:22px;left: 10px;font-size: 20px;color: #20a0ff}
-    .el-dialog__footer{margin-right: 60px}
+    .el-dialog__footer{margin-right: 30px}
     .el-upload-list{display: none}
 
 </style>
