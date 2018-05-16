@@ -84,17 +84,6 @@ export default {
               ]
           },
         {
-          icon: "el-icon-goods",
-          index: "4",
-          title: "品牌产品管理",
-          subs: [
-            {
-              index: "brandProductClassify",
-              title: "产品分类管理"
-            }
-          ]
-        },
-        {
           icon: "el-icon-warning",
           index: "5",
           title: "权限管理",
