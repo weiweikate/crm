@@ -47,6 +47,11 @@ export default new Router({
                     meta: { title: '经销商会员管理' }
                 },
                 {
+                    path: '/memberDetail',
+                    component: resolve => require(['../components/page/MemberManage/MemberDetail.vue'], resolve),
+                    meta: { title: '会员详情' }
+                },
+                {
                     // 权限页面
                     path: '/permission',
                     component: resolve => require(['../components/page/Permission.vue'], resolve),

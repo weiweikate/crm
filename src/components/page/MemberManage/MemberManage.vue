@@ -1,22 +1,64 @@
 <template>
     <div>
-        <v-breadcrumb :nav="['会员管理','经销商层级管理']"></v-breadcrumb>
+        <v-breadcrumb :nav="['会员管理','经销商会员管理']"></v-breadcrumb>
+        <transition name="move" appear>
+            <el-card style="margin:10px 0 20px">
+                <el-form ref="form" :inline="true" :model="form">
+                    <el-form-item label="用户ID" label-width="120">
+                        <el-input style="width:200px" placeholder="请输入用户ID" v-model="form.id"></el-input>
+                    </el-form-item>
+                    <el-form-item label="用户昵称" label-width="120">
+                        <el-input style="width:200px" placeholder="请输入用户昵称" v-model="form.nickName"></el-input>
+                    </el-form-item>
+                    <el-form-item label="授权码" label-width="120">
+                        <el-input style="width:200px" placeholder="请输入授权码" v-model="form.code"></el-input>
+                    </el-form-item>
+                    <el-form-item label="证件号" label-width="120">
+                        <el-input style="width:200px" placeholder="请输入证件号" v-model="form.idCard"></el-input>
+                    </el-form-item>
+                    <el-form-item label="手机号" label-width="120">
+                        <el-input style="width:200px" placeholder="请输入手机号" v-model="form.phone"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button @click="search" type="primary">查询</el-button>
+                        <el-button>重置</el-button>
+                    </el-form-item>
+                </el-form>
+            </el-card>
+        </transition>
         <div class="table-block">
-            <el-button type="primary" style="margin-bottom: 20px" @click="addClassify">添加层级</el-button>
+            <el-form ref="exportForm" :inline="true" :model="form" class="search-area">
+                <el-form-item>
+                    <template>
+                        <!--<area-select v-model="selected" level={2} :data="pcaa"></area-select>-->
+                    </template>
+                    <el-select v-model="exportForm.level" placeholder="用户层级">
+                        <el-option label="一级" value="0"></el-option>
+                        <el-option label="二级" value="1"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item>
+                    <el-button @click="exportData" type="primary">导出</el-button>
+                </el-form-item>
+            </el-form>
             <template>
                 <el-table :data="tableData" :height="height" border style="width: 100%">
-                    <el-table-column prop="ID" label="层级ID" width="120"></el-table-column>
-                    <el-table-column prop="name" label="名称"></el-table-column>
-                    <el-table-column prop="level" label="层级" width="120"></el-table-column>
-                    <el-table-column prop="remarks" label="备注说明"></el-table-column>
-                    <el-table-column prop="status" label="是否自动晋级" width="120"></el-table-column>
+                    <el-table-column prop="ID" label="用户ID" width="60"></el-table-column>
+                    <el-table-column prop="nickName" label="用户昵称"></el-table-column>
+                    <el-table-column prop="phone" label="手机号"></el-table-column>
+                    <el-table-column prop="level" label="层级" width="50"></el-table-column>
+                    <el-table-column prop="dayLogin" label="本日登录" width="80"></el-table-column>
+                    <el-table-column prop="monthLogin" label="本月登录" width="80"></el-table-column>
+                    <el-table-column prop="lastLoginTime" label="最近登录时间"></el-table-column>
+                    <el-table-column prop="code" label="授权码" width="100"></el-table-column>
+                    <el-table-column prop="address" label="区域/省市区"></el-table-column>
+                    <el-table-column prop="style" label="渠道" width="100"></el-table-column>
+                    <el-table-column prop="down" label="下级" width="50"></el-table-column>
+                    <el-table-column prop="status" label="状态"></el-table-column>
                     <el-table-column label="操作">
                         <template slot-scope="scope">
-                            <!--<el-button type="primary" size="small" @click="upSet(scope.$index,scope.row)">晋级设置</el-button>-->
-                            <!--<el-button type="warning" size="small" @click="downSet(scope.$index,scope.row)">降级设置</el-button>-->
-                            <!--<el-button type="primary" size="small" @click="priceLevel(scope.$index,scope.row)">价格阶层</el-button>-->
-                            <el-button type="warning" size="small" @click="editItem(scope.$index,scope.row)">编辑</el-button>
-                            <el-button type="danger" size="small" @click="delItem(scope.$index,scope.row.id)">删除</el-button>
+                            <el-button type="warning" size="small" @click="detailItem(scope.$index,scope.row)">详情</el-button>
+                            <el-button type="danger" size="small" @click="closeItem(scope.$index,scope.row.id)">关闭</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -33,58 +75,6 @@
             </div>
         </div>
 
-        <!--添加/编辑层级弹窗-->
-        <el-dialog :title="title" :visible.sync="addOrEditMask">
-            <el-form v-model="form">
-                <el-form-item label="名称" :label-width="formLabelWidth">
-                    <el-input v-model="form.name" auto-complete="off" placeholder="请输入名称"></el-input>
-                    <span>元</span>
-                </el-form-item>
-                <el-form-item label="层级" :label-width="formLabelWidth">
-                    <el-input v-model="form.level" auto-complete="off" placeholder="请输入数值"></el-input>
-                    <span>分</span>
-                </el-form-item>
-                <el-form-item label="是否晋级" :label-width="formLabelWidth">
-                    <el-radio-group v-model="form.status">
-                    <el-radio label="是"></el-radio>
-                    <el-radio label="否"></el-radio>
-                </el-radio-group>
-                </el-form-item>
-                <el-form-item label="备注说明" :label-width="formLabelWidth" class="remark-area">
-                    <el-input v-model="form.remarks" auto-complete="off" placeholder="请输入说明文字"></el-input>
-                </el-form-item>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="addOrEdit">确定保存</el-button>
-                <el-button @click="addOrEditMask = false">重置</el-button>
-            </div>
-        </el-dialog>
-        <!--价格层级弹窗-->
-        <!--<el-dialog title="选择价格层级" :visible.sync="priceLevelMask">
-            <el-form v-model="priceLevelForm">
-                <el-form-item label="用户层级名称" :label-width="formLabelWidth">
-                    <el-input v-model="priceLevelForm.name" auto-complete="off" placeholder="请输入名称"></el-input>
-                    <span>元</span>
-                </el-form-item>
-                <el-form-item label="层级" :label-width="formLabelWidth">
-                    <el-input v-model="priceLevelForm.level" auto-complete="off" placeholder="请输入数值"></el-input>
-                    <span>分</span>
-                </el-form-item>
-                <el-form-item label="选择价格层级模板" :label-width="formLabelWidth">
-                    <el-select v-model="priceLevelForm.status">
-                        <el-option label="是" value="0"></el-option>
-                        <el-option label="否" value="1"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="备注说明" :label-width="formLabelWidth" class="remark-area">
-                    <el-input v-model="priceLevelForm.remarks" auto-complete="off" placeholder="请输入说明文字"></el-input>
-                </el-form-item>
-            </el-form>
-            <div slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="addOrEdit">确定保存</el-button>
-                <el-button @click="priceLevelMask = false">重置</el-button>
-            </div>
-        </el-dialog>-->
     </div>
 </template>
 
@@ -105,26 +95,22 @@
                     totalPage:20
                 },
                 height:'',
-                addOrEditMask:false,//添加修改弹窗
-                // priceLevelMask:false,//价格层级弹窗
                 formLabelWidth:'100px',
-                form:{//添加修改表单
-                    name:'',
-                    level:'',
-                    status:'是',
-                    remarks:''
+                form:{
+                    id:'',
+                    nickName:'',
+                    code:'',
+                    idCard:'',
+                    phone:''
                 },
-                // priceLevelForm:{//价格层级表单
-                //     name:'',
-                //     level:'',
-                //     status:'0',
-                //     remarks:''
-                // },
-                title:'添加层级'
+                exportForm:{
+                    level:'',
+                },
+                selected:''
             }
         },
         created(){
-            let winHeight=window.screen.availHeight-500;
+            let winHeight=window.screen.availHeight-520;
             this.height=winHeight;
             this.getList(this.page.currentPage)
         },
@@ -136,7 +122,7 @@
                   page:val
               };
               this.$axios
-                  .post(api.getLevelList,data)
+                  .post(api.getManageList,data)
                   .then(res=>{
                       that.tableData=res.data.data.list;
                   })
@@ -153,44 +139,21 @@
                 this.page.currentPage=val;
                 this.getList(val)
             },
-            // 添加层级
-            addClassify(){
-                this.title='添加层级';
-                this.addOrEditMask=true
+            //详情
+            detailItem(index,row){
+                this.$router.push({path:'/memberDetail',query:{id:row.id}})
             },
-            //编辑
-            editItem(index,row){
-                this.title='编辑层级';
-                this.addOrEditMask=true;
-                this.form=row;
-                let id=row.id;
-            },
-            //添加修改确定
-            addOrEdit(){
-                this.addOrEditMask=false;
-            },
-            // //晋级设置
-            // upSet(index,row){
-            //     this.$router.push({ path: "/secondClassify", query: { params: row } });
-            // },
-            // //降级设置
-            // downSet(index,row){
-            //
-            // },
-            // //价格阶层
-            // priceLevel(index,row){
-            //
-            // },
             //删除
-            delItem(index,id){
+            closeItem(index,id){
 
             },
-            //上传图片
-            handleIconSuccess(res, file){
+            //导出
+            exportData(){
 
             },
-            beforeIconUpload(file){
-                this.form.icon=file.name;
+            //查询
+            search(){
+
             }
         }
     }
@@ -201,19 +164,9 @@
     .table-block{padding: 20px 20px 60px;background: #fff}
     .block{float:right;margin-top: 10px}
 
-    /*弹窗样式*/
-    .el-dialog{width: 530px;border-radius: 10px}
-    .el-dialog__header{border-bottom: 1px solid #eee;padding: 20px 20px 10px 50px}
-    .el-dialog__title{color: #ff6868}
-    .el-dialog .el-input{display: inline}
-    .el-dialog .el-input__inner{width: 180px}
-    .remark-area .el-input__inner{width: 360px}
-    .el-dialog .el-upload--text{width: 100px;height: 40px;border: none}
-    .el-input__suffix{line-height: 24px}
-    .icon-uploader{float: right;margin-right: 31px;height: 33px}
-    .icon-uploader .el-button--small{border-radius: 5px;width: 100px}
-    .el-upload--text .el-icon-upload{line-height:0;margin:0;color: #fff;font-size: 14px}
-    .el-dialog__footer{margin-right: 30px}
-    .el-upload-list{display: none}
+    .el-form-item{margin-bottom: 0 !important;}
+    .search-area{margin-bottom: 20px}
+    .search-area .el-input__inner{width: 160px}
+
 
 </style>
