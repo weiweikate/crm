@@ -26,6 +26,21 @@ export default new Router({
                 },
                 // 产品分类管理
                 {
+                    path: '/channelItemManage',
+                    component: resolve => require(['../components/page/Authorization/ChannelItemManage.vue'], resolve),
+                    meta: { title: '渠道类目管理' }
+                },
+                {
+                    path: '/secondChannel',
+                    component: resolve => require(['../components/page/Authorization/SecondChannel.vue'], resolve),
+                    meta: { title: '二级渠道' }
+                },
+                {
+                    path: '/certificateUse',
+                    component: resolve => require(['../components/page/Authorization/CertificateUse.vue'], resolve),
+                    meta: { title: '授权证书模板' }
+                },
+                {
                     path: '/brandProductClassify',
                     component: resolve => require(['../components/page/BrandProduct/BrandProductClassify.vue'], resolve),
                     meta: { title: '产品分类管理' }
@@ -53,9 +68,14 @@ export default new Router({
                 },
                 {
                     // 权限页面
-                    path: '/permission',
-                    component: resolve => require(['../components/page/Permission.vue'], resolve),
-                    meta: { title: '权限测试', permission: true }
+                    path: '/manageList',
+                    component: resolve => require(['../components/page/Permission/ManageList.vue'], resolve),
+                    meta: { title: '账号管理' }
+                },
+                {
+                    path: '/permissionMange',
+                    component: resolve => require(['../components/page/Permission/PermissionMange.vue'], resolve),
+                    meta: { title: '角色权限管理' }
                 }
             ]
         },

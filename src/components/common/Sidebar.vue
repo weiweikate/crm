@@ -32,7 +32,7 @@ export default {
   data() {
     return {
       collapse: false,
-      isShowLogo:true,
+      isShowLogo: true,
       items: [
         {
           icon: "el-icon-setting",
@@ -42,8 +42,16 @@ export default {
         {
           icon: "el-icon-date",
           index: "3",
-          title: "表单相关",
+          title: "授权管理",
           subs: [
+            {
+              index: "channelItemManage",
+              title: "渠道类目管理"
+            },
+            {
+              index: "certificateUse",
+              title: "授权证书模板"
+            },
             {
               index: "form",
               title: "基本表单"
@@ -76,9 +84,30 @@ export default {
               ]
           },
         {
+          icon: "el-icon-goods",
+          index: "4",
+          title: "品牌产品管理",
+          subs: [
+            {
+              index: "brandProductClassify",
+              title: "产品分类管理"
+            }
+          ]
+        },
+        {
           icon: "el-icon-warning",
-          index: "permission",
-          title: "权限测试"
+          index: "5",
+          title: "权限管理",
+          subs: [
+            {
+              index: "manageList",
+              title: "账号管理"
+            },
+             {
+              index: "permissionMange",
+              title: "角色权限管理"
+            }
+          ]
         }
       ]
     };
@@ -116,11 +145,11 @@ export default {
   .el-menu-item .is-active,
   .el-submenu .is-active {
     border-left: 5px solid #ff1e30;
-    background-color:rgba(255, 255, 255, .2)!important;
+    background-color: rgba(255, 255, 255, 0.2) !important;
   }
-  .el-menu-item:hover{
-    color: white!important;
-    background-color:rgba(255, 255, 255, .2)!important;
+  .el-menu-item:hover {
+    color: white !important;
+    background-color: rgba(255, 255, 255, 0.2) !important;
   }
   .search-area {
     height: 150px;

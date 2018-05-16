@@ -90,8 +90,8 @@
                 </el-card>
             </el-col>
         </el-row>
-        <!-- <act-account-pwd @status='isShow' v-if="isShowActAccPwd"></act-account-pwd> -->
-        <act-account-code @status='isShow' v-if="isShowActAccPwd"></act-account-code>
+        <act-account-code @status='isShowCode' v-if="isShowActAccCode"></act-account-code>
+        <act-account-pwd @status='isShowPwd' v-if="isShowActAccPwd"></act-account-pwd>
     </div>
 </template>
 
@@ -109,12 +109,17 @@ export default {
   },
   data() {
     return {
-      isShowActAccPwd: true
+      isShowActAccPwd: false,
+      isShowActAccCode:true
     };
   },
   methods: {
-    isShow(msg) {
-        this.isShowActAccPwd = msg;
+    isShowCode(msg) {
+        this.isShowActAccCode = msg;
+        this.isShowActAccPwd = !msg;
+    },
+    isShowPwd(msg){
+        this.isShowActAccPwd = false;
     }
   }
 };

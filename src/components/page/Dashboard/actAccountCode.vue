@@ -16,7 +16,7 @@
                             <icon slot="prefix" class="inp-ico" ico="icon-yanzhengma"></icon>
                         </el-input>
                     </el-form-item>
-                    <el-button class="confirm-btn" @click="submitForm('form')">设置完成</el-button>
+                    <el-button class="confirm-btn" @click="submitForm('form')">下一步</el-button>
                 </el-form>
             </div>
         </div>
