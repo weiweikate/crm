@@ -21,12 +21,15 @@ fi
 echo 'create workspace end'
 
 echo 'backups ' $MODULE_NAME ' server'
-bakUrl=$BACKUPSPATH/$(date +%Y%m%d%H%M%S)
-mkdir -p $bakUrl
-bakPrefix=$(date +%Y%m%d%H%M%S)
-echo 'backups ' $APP_NAME ' server doing...'
-mv $ROOTPATH/* $bakUrl/$MODULE_NAME-$bakPrefix
-echo 'backups ' $MODULE_NAME ' server done...'
+if [ -d $ROOTPATH/$MODULE_NAME ];
+then
+    bakUrl=$BACKUPSPATH/$(date +%Y%m%d%H%M%S)
+    mkdir -p $bakUrl
+    bakPrefix=$(date +%Y%m%d%H%M%S)
+    echo 'backups ' $APP_NAME ' server doing...'
+    mv $ROOTPATH/* $bakUrl/$MODULE_NAME-$bakPrefix
+    echo 'backups ' $MODULE_NAME ' server done...'
+fi
 
 rm -rf $ROOTPATH/*
 
