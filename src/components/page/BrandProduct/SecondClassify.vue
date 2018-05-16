@@ -1,12 +1,13 @@
 <template>
     <div>
-        <v-breadcrumb :nav="['品牌产品管理','品牌分类管理']"></v-breadcrumb>
+        <v-breadcrumb :nav="['品牌产品管理','品牌分类管理',params.name]"></v-breadcrumb>
         <div class="table-block">
-            <el-button type="primary" style="margin-bottom: 20px" @click="addClassify">添加一级类目</el-button>
+            <el-button type="primary" style="margin-bottom: 20px" @click="addClassify">添加二级类目</el-button>
             <template>
                 <el-table :data="tableData" :height="height" border style="width: 100%">
                     <el-table-column prop="ID" label="ID" width="180"></el-table-column>
-                    <el-table-column prop="classify" label="品类"></el-table-column>
+                    <el-table-column prop="secondName" label="二级分类"></el-table-column>
+                    <el-table-column prop="firstName" label="一级分类"></el-table-column>
                     <el-table-column label="图标" width="180">
                         <template slot-scope="scope">
                             <img :src="scope.row.icon" alt="">
@@ -15,7 +16,7 @@
                     <el-table-column prop="status" label="状态"></el-table-column>
                     <el-table-column label="操作">
                         <template slot-scope="scope">
-                            <el-button type="primary" size="small" @click="toSecondClassify(scope.row.id)">二级类目</el-button>
+                            <el-button type="primary" size="small" @click="toSecondClassify(scope.row.id)">参数管理</el-button>
                             <el-button type="warning" size="small" @click="editItem(scope.row)">编辑</el-button>
                             <el-button type="danger" size="small" @click="delItem(scope.row.id)">删除</el-button>
                         </template>
@@ -48,6 +49,9 @@
                             :before-upload="beforeIconUpload">
                         <el-button size="small" type="primary"><i class="el-icon-upload"></i>点击上传</el-button>
                     </el-upload>
+                </el-form-item>
+                <el-form-item label="一级分类" :label-width="formLabelWidth">
+                    <el-input v-model="form.firstName" auto-complete="off" readonly></el-input>
                 </el-form-item>
                 <el-form-item label="是否启用" :label-width="formLabelWidth">
                     <el-select v-model="form.status">
@@ -86,15 +90,19 @@
                 form:{
                     name:'',
                     status:'0',
-                    icon:''
+                    icon:'',
+                    firstName:''
                 },
-                title:'添加一级类目'
+                title:'添加二级类目',
+                params:{}
             }
         },
         created(){
             let winHeight=window.screen.availHeight-500;
             this.height=winHeight;
-            this.getList(this.page.currentPage)
+            this.getList(this.page.currentPage);
+            this.params=this.$route.query.params;
+            this.form.firstName=this.params.name;
         },
         methods: {
             //获取列表
@@ -104,7 +112,7 @@
                   page:val
               };
               this.$axios
-                  .post(api.getProductList,data)
+                  .post(api.getSecondProductList,data)
                   .then(res=>{
                       that.tableData=res.data.data.list;
                   })
@@ -121,14 +129,14 @@
                 this.page.currentPage=val;
                 this.getList(val)
             },
-            // 添加一级类目
+            // 添加二级类目
             addClassify(){
-                this.title='添加一级类目';
+                this.title='添加二级类目';
                 this.addOrEditMask=true
             },
             //编辑
             editItem(row){
-                this.title='编辑一级类目';
+                this.title='编辑二级类目';
                 this.addOrEditMask=true;
                 this.form=row;
                 let id=row.id;

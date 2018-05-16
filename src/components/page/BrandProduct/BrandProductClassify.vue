@@ -6,7 +6,7 @@
             <template>
                 <el-table :data="tableData" :height="height" border style="width: 100%">
                     <el-table-column prop="ID" label="ID" width="180"></el-table-column>
-                    <el-table-column prop="classify" label="品类"></el-table-column>
+                    <el-table-column prop="name" label="品类"></el-table-column>
                     <el-table-column label="图标" width="180">
                         <template slot-scope="scope">
                             <img :src="scope.row.icon" alt="">
@@ -15,9 +15,9 @@
                     <el-table-column prop="status" label="状态"></el-table-column>
                     <el-table-column label="操作">
                         <template slot-scope="scope">
-                            <el-button type="primary" size="small" @click="toSecondClassify(scope.row.id)">二级类目</el-button>
-                            <el-button type="warning" size="small" @click="editItem(scope.row)">编辑</el-button>
-                            <el-button type="danger" size="small" @click="delItem(scope.row.id)">删除</el-button>
+                            <el-button type="primary" size="small" @click="toSecondClassify(scope.$index,scope.row)">二级类目</el-button>
+                            <el-button type="warning" size="small" @click="editItem(scope.$index,scope.row)">编辑</el-button>
+                            <el-button type="danger" size="small" @click="delItem(scope.$index,scope.row.id)">删除</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -127,7 +127,7 @@
                 this.addOrEditMask=true
             },
             //编辑
-            editItem(row){
+            editItem(index,row){
                 this.title='编辑一级类目';
                 this.addOrEditMask=true;
                 this.form=row;
@@ -138,11 +138,11 @@
                 this.addOrEditMask=false;
             },
             //跳到二级类目页面
-            toSecondClassify(id){
-                this.$router.push('/secondClassify')
+            toSecondClassify(index,row){
+                this.$router.push({ path: "/secondClassify", query: { params: row } });
             },
             //删除
-            delItem(id){
+            delItem(index,id){
 
             },
             //上传图片
