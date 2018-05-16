@@ -63,7 +63,7 @@ export default {
                       title: "品牌管理"
                   },{
                       index: "productManage",
-                      title: "品牌管理"
+                      title: "产品管理"
                   },{
                       index: "productAudit",
                       title: "产品审核"
