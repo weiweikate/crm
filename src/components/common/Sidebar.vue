@@ -71,7 +71,7 @@ export default {
                       title: "经销商层级管理"
                   },{
                       index: "memberManage",
-                      title: "会员管理"
+                      title: "经销商会员管理"
                   }
               ]
           },

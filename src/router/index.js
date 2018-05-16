@@ -44,7 +44,7 @@ export default new Router({
                 {
                     path: '/memberManage',
                     component: resolve => require(['../components/page/MemberManage/MemberManage.vue'], resolve),
-                    meta: { title: '会员管理' }
+                    meta: { title: '经销商会员管理' }
                 },
                 {
                     // 权限页面
