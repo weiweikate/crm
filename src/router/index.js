@@ -19,12 +19,7 @@ export default new Router({
                     component: resolve => require(['../components/page/Dashboard.vue'], resolve),
                     meta: { title: '系统首页' }
                 },
-                {
-                    path: '/form',
-                    component: resolve => require(['../components/page/BaseForm.vue'], resolve),
-                    meta: { title: '基本表单' }
-                },
-                // 产品分类管理
+                // 授权管理
                 {
                     path: '/channelItemManage',
                     component: resolve => require(['../components/page/Authorization/ChannelItemManage.vue'], resolve),
@@ -40,6 +35,17 @@ export default new Router({
                     component: resolve => require(['../components/page/Authorization/CertificateUse.vue'], resolve),
                     meta: { title: '授权证书模板' }
                 },
+                {
+                    path: '/contractReview',
+                    component: resolve => require(['../components/page/Authorization/ContractReview.vue'], resolve),
+                    meta: { title: '续约审核' }
+                },
+                {
+                    path: '/form',
+                    component: resolve => require(['../components/page/BaseForm.vue'], resolve),
+                    meta: { title: '基本表单' }
+                },
+                // 品牌产品管理
                 {
                     path: '/brandProductClassify',
                     component: resolve => require(['../components/page/BrandProduct/BrandProductClassify.vue'], resolve),

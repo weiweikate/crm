@@ -3,7 +3,7 @@
         <div v-if="isShowLogo" class="search-area">
             <img class="logo-img" src="../../assets/images/logo.png" alt="" />
         </div>
-        <el-menu class="sidebar-el-menu" :default-active="onRoutes" :collapse="collapse" background-color="#222d32"
+        <el-menu :unique-opened='true' class="sidebar-el-menu" :default-active="onRoutes" :collapse="collapse" background-color="#222d32"
             text-color="#b1b1b1" active-text-color="#fff" router>
             <template v-for="item in items">
                 <template v-if="item.subs">
@@ -53,8 +53,8 @@ export default {
               title: "授权证书模板"
             },
             {
-              index: "form",
-              title: "基本表单"
+              index: "contractReview",
+              title: "续约审核"
             }
           ]
         },
@@ -84,8 +84,19 @@ export default {
               ]
           },
         {
+          icon: "el-icon-goods",
+          index: "6",
+          title: "品牌产品管理",
+          subs: [
+            {
+              index: "brandProductClassify",
+              title: "产品分类管理"
+            }
+          ]
+        },
+        {
           icon: "el-icon-warning",
-          index: "5",
+          index: "7",
           title: "权限管理",
           subs: [
             {
