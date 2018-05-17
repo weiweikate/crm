@@ -58,6 +58,25 @@ export default {
             }
           ]
         },
+        {
+          icon: "el-icon-date",
+          index: "101",
+          title: "溯源管理",
+          subs: [
+            {
+              index: "rootsCodeMange",
+              title: "溯源防伪码管理"
+            },
+            {
+              index: "rootsCodeQuery",
+              title: "防伪码查询"
+            },
+            {
+              index: "rootsCodeTpl",
+              title: "防伪码模板"
+            }
+          ]
+        },
           {
               icon: "el-icon-goods",
               index: "4",

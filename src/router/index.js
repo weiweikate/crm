@@ -72,6 +72,22 @@ export default new Router({
                     component: resolve => require(['../components/page/MemberManage/MemberDetail.vue'], resolve),
                     meta: { title: '会员详情' }
                 },
+                // 溯源管理
+                {
+                    path: '/rootsCodeMange',
+                    component: resolve => require(['../components/page/RootsMange/RootsCodeMange.vue'], resolve),
+                    meta: { title: '溯源防伪码管理' }
+                },
+                {
+                    path: '/rootsCodeQuery',
+                    component: resolve => require(['../components/page/RootsMange/RootsCodeQuery.vue'], resolve),
+                    meta: { title: '防伪码查询' }
+                },
+                {
+                    path: '/rootsCodeTpl',
+                    component: resolve => require(['../components/page/RootsMange/RootsCodeTpl.vue'], resolve),
+                    meta: { title: '防伪码模板' }
+                },
                 {
                     // 权限页面
                     path: '/manageList',

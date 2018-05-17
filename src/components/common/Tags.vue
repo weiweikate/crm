@@ -35,9 +35,6 @@
             },
             // 关闭单个标签
             closeTags(index) {
-                if(index == 0){
-                    return;
-                }
                 const delItem = this.tagsList.splice(index, 1)[0];
                 const item = this.tagsList[index] ? this.tagsList[index] : this.tagsList[index - 1];
                 if (item) {
