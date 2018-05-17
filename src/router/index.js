@@ -63,6 +63,11 @@ export default new Router({
                     meta: { title: '经销商层级管理' }
                 },
                 {
+                    path: '/joinrManage',
+                    component: resolve => require(['../components/page/MemberManage/JoinManage.vue'], resolve),
+                    meta: { title: '经销商加盟管理' }
+                },
+                {
                     path: '/memberManage',
                     component: resolve => require(['../components/page/MemberManage/MemberManage.vue'], resolve),
                     meta: { title: '经销商会员管理' }

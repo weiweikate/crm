@@ -97,22 +97,14 @@ export default {
                       index: "levelManage",
                       title: "经销商层级管理"
                   },{
+                      index: "joinManage",
+                      title: "经销商加盟管理"
+                  },{
                       index: "memberManage",
                       title: "经销商会员管理"
                   }
               ]
           },
-        {
-          icon: "el-icon-goods",
-          index: "6",
-          title: "品牌产品管理",
-          subs: [
-            {
-              index: "brandProductClassify",
-              title: "产品分类管理"
-            }
-          ]
-        },
         {
           icon: "el-icon-warning",
           index: "7",
