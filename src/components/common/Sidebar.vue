@@ -90,7 +90,7 @@ export default {
           },
           {
               icon: "el-icon-goods",
-              index: "5",
+              index: "6",
               title: "会员管理",
               subs: [
                   {
