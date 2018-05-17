@@ -77,6 +77,11 @@ export default new Router({
                     component: resolve => require(['../components/page/MemberManage/MemberDetail.vue'], resolve),
                     meta: { title: '会员详情' }
                 },
+                {
+                    path: '/memberTree',
+                    component: resolve => require(['../components/page/MemberManage/MemberManage/MemberTree.vue'], resolve),
+                    meta: { title: '会员树状图' }
+                },
                 // 溯源管理
                 {
                     path: '/rootsCodeMange',
