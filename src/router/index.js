@@ -64,6 +64,18 @@ export default new Router({
                     component: resolve => require(['../components/page/BrandProduct/SecondClassify.vue'], resolve),
                     meta: { title: '二级类目' }
                 },
+                {
+                    name:'brandManage',
+                    path: '/brandManage',
+                    component: resolve => require(['../components/page/BrandProduct/BrandManage.vue'], resolve),
+                    meta: { title: '品牌管理' }
+                },
+                {
+                    name:'addOrUpBrand',
+                    path: '/addOrUpBrand',
+                    component: resolve => require(['../components/page/BrandProduct/BrandManage/AddOrUpBrand.vue'], resolve),
+                    meta: { title: '添加品牌' }
+                },
                 // 会员管理
                 {
                     name:'levelManage',
@@ -72,8 +84,8 @@ export default new Router({
                     meta: { title: '经销商层级管理' }
                 },
                 {
-                    name:'joinrManage',
-                    path: '/joinrManage',
+                    name:'joinManage',
+                    path: '/joinManage',
                     component: resolve => require(['../components/page/MemberManage/JoinManage.vue'], resolve),
                     meta: { title: '经销商加盟管理' }
                 },
@@ -94,6 +106,24 @@ export default new Router({
                     path: '/memberTree',
                     component: resolve => require(['../components/page/MemberManage/MemberManage/MemberTree.vue'], resolve),
                     meta: { title: '会员树状图' }
+                },
+                {
+                    name:'sendInvite',
+                    path: '/sendInvite',
+                    component: resolve => require(['../components/page/MemberManage/JoinManage/SendInvite.vue'], resolve),
+                    meta: { title: '邀请发起' }
+                },
+                {
+                    name:'inviteDetail',
+                    path: '/inviteDetail',
+                    component: resolve => require(['../components/page/MemberManage/JoinManage/InviteDetail.vue'], resolve),
+                    meta: { title: '邀请详情' }
+                },
+                {
+                    name:'inviteLink',
+                    path: '/inviteLink',
+                    component: resolve => require(['../components/page/MemberManage/JoinManage/InviteLink.vue'], resolve),
+                    meta: { title: '邀请链接' }
                 },
                 // 溯源管理
                 {
