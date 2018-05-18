@@ -3,32 +3,25 @@
         <breadcrumb :nav='nav'></breadcrumb>
         <el-card>
             <div class="add-box">
-                <el-form ref="form" :model="form" label-width="100px">
+                <el-form ref="form" :rules="rules" :model="form" label-width="100px">
                     <span class="add-box-title">基础信息</span>
-                    <el-form-item prop="name" label="姓名">
-                        <el-input class="add-mange-inp" v-model="form.name"></el-input>
-                    </el-form-item>
-                    <el-form-item prop="phone" label="手机号">
-                        <el-input class="add-mange-inp" v-model="form.phone"></el-input>
-                    </el-form-item>
-                    <div class="add-avatar"></div>
-                    <hr width='90%' size='1' color='#ccc' class='add-box-sep'>
-                    <span class="add-box-title">部门信息</span>
-                    <el-form-item prop="department" label="所属部门">
-                        <el-select v-model="form.department" multiple placeholder="请选择">
-                            <el-option v-for="item in department" :key="item.value" :label="item.label" :value="item.value"></el-option>
-                        </el-select>
-                    </el-form-item>
                     <el-form-item prop="job" label="所在岗位">
                         <el-select v-model="form.job" placeholder="请选择">
                             <el-option v-for="item in department" :key="item.value" :label="item.label" :value="item.value"></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item prop="superior" label="直接上级">
-                        <el-input class="add-mange-inp" v-model="form.superior"></el-input>
+                    <el-form-item prop="department" label="所属部门">
+                        <el-select v-model="form.department" multiple placeholder="请选择">
+                            <el-option v-for="item in department" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                        </el-select>
                     </el-form-item>
                     <hr width='90%' size='1' color='#ccc' class='add-box-sep'>
-                    <span class="add-box-title">基础信息</span>
+                    <span class="add-box-title">权限设置</span>
+                    <el-form-item prop="defPermission" label="默认权限">
+                        <el-select v-model="form.defPermission" placeholder="请选择">
+                            <el-option v-for="item in defPermission" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                        </el-select>
+                    </el-form-item>
                     <el-collapse accordion>
                         <el-collapse-item>
                             <template slot="title">
@@ -83,6 +76,10 @@
                             </el-checkbox-group>
                         </el-collapse-item>
                     </el-collapse>
+                    <el-form-item class="sub-btn">
+                        <el-button size="medium" type="primary" @click="submitForm('form')">提交</el-button>
+                        <el-button size="medium" @click="resetForm('form')">重置</el-button>
+                    </el-form-item>
                 </el-form>
             </div>
         </el-card>
@@ -97,7 +94,7 @@ export default {
   },
   data() {
     return {
-      nav: ["权限管理", "创建账号"],
+      nav: ["权限管理", "岗位权限管理",'编辑岗位'],
       checkAllUser: false,
       isIndeterminateUser: false,
       checkedUser: [],
@@ -120,18 +117,48 @@ export default {
           value: "人事部"
         }
       ],
+      defPermission:[
+          {
+              value:'管理员',
+              label:'管理员'
+          }
+      ],
       form: {
-        name: "",
-        phone: "",
         department: [],
         job: "",
-        superior: ""
+        defPermission:''
+      },
+      rules:{
+          department:{ required: true, message: '请选择所在岗位', trigger: 'blur' },
+          job:{ required: true, message: '请选择所属部门', trigger: 'blur' },
+          defPermission:{ required: true, message: '请选择默认权限', trigger: 'blur' }
       }
     };
+  },
+  activated(){
+      let userId = this.$route.params.userId || sessionStorage.getItem('editJobsPermission');
+      console.log(userId)
   },
   methods: {
     // 上传图片
     uploadAvatar(file) {},
+
+    // 提交表单
+    submitForm(formName){
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            alert('submit!');
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+    },
+
+    // 重置表单
+    resetForm(formName) {
+        this.$refs[formName].resetFields();
+    },
 
     // 全选用户管理
     handleCheckAllChangeUser(val) {
@@ -168,27 +195,12 @@ export default {
   .add-box-sep {
     margin-bottom: 20px;
   }
-  .add-avatar {
-    position: absolute;
-    top: 3%;
-    right: 2%;
-    width: 100px;
-    height: 100px;
-    border-radius: 10px;
-    border: 1px solid red;
-  }
-  .add-avatar-btn {
-    position: absolute;
-    top: 31%;
-    right: 2.7%;
-    border: 1px solid #ccc;
-  }
   .el-collapse {
-      width: 90%;
+    width: 90%;
     border: 1px solid #ccc;
-    padding: 10px;
+    padding: 3px;
     box-sizing: border-box;
-    border-radius: 10px;
+    border-radius: 5px;
     margin-bottom: 10px;
     .el-collapse-item__header,
     .el-collapse-item__wrap {
@@ -199,15 +211,15 @@ export default {
     }
   }
   .collapse-tit .el-checkbox__label {
-    font-size: 18px;
+    font-size: 14px;
   }
   .collapse-item {
     float: left;
     width: 90%;
     border: 1px solid #ccc;
-    border-radius: 10px;
+    border-radius: 5px;
     line-height: 38px;
-    padding: 0 20px 0 20px;
+    padding: 0 10px 0 10px;
     box-sizing: border-box;
   }
   .collapse-title {
@@ -219,6 +231,11 @@ export default {
   }
   .el-checkbox {
     margin-left: 20px;
+  }
+  .sub-btn{
+      margin-top: 20px;
+      padding-left:30%;
+      box-sizing: border-box;
   }
 }
 </style>

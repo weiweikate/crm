@@ -29,13 +29,13 @@
               <el-table-column prop="name" label="状态" align="center"></el-table-column>
               <el-table-column label="操作"  width="400" align="center">
                 <template slot-scope="scope">
-                  <el-button size="mini" type="primary">编辑</el-button>
-                  <el-button v-if='accountCtr' size="mini" type="warning">密码重置</el-button>
-                  <el-button size="mini" type="warning">查看日志</el-button>
+                  <el-button size="mini" type="primary" @click="editManger(scope.row)">编辑</el-button>
+                  <el-button v-if='accountCtr' size="mini" type="warning" @click="resetPwd(scope.row)">密码重置</el-button>
+                  <el-button size="mini" type="warning" @click="showLog(scope.row)">查看日志</el-button>
                   <el-button v-if='!accountCtr' size="mini" type="danger"  >账号删除</el-button>
                   <template>
                     <el-button v-if='accountCtr' size="mini" type="danger" @click='accountMange(false)' >账号关闭</el-button>
-                    <el-button v-if='!accountCtr'size="mini" type="danger" @click='accountMange(true)' >账号开启</el-button>
+                    <el-button v-if='!accountCtr' size="mini" type="danger" @click='accountMange(true)' >账号开启</el-button>
                   </template>
                 </template>
               </el-table-column>
@@ -51,6 +51,17 @@
               </el-pagination>
           </div>
         </el-card>
+        <el-dialog :visible.sync="isShowResetPwd" width="20%">
+            <el-form ref="pwdForm" :rules="rules" :model="pwdForm" inline label-width="100px">
+              <el-form-item prop="password" label='密码重置'>
+                <el-input v-model="pwdForm.password"></el-input>
+              </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+              <el-button @click="isShowResetPwd = false">取 消</el-button>
+              <el-button type="primary" @click="confirmReset('pwdForm')">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 <script>
@@ -64,10 +75,14 @@ export default {
     return {
       nav: ["权限管理", "管理员账号管理"],
       accountCtr:false,
+      isShowResetPwd:false,
       form: {
         id: "",
         name: "",
         phone: ""
+      },
+      pwdForm:{
+        password:'',
       },
       tableLoading: false,
       tableData: [],
@@ -75,6 +90,11 @@ export default {
       page: {
         currentPage: 1,
         totalPage: 20
+      },
+      rules:{
+        password:[
+          { required: true, message: '请输入密码', trigger: 'blur' },
+        ]
       }
     };
   },
@@ -118,7 +138,34 @@ export default {
 
     // 新建管理员
     addManger(){
+      this.$router.push('/addManger');
+    },
 
+    // 编辑管理员
+    editManger(row){
+      this.$router.push('/editManger');
+    },
+
+    // 查看操作日志
+    showLog(row){
+      sessionStorage.setItem('showMangeLogTmp',row.id);
+      this.$router.push({name:'showMangeLog',params:{userId: row.id}});
+    },
+
+    // 密码重置
+    resetPwd(row){
+      this.pwdForm = {};
+      this.isShowResetPwd = true;
+    },
+    confirmReset(formName){
+      this.$refs[formName].validate((valid) => {
+          if (valid) {
+            this.isShowResetPwd = false;
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
     },
 
     // 账号开启/关闭

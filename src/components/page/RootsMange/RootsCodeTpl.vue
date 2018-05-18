@@ -2,14 +2,13 @@
     <div>
         <breadcrumb :nav='nav'></breadcrumb>
         <el-card>
-            <el-button type='primary' @click="isShowaddCodeDialog = true">添加模板</el-button>
+            <el-button type='primary' @click="addCodeTpl('addTplForm')">添加模板</el-button>
             <el-table v-loading="tableLoading" class="w-table" stripe :data="tableData" :height="height" border style="width: 100%">
-                <el-table-column prop="ID" label="编号" width="180" align="center"></el-table-column>
-                <el-table-column prop="name" label="模板名称" align="center"></el-table-column>
-                <el-table-column prop="status" label="产品类型" align="center"></el-table-column>
-                <el-table-column prop="name" label="大箱码" align="center"></el-table-column>
-                <el-table-column prop="name" label="小箱码" align="center"></el-table-column>
-                <el-table-column prop="name" label="包装码" align="center"></el-table-column>
+                <el-table-column prop="id" label="编号" width="180" align="center"></el-table-column>
+                <el-table-column prop="templateName" label="模板名称" align="center"></el-table-column>
+                <el-table-column prop="bigBoxCodeNum" label="大箱码" align="center"></el-table-column>
+                <el-table-column prop="smallBoxCodeNum" label="小箱码" align="center"></el-table-column>
+                <el-table-column prop="packagingCodeNum" label="包装码" align="center"></el-table-column>
                 <el-table-column label="操作" align="center">
                     <template slot-scope="scope">
                         <el-button type="warning" @click='editCodeTpl(scope.row)'>编辑</el-button>
@@ -29,46 +28,40 @@
             </div>
         </el-card>
         <el-dialog title="添加防伪码模板" :visible.sync="isShowaddCodeDialog">
-            <el-form :model="addTplForm" :rules="addTplForm" ref="addTplForm" label-width="80px">
-                <el-form-item label="模板名称" >
-                    <el-input class="rootscode-inp" v-model="addTplForm.tplName" placeholder="请输入模板名称"></el-input>
-                </el-form-item>
-                <el-form-item label="产品类型" >
-                    <el-input class="rootscode-inp" v-model="addTplForm.tplName" placeholder="请输入产品类型"></el-input>
+            <el-form :model="addTplForm" :rules="rules" ref="addTplForm" label-width="80px">
+                <el-form-item prop="templateName" label="模板名称" >
+                    <el-input class="rootscode-inp" v-model="addTplForm.templateName" placeholder="请输入模板名称"></el-input>
                 </el-form-item><br />
                     <el-form-item label="" ><h3 style="position:absolute;top:-15px;left:-70px">防伪码数量设置</h3></el-form-item><br/>
-                <el-form-item label="大箱码" >
-                    <el-input class="rootscode-inp" v-model="addTplForm.bidBoxNum" placeholder="请输入大箱码"></el-input>
+                <el-form-item prop="bigBoxCodeNum" label="大箱码" >
+                    <el-input class="rootscode-inp" v-model="addTplForm.bigBoxCodeNum" placeholder="请输入大箱码"></el-input>
                 </el-form-item>
-                <el-form-item label="小箱码" >
-                    <el-input class="rootscode-inp" v-model="addTplForm.smallBoxNum" placeholder="请输入小箱码"></el-input>
+                <el-form-item prop="smallBoxCodeNum" label="小箱码" >
+                    <el-input class="rootscode-inp" v-model="addTplForm.smallBoxCodeNum" placeholder="请输入小箱码"></el-input>
                 </el-form-item>
-                <el-form-item label="包装码" >
-                    <el-input class="rootscode-inp" v-model="addTplForm.packageNum" placeholder="请输入包装码"></el-input>
+                <el-form-item prop="packagingCodeNum" label="包装码" >
+                    <el-input class="rootscode-inp" v-model="addTplForm.packagingCodeNum" placeholder="请输入包装码"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="addCodeTpl('addTplForm')">确 定</el-button>
+                <el-button type="primary" :loading="btnLoading" @click="confirmAddCodeTpl('addTplForm')">确 定</el-button>
                 <el-button @click="isShowaddCodeDialog = false">取 消</el-button>
             </div>
         </el-dialog>
         <el-dialog title="修改防伪码模板" :visible.sync="isShoweditCodeDialog">
-            <el-form :model="editTplForm" :rules="editTplForm" ref="editTplForm" label-width="80px">
-                <el-form-item label="模板名称" >
-                    <el-input class="rootscode-inp" v-model="editTplForm.tplName" placeholder="请输入模板名称"></el-input>
-                </el-form-item>
-                <el-form-item label="产品类型" >
-                    <el-input class="rootscode-inp" v-model="editTplForm.tplName" placeholder="请输入产品类型"></el-input>
+            <el-form :model="editTplForm" :rules="rules" ref="editTplForm" label-width="80px">
+                <el-form-item prop="templateName" label="模板名称" >
+                    <el-input class="rootscode-inp" v-model="editTplForm.templateName" placeholder="请输入模板名称"></el-input>
                 </el-form-item><br />
                     <el-form-item label="" ><h3 style="position:absolute;top:-15px;left:-70px">防伪码数量设置</h3></el-form-item><br/>
-                <el-form-item label="大箱码" >
-                    <el-input class="rootscode-inp" v-model="editTplForm.bidBoxNum" placeholder="请输入大箱码"></el-input>
+                <el-form-item prop="bigBoxCodeNum" label="大箱码" >
+                    <el-input class="rootscode-inp" v-model="editTplForm.bigBoxCodeNum" placeholder="请输入大箱码"></el-input>
                 </el-form-item>
-                <el-form-item label="小箱码" >
-                    <el-input class="rootscode-inp" v-model="editTplForm.smallBoxNum" placeholder="请输入小箱码"></el-input>
+                <el-form-item prop="smallBoxCodeNum" label="小箱码" >
+                    <el-input class="rootscode-inp" v-model="editTplForm.smallBoxCodeNum" placeholder="请输入小箱码"></el-input>
                 </el-form-item>
-                <el-form-item label="包装码" >
-                    <el-input class="rootscode-inp" v-model="editTplForm.packageNum" placeholder="请输入包装码"></el-input>
+                <el-form-item prop="packagingCodeNum" label="包装码" >
+                    <el-input class="rootscode-inp" v-model="editTplForm.packagingCodeNum" placeholder="请输入包装码"></el-input>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -92,29 +85,43 @@ export default {
     return {
       nav: ["溯源管理", "防伪码模板"],
       tableLoading: false,
+      btnLoading: false,
       isShowaddCodeDialog: false,
       isShoweditCodeDialog: false,
-      isShowDelToast:false,
+      isShowDelToast: false,
       delId: 66,
-      delUrl:'http://api',
+      delUrl: "http://api",
       addTplForm: {
-        tplName: "",
-        productType: "",
-        bidBoxNum: "",
-        smallBoxNum: "",
-        packageNum: ""
+        templateName: "",
+        bigBoxCodeNum: "",
+        smallBoxCodeNum: "",
+        packagingCodeNum: ""
       },
       editTplForm: {
-        tplName: "",
-        productType: "",
-        bidBoxNum: "",
-        smallBoxNum: "",
-        packageNum: ""
+        id: "",
+        templateName: "",
+        bigBoxCodeNum: "",
+        smallBoxCodeNum: "",
+        packagingCodeNum: ""
       },
       tableData: [],
       page: {
         currentPage: 1,
-        totalPage: 20
+        totalPage: 0
+      },
+      rules: {
+        templateName: [
+          { required: true, message: "请输入模板名称", trigger: "blur" }
+        ],
+        bigBoxCodeNum: [
+          { required: true, message: "请输入大箱码", trigger: "blur" }
+        ],
+        smallBoxCodeNum: [
+          { required: true, message: "请输入小箱码", trigger: "blur" }
+        ],
+        packagingCodeNum: [
+          { required: true, message: "请输入包装码", trigger: "blur" }
+        ]
       }
     };
   },
@@ -132,10 +139,17 @@ export default {
       };
       this.tableLoading = true;
       this.$axios
-        .post(api.getProductList, data)
+        .post(api.rootsGetCodeTplList, data)
         .then(res => {
-          that.tableData = res.data.data.list;
           that.tableLoading = false;
+          if (res.data.code == 200) {
+            this.tableData = [];
+            this.tableData = res.data.data.data;
+            this.page.totalPage = res.data.data.resultCount;
+            this.$message.success(res.data.msg);
+          } else {
+            this.$message.error(res.data.msg);
+          }
         })
         .catch(err => {
           console.log(err);
@@ -152,25 +166,103 @@ export default {
     },
 
     // 添加防伪码模板
-    addCodeTpl() {
-      this.isShowaddCodeDialog = false;
+    addCodeTpl(formName) {
+      this.addTplForm = {};
+      this.isShowaddCodeDialog = true;
+    },
+    confirmAddCodeTpl(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.btnLoading = true;
+          let that = this;
+          let data = {};
+          data = this.addTplForm;
+          this.$axios
+            .post(api.rootsAddCodeTplList, data)
+            .then(res => {
+              that.btnLoading = false;
+              if (res.data.code == 200) {
+                this.btnLoading = false;
+                this.$message.success(res.data.msg);
+                this.isShowaddCodeDialog = false;
+                this.getList(this.page.currentPage);
+              } else {
+                this.btnLoading = false;
+                this.$message.error(res.data.msg);
+                this.isShowaddCodeDialog = false;
+              }
+            })
+            .catch(err => {
+              console.log(err);
+              that.tableLoading = false;
+            });
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
     },
 
     // 编辑防伪码模板
     editCodeTpl(row) {
+      this.editTplForm = {};
+      this.btnLoading = true;
+      let data = {id:row.id};
+      this.$axios
+        .post(api.rootsQueryCodeTplList, data)
+        .then(res => {
+          if (res.data.code == 200) {
+              this.editTplForm = res.data.data;
+            this.$message.success(res.data.msg);
+          } else {
+            this.$message.error(res.data.msg);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+          that.tableLoading = false;
+        });
       this.isShoweditCodeDialog = true;
     },
-    confirmEditCodeTpl() {
-        this.isShoweditCodeDialog = false;
+    confirmEditCodeTpl(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.btnLoading = true;
+          let data = {};
+          data = this.editTplForm;
+          this.$axios
+            .post(api.rootsEditCodeTplList, data)
+            .then(res => {
+              this.btnLoading = false;
+              if (res.data.code == 200) {
+                this.btnLoading = false;
+                this.$message.success(res.data.msg);
+                this.isShoweditCodeDialog = false;
+                this.getList(this.page.currentPage);
+              } else {
+                this.btnLoading = false;
+                this.$message.error(res.data.msg);
+                this.isShoweditCodeDialog = false;
+              }
+            })
+            .catch(err => {
+              console.log(err);
+              that.tableLoading = false;
+            });
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
     },
 
     // 删除模板
-    deleteTpl(row){
-        this.delId = 666;
-        this.isShowDelToast = true;
+    deleteTpl(row) {
+      this.delId = 666;
+      this.isShowDelToast = true;
     },
-    deleteToast(msg){
-        this.isShowDelToast = msg;
+    deleteToast(msg) {
+      this.isShowDelToast = msg;
     }
   }
 };

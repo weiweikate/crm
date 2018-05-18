@@ -4,7 +4,9 @@ import { Message } from 'element-ui';
 import utils from '../utils/index.js';
 import qs from 'qs';
   
-axios.defaults.baseURL = 'https://www.easy-mock.com';//局域网   
+axios.defaults.baseURL = 'https://www.easy-mock.com';//局域网
+// axios.defaults.baseURL = 'http://172.16.10.252:7000/mockjsdata/19/';//开发
+ 
 
 axios.defaults.timeout = 20000;   
 

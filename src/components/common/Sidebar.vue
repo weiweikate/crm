@@ -114,10 +114,14 @@ export default {
               index: "manageList",
               title: "管理员账号管理"
             },
-             {
-              index: "addManger",
-              title: "添加管理员"
-            }
+            {
+              index: "jobsPermissionMange",
+              title: "岗位权限管理"
+            },
+            {
+              index: "setPermission",
+              title: "权限设置"
+            },
           ]
         }
       ]

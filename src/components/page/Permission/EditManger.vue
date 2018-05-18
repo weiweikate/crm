@@ -97,7 +97,7 @@ export default {
   },
   data() {
     return {
-      nav: ["权限管理", "创建账号"],
+      nav: ["权限管理", "编辑账号"],
       checkAllUser: false,
       isIndeterminateUser: false,
       checkedUser: [],

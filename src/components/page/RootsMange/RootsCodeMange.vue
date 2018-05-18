@@ -23,7 +23,7 @@
         <el-card class="con-card">
           <el-button type="primary" @click="createCode">生成防伪码</el-button>
           <el-table v-loading="tableLoading" class="w-table" stripe :data="tableData" :height="height" border style="width: 100%">
-              <el-table-column prop="ID" label="方位记录ID" width="100" align="center"></el-table-column>
+              <el-table-column prop="id" label="方位记录ID" width="100" align="center"></el-table-column>
               <el-table-column prop="name" label="产品类型" align="center"></el-table-column>
               <el-table-column prop="status" label="产品品牌" align="center"></el-table-column>
               <el-table-column prop="name" label="导出时间" align="center"></el-table-column>
@@ -51,15 +51,18 @@
               </el-pagination>
           </div>
         </el-card>
-        <el-dialog title="收货地址" :visible.sync="isShowDialog">
+        <el-dialog title="生成防伪码" :visible.sync="isShowDialog">
           <el-form :model="diaForm" :rules="diaRules" ref="diaForm" label-width="80px">
-            <el-form-item label="产品品牌" >
-              <el-select v-model="diaForm.productBrand" placeholder="请选择品牌">
+            <el-form-item label="产品分类" >
+              <el-select v-model="diaForm.productItem" placeholder="请选择分类">
+                <el-option v-for="(v,k) in level" :label="v.label" :value="v.value" :key="k"></el-option>
+              </el-select>
+              <el-select v-model="diaForm.productItem" placeholder="请选择分类">
                 <el-option v-for="(v,k) in level" :label="v.label" :value="v.value" :key="k"></el-option>
               </el-select>
             </el-form-item>
-            <el-form-item label="产品分类" >
-              <el-select v-model="diaForm.productItem" placeholder="请选择分类">
+            <el-form-item label="产品品牌" >
+              <el-select v-model="diaForm.productBrand" placeholder="请选择品牌">
                 <el-option v-for="(v,k) in level" :label="v.label" :value="v.value" :key="k"></el-option>
               </el-select>
             </el-form-item>
@@ -175,7 +178,7 @@ export default {
       };
       this.tableLoading = true;
       this.$axios
-        .post(api.getProductList, data)
+        .post(api.rootsGetCodeTplList, data)
         .then(res => {
           that.tableData = res.data.data.list;
           that.tableLoading = false;
