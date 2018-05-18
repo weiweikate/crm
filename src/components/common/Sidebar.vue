@@ -112,11 +112,11 @@ export default {
           subs: [
             {
               index: "manageList",
-              title: "账号管理"
+              title: "管理员账号管理"
             },
              {
-              index: "permissionMange",
-              title: "角色权限管理"
+              index: "addManger",
+              title: "添加管理员"
             }
           ]
         }

@@ -98,17 +98,17 @@ export default new Router({
                     component: resolve => require(['../components/page/RootsMange/RootsCodeTpl.vue'], resolve),
                     meta: { title: '防伪码模板' }
                 },
+                // 权限管理
                 {
-                    // 权限页面
                     path: '/manageList',
                     component: resolve => require(['../components/page/Permission/ManageList.vue'], resolve),
                     meta: { title: '账号管理' }
                 },
                 {
-                    path: '/permissionMange',
-                    component: resolve => require(['../components/page/Permission/PermissionMange.vue'], resolve),
-                    meta: { title: '角色权限管理' }
-                }
+                    path: '/addManger',
+                    component: resolve => require(['../components/page/Permission/AddManger.vue'], resolve),
+                    meta: { title: '添加管理员' }
+                },
             ]
         },
         {
