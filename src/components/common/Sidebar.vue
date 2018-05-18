@@ -121,7 +121,7 @@ export default {
             {
               index: "setPermission",
               title: "权限设置"
-            },
+            }
           ]
         }
       ]
