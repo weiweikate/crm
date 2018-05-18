@@ -50,8 +50,12 @@
                     <div>
                         <img class="img" src="../../../assets/images/logo.png" alt="">
                     </div>
-                    <el-button type="primary" @click="toLowerAgent">下级代理({{detail.number}})</el-button>
-                    <el-button type="primary" @click="toMemberTree" style="margin-left: 0">查看会员树状图</el-button>
+                    <div>
+                        <el-button type="primary" @click="toLowerAgent">下级代理({{detail.number}})</el-button>
+                    </div>
+                   <div>
+                       <el-button type="primary" @click="toMemberTree" style="margin-left: 0">查看会员树状图</el-button>
+                   </div>
                     <!--<el-button type="primary" style="margin-left: 0">用户操作日志</el-button>-->
                 </div>
                 <div class="clearfix"></div>
@@ -234,7 +238,7 @@
             },
             //返回列表
             backToList() {
-                this.$router('/memberManage')
+                this.$router.push('/memberManage')
             },
             //跳到下级代理页面
             toLowerAgent(){

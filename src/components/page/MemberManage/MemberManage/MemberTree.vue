@@ -21,33 +21,75 @@
             </el-card>
         </transition>
         <div class="tree-block">
-            <div class="first-title" v-for="(item,index) in list">
-                <div @click="expandLower(index)" class="click-area">
-                    <span>{{item.name}}</span>
-                    <span v-if="item.name=='下级代理'" class="count-area">343434人</span>
-                    <i :class="item.checked?'el-icon-caret-bottom':'el-icon-caret-top'"></i>
+            <!--上级代理-->
+            <div class="first-title">
+                <div class="click-area" @click="expandHigher()">
+                    <span>上级代理</span>
+                    <i :class="higher.checked?'el-icon-caret-bottom':'el-icon-caret-top'"></i>
                 </div>
-                <div v-if="item.name=='上级代理'" class="first-child" v-for="child in childList" :class="item.checked?'':'isHidden'">
+                <div class="first-child jump" v-show="higher.checked" @click="toDetail(higher.id)">
                     <div class="img-area">
                         <img src="../../../../assets/images/logo.png" alt="">
                     </div>
                     <div class="detail-area">
-                        <div>用户名：{{child.name}}</div>
-                        <div>用户ID：{{child.id}}<span>授权号：{{child.code}}</span></div>
+                        <div>用户名：{{higher.name}}</div>
+                        <div>用户ID：{{higher.id}}<span>授权号：{{higher.code}}</span></div>
                     </div>
                     <div class="clearfix"></div>
                 </div>
-                <div v-else>
+            </div>
+            <!--用户本人-->
+            <div class="first-title line">
+                <div class="first-child">
+                    <div class="img-area">
+                        <img src="../../../../assets/images/logo.png" alt="">
+                    </div>
+                    <div class="detail-area">
+                        <div>用户名：{{user.name}}</div>
+                        <div>用户ID：{{user.id}}<span>授权号：{{user.code}}</span></div>
+                    </div>
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+            <!--下级代理-->
+            <div class="first-title">
+                <div @click="expandLower()" class="click-area">
+                    <span>下级代理</span>
+                    <span class="count-area">{{lower.number}}人</span>
+                    <i :class="lower.checked?'el-icon-caret-bottom':'el-icon-caret-top'"></i>
+                </div>
+                <div v-show="lower.checked">
                     <!--直接代理-->
-                    <div class="direct-area">
-                        <div class="">直接代理-{{}}</div>
-                        <!--间接代理-->
-                        <div class="indirect-area">
-
+                    <div class="direct-area" v-for="(item,index) in lowerListTitle">
+                        <div @click="expendDirect(index)" class="click-area">
+                            <span class="direct-title">直接代理-{{item.name}}：<span>{{item.number}}</span>人</span>
+                            <i :class="item.checked?'el-icon-caret-bottom':'el-icon-caret-top'"></i>
+                        </div>
+                        <div v-show="item.checked">
+                            <div v-for="(direct,i) in item.directList">
+                                <div class="direct-item" @click="toDetail(direct.id)">
+                                    <img src="../../../../assets/images/logo.png" alt="">
+                                    <span>用户名：{{direct.name}}</span>
+                                    <span>用户ID：{{direct.id}}</span><span>授权号：{{direct.code}}</span>
+                                </div>
+                                <div @click="expendIndirect(index,i)" class="click-area">
+                                    <span class="direct-title">间接代理：<span>{{direct.number}}</span>人</span>
+                                    <i :class="direct.checked?'el-icon-caret-bottom':'el-icon-caret-top'"></i>
+                                </div>
+                                <div v-show="direct.checked">
+                                    <!--间接代理-->
+                                    <div v-for="indirect in direct.indirectList" class="indirect-area"
+                                         @click="toDetail(indirect.id)">
+                                        <span>用户名：{{indirect.name}}</span>
+                                        <span>用户ID：{{indirect.id}}</span><span>授权号：{{indirect.code}}</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <div></div>
         </div>
 
     </div>
@@ -71,22 +113,56 @@
                     idCard: '',
                     phone: ''
                 },
-                list: [{
-                    name: '上级代理',
+                higher: {
+                    name: '张三',
+                    checked: false,
+                    id: '1212',
+                    code: '32424'
+                },
+                user: {
+                    name: '张三',
+                    checked: false,
+                    id: '1212',
+                    code: '32424'
+                },
+                lower: {
+                    number: 23232,
                     checked: false
+                },
+                lowerListTitle: [{
+                    name: '省级代理',
+                    number: 23232,
+                    checked: false,
+                    directList: [{
+                        name: '张三',
+                        id: '1212',
+                        code: '32424',
+                        checked: false,
+                        number: 12,
+                        indirectList: [{
+                            name: '张三',
+                            id: '1212',
+                            code: '32424',
+                            checked: false
+                        }, {
+                            name: '张三',
+                            id: '1212',
+                            code: '32424',
+                            checked: false
+                        }],
+                    }, {
+                        name: '张三',
+                        id: '1212',
+                        code: '32424',
+                        checked: false,
+                        number: 4
+                    }],
                 }, {
-                    name: '下级代理',
+                    name: '实习代理',
+                    number: 12234,
                     checked: false
                 }],
-                childList: [{
-                    name: '张三',
-                    id: '1212',
-                    code: '32424'
-                },{
-                    name: '张三',
-                    id: '1212',
-                    code: '32424'
-                }],
+
             }
         },
         created() {
@@ -112,9 +188,25 @@
             search() {
 
             },
-            //展开收起下级
-            expandLower(index) {
-                this.list[index].checked = !this.list[index].checked;
+            //展开收起上级代理
+            expandHigher() {
+                this.higher.checked = !this.higher.checked;
+            },
+            //展开收起下级代理
+            expandLower() {
+                this.lower.checked = !this.lower.checked;
+            },
+            //展开收起直接代理
+            expendDirect(index) {
+                this.lowerListTitle[index].checked = !this.lowerListTitle[index].checked;
+            },
+            //展开收起直接代理
+            expendIndirect(index, i) {
+                this.lowerListTitle[index].directList[i].checked = !this.lowerListTitle[index].directList[i].checked;
+            },
+            // 跳到详情页
+            toDetail(id) {
+                this.$router.push({path:'/memberDetail',query:{id:id}})
             }
         }
     }
@@ -130,7 +222,6 @@
         }
         .first-area .el-collapse-item__header {
             width: 100px;
-            border-bottom: none
         }
         .el-collapse {
             border: none
@@ -138,11 +229,16 @@
         .el-collapse-item__content {
             padding-bottom: 0
         }
-        .count-area{margin: 0 10px}
+        .count-area {
+            margin: 0 10px
+        }
+        .line {
+            border-top: 1px solid #dfdfdf;
+        }
+        .jump{cursor: pointer}
         .first-child {
             display: flex;
             padding: 10px 0;
-            border-bottom: 1px solid #dfdfdf;
             .img-area {
                 float: left;
                 width: 80px;
@@ -163,12 +259,51 @@
                 }
             }
         }
-        .isHidden {
-            display: none
-        }
         .click-area {
             cursor: pointer;
             line-height: 40px;
+        }
+        .direct-area {
+            font-size: 14px;
+            color: #999999;
+            margin-left: 20px;
+            img {
+                width: 40px;
+                height: 40px;
+                border-radius: 4px;
+                border: 2px solid #dfdfdf;
+                vertical-align: middle;
+            }
+            .direct-item {
+                width: 460px;
+                height: 60px;
+                line-height: 60px;
+                border-radius: 5px;
+                border: 1px solid #dfdfdf;
+                padding: 0 30px;
+                margin: 0 10px 10px;
+                span {
+                    margin: 0 20px;
+                }
+                display: inline-block;
+                cursor: pointer;
+            }
+            .click-area {
+                display: inline-block;
+                margin-left: 10px
+            }
+            .indirect-area {
+                width: 520px;
+                height: 40px;
+                line-height: 40px;
+                border-radius: 5px;
+                border: 1px solid #dfdfdf;
+                margin: 0 10px 10px 30px;
+                span {
+                    margin: 0 20px;
+                }
+                cursor: pointer;
+            }
         }
     }
 

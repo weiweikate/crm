@@ -41,8 +41,8 @@
                         </div>
                     </div>
                     <div class="right">
-                        <img v-if="form.imageUrl" :src="form.imageUrl" class="avatar">
-                        <img v-else src="../../../../assets/images/logo.png" alt="">
+                        <img v-if="form.imageUrl" :src="form.imageUrl">
+                        <!--<img v-else src="../../../../assets/images/logo.png" alt="">-->
                         <el-upload
                                 action="https://jsonplaceholder.typicode.com/posts/"
                                 :show-file-list="false"
@@ -152,7 +152,14 @@
             float: left;
             width: 20%;
             text-align: center;
-            padding: 20px 0 0
+            padding: 20px 0 0;
+            img{
+                width: 100px;
+                height: 100px;
+                border-radius: 10px;
+                border:2px solid  #dfdfdf;
+                margin-bottom: 10px;
+            }
         }
         .clearfix {
             clear: both
@@ -189,11 +196,6 @@
         }
         .el-upload:hover {
             border-color: #409EFF;
-        }
-        .avatar {
-            width: 100px;
-            height: 100px;
-            display: block;
         }
         .el-upload--text {
             width: 80px;

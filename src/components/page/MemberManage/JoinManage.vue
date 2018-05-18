@@ -1,30 +1,13 @@
 <template>
     <div>
-        <v-breadcrumb :nav="['会员管理','经销商会员管理']"></v-breadcrumb>
+        <v-breadcrumb :nav="['会员管理','经销商加盟管理']"></v-breadcrumb>
         <transition name="move" appear>
             <el-card style="margin:10px 0 20px">
                 <el-form ref="form" :inline="true" :model="form">
-                    <el-form-item label="用户ID" label-width="120">
-                        <el-input style="width:200px" placeholder="请输入用户ID" v-model="form.id"></el-input>
+                    <el-form-item label="发起人" label-width="120">
+                        <el-input style="width:200px" placeholder="请输入发起人姓名" v-model="form.name"></el-input>
                     </el-form-item>
-                    <el-form-item label="用户昵称" label-width="120">
-                        <el-input style="width:200px" placeholder="请输入用户昵称" v-model="form.nickName"></el-input>
-                    </el-form-item>
-                    <el-form-item label="授权码" label-width="120">
-                        <el-input style="width:200px" placeholder="请输入授权码" v-model="form.code"></el-input>
-                    </el-form-item>
-                    <el-form-item label="证件号" label-width="120">
-                        <el-input style="width:200px" placeholder="请输入证件号" v-model="form.idCard"></el-input>
-                    </el-form-item>
-                    <el-form-item label="手机号" label-width="120">
-                        <el-input style="width:200px" placeholder="请输入手机号" v-model="form.phone"></el-input>
-                    </el-form-item>
-                    <el-form-item label="会员类型" label-width="120">
-                        <el-select v-model="exportForm.level" placeholder="请选择会员类型">
-                            <el-option label="一级" value="0"></el-option>
-                            <el-option label="二级" value="1"></el-option>
-                        </el-select>
-                    </el-form-item>
+
                     <el-form-item>
                         <el-button @click="search" type="primary">查询</el-button>
                         <el-button>重置</el-button>
@@ -33,38 +16,19 @@
             </el-card>
         </transition>
         <div class="table-block">
-            <el-form ref="exportForm" :inline="true" :model="form" class="search-area">
-                <el-form-item>
-                    <template>
-                        <!--<area-select v-model="selected" level={2} :data="pcaa"></area-select>-->
-                    </template>
-                    <el-select v-model="exportForm.level" placeholder="用户层级">
-                        <el-option label="一级" value="0"></el-option>
-                        <el-option label="二级" value="1"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item>
-                    <el-button @click="exportData" type="primary">导出</el-button>
-                </el-form-item>
-            </el-form>
+            <el-button @click="sendInvite" style="margin-bottom: 20px" type="primary">发起邀请</el-button>
             <template>
                 <el-table :data="tableData" :height="height" border style="width: 100%">
-                    <el-table-column prop="ID" label="用户ID" width="60"></el-table-column>
-                    <el-table-column prop="nickName" label="用户昵称"></el-table-column>
-                    <el-table-column prop="phone" label="手机号"></el-table-column>
-                    <el-table-column prop="level" label="层级" width="50"></el-table-column>
-                    <el-table-column prop="dayLogin" label="本日登录" width="80"></el-table-column>
-                    <el-table-column prop="monthLogin" label="本月登录" width="80"></el-table-column>
-                    <el-table-column prop="lastLoginTime" label="最近登录时间"></el-table-column>
-                    <el-table-column prop="code" label="授权码" width="100"></el-table-column>
-                    <el-table-column prop="address" label="区域/省市区"></el-table-column>
-                    <el-table-column prop="style" label="渠道" width="100"></el-table-column>
-                    <el-table-column prop="down" label="下级" width="50"></el-table-column>
-                    <el-table-column prop="status" label="状态"></el-table-column>
+                    <el-table-column prop="ID" label="邀请记录ID" width="150"></el-table-column>
+                    <el-table-column prop="level" label="邀请层级" width="150"></el-table-column>
+                    <el-table-column prop="dayLogin" label="授权渠道"></el-table-column>
+                    <el-table-column prop="monthLogin" label="邀请代理品牌"></el-table-column>
+                    <el-table-column prop="lastLoginTime" label="邀请时间" width="180"></el-table-column>
+                    <el-table-column prop="code" label="发起者" width="150"></el-table-column>
                     <el-table-column label="操作">
                         <template slot-scope="scope">
                             <el-button type="warning" size="small" @click="detailItem(scope.$index,scope.row)">详情</el-button>
-                            <el-button type="danger" size="small" @click="closeItem(scope.$index,scope.row.id)">关闭</el-button>
+                            <el-button type="danger" size="small" @click="watchItem(scope.$index,scope.row.id)">查看邀请</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -103,14 +67,7 @@
                 height:'',
                 formLabelWidth:'100px',
                 form:{
-                    id:'',
-                    nickName:'',
-                    code:'',
-                    idCard:'',
-                    phone:''
-                },
-                exportForm:{
-                    level:'',
+                    name:''
                 },
                 selected:''
             }
@@ -147,15 +104,15 @@
             },
             //详情
             detailItem(index,row){
-                this.$router.push({path:'/memberDetail',query:{id:row.id}})
+                this.$router.push({path:'/inviteDetail',query:{id:row.id}})
             },
-            //删除
-            closeItem(index,id){
-
+            //查看邀请
+            watchItem(index,id){
+                this.$router.push('/inviteLink')
             },
-            //导出
-            exportData(){
-
+            //发起邀请
+            sendInvite(){
+                this.$router.push('/sendInvite')
             },
             //查询
             search(){

@@ -169,7 +169,7 @@
     /*表格样式*/
     .table-block{padding: 20px 20px 60px;background: #fff}
     .block{float:right;margin-top: 10px}
-
+     .content{padding: 40px 40px 0}
     .table-block .el-form-item{margin-bottom: 0 !important;}
     .search-area{margin-bottom: 20px}
     .search-area .el-input__inner{width: 160px}

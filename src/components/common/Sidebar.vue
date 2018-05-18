@@ -85,6 +85,9 @@ export default {
                   {
                       index: "brandProductClassify",
                       title: "产品分类管理"
+                  }, {
+                      index: "brandManage",
+                      title: "品牌管理"
                   }
               ]
           },
