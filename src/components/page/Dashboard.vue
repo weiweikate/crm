@@ -33,7 +33,7 @@
                 </el-card>
             </el-col>
         </el-row >
-        <el-row :gutter="20" style="margin-top:20px">
+        <el-row :gutter="20" style="margin-top:20px;">
             <el-col :span="10">
                 <el-card class="top-card clearfix">
                     <div slot="header" class="clearfix">
