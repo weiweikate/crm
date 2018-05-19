@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="set-permission">
         <breadcrumb :nav='nav'></breadcrumb>
         <el-card>
             <el-button type='primary' @click="addModule">新增功能模块</el-button>
@@ -10,7 +10,7 @@
                 <el-table-column prop="smallBoxCodeNum" label="模块" align="center"></el-table-column>
                 <el-table-column label="操作" align="center">
                     <template slot-scope="scope">
-                        <el-button type="primary" @click='editCodeTpl(scope.row)'>添加权限</el-button>
+                        <el-button type="primary" @click='addPermission(scope.row)'>添加权限</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -26,7 +26,7 @@
             </div>
         </el-card>
         <el-dialog title="添加功能模块" width='30%' :visible.sync="isShowaddToask">
-            <el-form>
+            <el-form ref="addModuleForm" :rules="rules" :model="addModuleForm">
                 <el-form-item prop="name" label="模块名称">
                     <el-input class="add-module-inp" v-model="addModuleForm.name"></el-input>
                 </el-form-item>
@@ -53,7 +53,24 @@
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="isShowaddToask = false">取 消</el-button>
-                <el-button type="primary" @click="confirmAddModule">确 定</el-button>
+                <el-button type="primary" @click="confirmAddModule('addModuleForm')">确 定</el-button>
+            </span>
+        </el-dialog>
+        <el-dialog title="添加权限" width='30%' :visible.sync="isShowPermission">
+            <el-form label-position="right" ref="addPermissionForm" :rules="rules" :model="addPermissionForm">
+                <el-form-item prop="url" label="URL">
+                    <el-input class="add-module-inp" style="margin-left:25px" v-model="addPermissionForm.url"></el-input>
+                </el-form-item>
+                <el-form-item prop="belongModule" label="所属模块">
+                    <el-input class="add-module-inp" disabled v-model="addPermissionForm.belongModule"></el-input>
+                </el-form-item>
+                <el-form-item prop="perName" label="权限名称">
+                    <el-input class="add-module-inp" v-model="addPermissionForm.perName"></el-input>
+                </el-form-item>
+            </el-form>
+            <span slot="footer" class="dialog-footer">
+              <el-button type="primary" @click="confirmAddPer('addPermissionForm')">确 定</el-button>
+              <el-button @click="isShowPermission = false">取 消</el-button>
             </span>
         </el-dialog>
     </div>
@@ -70,6 +87,7 @@ export default {
       nav: ["权限管理", "权限设置"],
       tableLoading: false,
       isShowaddToask: false,
+      isShowPermission: false,
       mdLevel: [
         {
           value: "1",
@@ -101,9 +119,20 @@ export default {
         mdLevel: "",
         first: ""
       },
+      addPermissionForm: {
+        id: "",
+        url: "",
+        belongModule: "",
+        perName: ""
+      },
       page: {
         currentPage: 1,
         totalPage: 0
+      },
+      rules: {
+        url: [{ required: true, message: "请输入URL", trigger: "blur" }],
+        perName: [{ required: true, message: "请输入权限名称", trigger: "blur" }],
+        belongModule: [{ required: true, message: "请输入所属模块名称", trigger: "blur" }],
       }
     };
   },
@@ -149,6 +178,25 @@ export default {
       this.isShowaddToask = false;
     },
 
+    // 添加权限
+    addPermission(row) {
+      this.addPermissionForm = {};
+      this.addPermissionForm.id = row.name;
+      this.addPermissionForm.belongModule = '666';
+      this.isShowPermission = true;
+    },
+    confirmAddPer(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          console.log(this.addPermissionForm);
+          this.isShowPermission = false;
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+    },
+
     // 合并行
     mergeRow({ row, column, rowIndex, columnIndex }) {
       if (columnIndex === 0 || columnIndex === 1) {
@@ -184,22 +232,27 @@ export default {
 };
 </script>
 <style lang="less">
-.w-table {
-  margin-top: 10px;
-}
-.block {
-  float: right;
-  margin: 10px 0 10px 0;
-}
-.add-module-inp {
-  width: 215px;
-}
-.el-dialog__title {
-  color: #ff6868;
-}
-.el-dialog__header {
-  border-bottom: 1px solid #eee;
-  padding: 20px 20px 10px 50px;
+.set-permission {
+  .w-table {
+    margin-top: 10px;
+  }
+  .block {
+    float: right;
+    margin: 10px 0 10px 0;
+  }
+  .add-module-inp {
+    width: 215px;
+  }
+  .el-dialog__title {
+    color: #ff6868;
+  }
+  .el-dialog__header {
+    border-bottom: 1px solid #eee;
+    padding: 20px 20px 10px 50px;
+  }
+  .el-form-item__error {
+    margin-left: 75px;
+  }
 }
 </style>
 

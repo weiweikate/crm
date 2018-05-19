@@ -193,6 +193,12 @@ export default new Router({
                     component: resolve => require(['../components/page/Permission/SetPermission.vue'], resolve),
                     meta: { title: '权限设置' }
                 },
+                {
+                    name:'editMangerMsg',
+                    path: '/editMangerMsg',
+                    component: resolve => require(['../components/page/Permission/EditMangerMsg.vue'], resolve),
+                    meta: { title: '管理员基础信息修改' }
+                },
             ]
         },
         {

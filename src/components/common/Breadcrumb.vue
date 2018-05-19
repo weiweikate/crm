@@ -3,14 +3,37 @@
         <el-breadcrumb separator="/">
             <el-breadcrumb-item class="bread-item" v-for="(item,index) in nav" :key="index"><icon class="ico" v-if="index == 0" ico="icon-dingwei1" />{{item}}</el-breadcrumb-item>
         </el-breadcrumb>
+        <div class="now-date">
+          {{time}}
+        </div>
     </div>
 </template>
 <script>
 import icon from "./ico";
+import moment from 'moment';
 export default {
   props: ["nav"],
   components: {
     icon
+  },
+  data () {
+    return {
+      time:''
+    }
+  },
+  created(){
+    console.log(123)
+    this.timeDown();
+  },
+  methods:{
+    timeDown(){
+      let that = this;
+      clearInterval(timer);
+      let timer = setInterval(function () {  
+        let nowDate = new Date();
+        that.time = moment(nowDate).format('YYYY年MM月DD日') +' '+ moment(nowDate).format('hh:mm:ss')
+      },1000)
+    }
   }
 };
 </script>
@@ -33,6 +56,13 @@ export default {
     margin-right:5px;
     color:#33b4ff;
     font-size:18px;
+}
+.now-date{
+  position: absolute;
+  top: 0px;
+  right: 45px;
+  font-size: 14px;
+  line-height: 30px;
 }
 </style>
 
