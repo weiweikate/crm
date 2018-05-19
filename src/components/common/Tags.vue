@@ -1,7 +1,7 @@
 <template>
     <div class="tags" v-if="showTags">
         <ul>
-            <li class="tags-li" v-for="(item,index) in tagsList" :class="{'active': isActive(item.path)}" :key="index">
+            <li @click="checkout(tagsList)" class="tags-li" v-for="(item,index) in tagsList" :class="{'active': isActive(item.path)}" :key="index">
                 <router-link :to="item.path" class="tags-li-title">
                     {{item.title}}
                 </router-link>
@@ -16,6 +16,7 @@
                 <el-dropdown-menu size="small" slot="dropdown">
                     <el-dropdown-item command="other">关闭其他</el-dropdown-item>
                     <el-dropdown-item command="all">关闭所有</el-dropdown-item>
+                    <el-dropdown-item v-for="(v,k) in extraLst" :key="k" :command="'extra-'+v.path">{{v.title}}</el-dropdown-item>
                 </el-dropdown-menu>
             </el-dropdown>
         </div>
@@ -26,7 +27,8 @@
     export default {
         data() {
             return {
-                tagsList: []
+                tagsList: [],
+                extraLst:[]
             }
         },
         methods: {
@@ -57,6 +59,7 @@
             },
             // 设置标签
             setTags(route){
+                let that = this;
                 const isExist = this.tagsList.some(item => {
                     return item.path === route.path;
                 })
@@ -64,9 +67,29 @@
                     title: route.meta.title,
                     path: route.path
                 })
+                if(!isExist && this.tagsList.length>11){
+                    this.extraLst.push({
+                    title: route.meta.title,
+                    path: route.path
+                })
+                }
             },
             handleTags(command){
-                command === 'other' ? this.closeOther() : this.closeAll();
+                if(command === 'other'){
+                    this.closeOther();
+                    this.extraLst = [];
+                }else if(command === 'all'){
+                    this.closeAll();
+                    this.extraLst = [];
+                }else{
+                    let path = command.split('-')[1];
+                    this.$router.push(path);
+                }
+            },
+            checkout(row){
+                if(row.length <= 11){
+                    this.extraLst = [];
+                }
             }
         },
         computed: {
