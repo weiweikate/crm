@@ -5,7 +5,7 @@
             <el-button type="primary" style="margin-bottom: 20px" @click="addBrand">添加品牌</el-button>
             <template>
                 <el-table :data="tableData" :height="height" border style="width: 100%">
-                    <el-table-column prop="ID" label="ID" width="180"></el-table-column>
+                    <el-table-column prop="ID" label="ID" width="100"></el-table-column>
                     <el-table-column prop="name" label="品牌名称"></el-table-column>
                     <el-table-column prop="name" label="品牌区域"></el-table-column>
                     <el-table-column prop="name" label="品牌分类"></el-table-column>
@@ -14,8 +14,8 @@
                             <img :src="scope.row.icon" alt="">
                         </template>
                     </el-table-column>
-                    <el-table-column prop="name" label="产品数"></el-table-column>
-                    <el-table-column prop="status" label="状态"></el-table-column>
+                    <el-table-column prop="name" label="产品数" width="180"></el-table-column>
+                    <el-table-column prop="status" label="状态" width="180"></el-table-column>
                     <el-table-column label="操作">
                         <template slot-scope="scope">
                             <el-button type="primary" size="small" @click="toBrand(scope.$index,scope.row)">品牌页</el-button>

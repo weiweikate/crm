@@ -50,7 +50,7 @@
                     </el-upload>
                 </el-form-item>
                 <el-form-item label="一级分类" :label-width="formLabelWidth">
-                    <el-input v-model="form.firstName" auto-complete="off" readonly></el-input>
+                    <el-input v-model="form.firstName" auto-complete="off" disabled=""></el-input>
                 </el-form-item>
                 <el-form-item label="是否启用" :label-width="formLabelWidth">
                     <el-select v-model="form.status">
