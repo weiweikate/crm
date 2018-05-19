@@ -9,7 +9,8 @@
                 <template v-if="item.subs">
                     <el-submenu :index="item.index" :key="item.index">
                         <template slot="title">
-                            <i :class="item.icon"></i><span slot="title">{{ item.title }}</span>
+                          <icon :ico="item.icon"></icon><span slot="title">{{ item.title }}</span>
+                            <!-- <i :class="item.icon"></i><span slot="title">{{ item.title }}</span> -->
                         </template>
                         <el-menu-item v-for="(subItem,i) in item.subs" :key="i" :index="subItem.index">
                             {{ subItem.title }}
@@ -18,7 +19,7 @@
                 </template>
                 <template v-else>
                     <el-menu-item :index="item.index" :key="item.index">
-                        <i :class="item.icon"></i><span slot="title">{{ item.title }}</span>
+                        <icon :ico="item.icon"></icon><span slot="title">{{ item.title }}</span>
                     </el-menu-item>
                 </template>
             </template>
@@ -28,19 +29,23 @@
 
 <script>
 import bus from "../common/bus";
+import icon from './ico'
 export default {
+  components:{
+    icon
+  },
   data() {
     return {
       collapse: false,
       isShowLogo: true,
       items: [
         {
-          icon: "el-icon-setting",
+          icon: "icon-shouye",
           index: "dashboard",
           title: "系统首页"
         },
         {
-          icon: "el-icon-date",
+          icon: "icon-shouquanfuwu",
           index: "3",
           title: "授权管理",
           subs: [
@@ -59,7 +64,7 @@ export default {
           ]
         },
         {
-          icon: "el-icon-date",
+          icon: "icon-suyuan",
           index: "101",
           title: "溯源管理",
           subs: [
@@ -78,21 +83,7 @@ export default {
           ]
         },
           {
-              icon: "el-icon-goods",
-              index: "9",
-              title: "服务管理",
-              subs: [
-                  {
-                      index: "NoticeInformManage",
-                      title: "通知公告管理"
-                  },{
-                      index: "Feed",
-                      title: "问题反馈"
-                  }
-              ]
-          },
-          {
-              icon: "el-icon-goods",
+              icon: "icon-fenlei",
               index: "4",
               title: "品牌产品管理",
               subs: [
@@ -106,7 +97,7 @@ export default {
               ]
           },
           {
-              icon: "el-icon-goods",
+              icon: "icon-huiyuanzhanghaoguanli",
               index: "6",
               title: "会员管理",
               subs: [
@@ -123,7 +114,7 @@ export default {
               ]
           },
         {
-          icon: "el-icon-warning",
+          icon: "icon-shezhi",
           index: "7",
           title: "权限管理",
           subs: [
