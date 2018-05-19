@@ -58,9 +58,9 @@
                     <el-table-column label="操作">
                         <template slot-scope="scope">
                             <el-button type="primary" size="small" @click="detailItem(scope.$index,scope.row)">查看详情</el-button>
-                            <el-button type="warning" size="small" @click="closeItem(scope.$index,scope.row.id)">再次推送</el-button>
-                            <el-button type="success" size="small" @click="closeItem(scope.$index,scope.row.id)">取消推送</el-button>
-                            <el-button type="danger" size="small" @click="closeItem(scope.$index,scope.row.id)">删除</el-button>
+                            <el-button type="warning" size="small" @click="resendItem(scope.$index,scope.row.id)">再次推送</el-button>
+                            <el-button type="success" size="small" @click="cancelItem(scope.$index,scope.row.id)">取消推送</el-button>
+                            <el-button type="danger" size="small" @click="delItem(scope.$index,scope.row.id)">删除</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -76,18 +76,20 @@
                 </el-pagination>
             </div>
         </div>
-
+        <!--删除弹窗-->
+        <delete-toast :id='delId' :url='delUrl' @msg='deleteToast' v-if="isShowDelToast"></delete-toast>
     </div>
 </template>
 
 <script>
     import vBreadcrumb from '../../common/Breadcrumb.vue';
     import icon from '../../common/ico.vue';
+    import deleteToast from "../../common/DeleteToast";
     import * as api from '../../../api/api';
 
     export default {
         components: {
-            vBreadcrumb,icon
+            vBreadcrumb,icon,deleteToast
         },
         data() {
             return {
@@ -110,7 +112,10 @@
                     level:'',
                 },
                 selected:'',
-                nav:['服务管理','公告']
+                nav:['服务管理','公告'],
+                isShowDelToast: false,
+                delId: 66,
+                delUrl:'http://api',
             }
         },
         created(){
@@ -157,9 +162,22 @@
             detailItem(index,row){
                 this.$router.push({path:'/memberDetail',query:{id:row.id}})
             },
-            //删除
-            closeItem(index,id){
+            //再次推送
+            resendItem(){
 
+            },
+            //取消推送
+            cancelItem(){
+
+            },
+            //删除
+            delItem(index,id){
+                this.delId = '999';
+                this.isShowDelToast = true;
+            },
+            // 删除弹窗
+            deleteToast(msg) {
+                this.isShowDelToast = msg;
             },
             //发布通知/公告
             addInf(){

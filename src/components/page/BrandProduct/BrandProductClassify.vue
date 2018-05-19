@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="brand-product">
         <v-breadcrumb :nav="['品牌产品管理','品牌分类管理']"></v-breadcrumb>
         <div class="table-block">
             <el-button type="primary" style="margin-bottom: 20px" @click="addClassify">添加一级类目</el-button>
@@ -60,17 +60,20 @@
                 <el-button type="primary" @click="addOrEdit">确 定</el-button>
             </div>
         </el-dialog>
+        <!--删除弹窗-->
+        <delete-toast :id='delId' :url='delUrl' @msg='deleteToast' v-if="isShowDelToast"></delete-toast>
     </div>
 </template>
 
 <script>
     import vBreadcrumb from '../../common/Breadcrumb.vue';
     import icon from '../../common/ico.vue';
+    import deleteToast from "../../common/DeleteToast";
     import * as api from '../../../api/api';
 
     export default {
         components: {
-            vBreadcrumb,icon
+            vBreadcrumb,icon,deleteToast
         },
         data() {
             return {
@@ -81,13 +84,16 @@
                 },
                 height:'',
                 addOrEditMask:false,
+                isShowDelToast: false,
                 formLabelWidth:'100px',
                 form:{
                     name:'',
                     status:'0',
                     icon:''
                 },
-                title:'添加一级类目'
+                title:'添加一级类目',
+                delId: 66,
+                delUrl:'http://api',
             }
         },
         created(){
@@ -142,7 +148,12 @@
             },
             //删除
             delItem(index,id){
-
+                this.delId = '999';
+                this.isShowDelToast = true;
+            },
+            // 删除弹窗
+            deleteToast(msg) {
+                this.isShowDelToast = msg;
             },
             //上传图片
             handleIconSuccess(res, file){
@@ -155,25 +166,26 @@
     }
 </script>
 
-<style>
-    /*表格样式*/
-    .table-block{padding: 20px 20px 60px;background: #fff}
-    .block{float:right;margin-top: 10px}
+<style lang="less">
+    .brand-product{
+        /*表格样式*/
+        .table-block{padding: 20px 20px 60px;background: #fff}
+        .block{float:right;margin-top: 10px}
 
-    /*弹窗样式*/
-    .el-dialog{width: 530px;border-radius: 10px}
-    .el-dialog__header{border-bottom: 1px solid #eee;padding: 20px 20px 10px 50px}
-    .el-dialog__title{color: #ff6868}
-    .el-dialog .el-input{display: inline}
-    .el-dialog .el-input__inner{width: 360px}
-    .el-select .el-input__inner{width: 200px}
-    .el-dialog .el-upload--text{width: 100px;height: 40px;border: none}
-    .icon-area .el-input__inner{width: 240px}
-    .el-input__suffix{line-height: 24px}
-    .icon-uploader{float: right;margin-right: 31px;height: 33px}
-    .icon-uploader .el-button--small{border-radius: 5px;width: 100px}
-    .el-upload--text .el-icon-upload{line-height:0;margin:0;color: #fff;font-size: 14px}
-    .el-dialog__footer{margin-right: 30px}
-    .el-upload-list{display: none}
-
+        /*弹窗样式*/
+        .el-dialog{width: 530px;border-radius: 10px}
+        .el-dialog__header{border-bottom: 1px solid #eee;padding: 20px 20px 10px 50px}
+        .el-dialog__title{color: #ff6868}
+        .el-dialog .el-input{display: inline}
+        .el-dialog .el-input__inner{width: 360px}
+        .el-select .el-input__inner{width: 200px}
+        .el-dialog .el-upload--text{width: 100px;height: 40px;border: none}
+        .icon-area .el-input__inner{width: 240px}
+        .el-input__suffix{line-height: 24px}
+        .icon-uploader{float: right;margin-right: 31px;height: 33px}
+        .icon-uploader .el-button--small{border-radius: 5px;width: 100px}
+        .el-upload--text .el-icon-upload{line-height:0;margin:0;color: #fff;font-size: 14px}
+        .el-dialog__footer{margin-right: 30px}
+        .el-upload-list{display: none}
+    }
 </style>

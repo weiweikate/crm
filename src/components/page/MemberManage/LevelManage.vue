@@ -85,17 +85,20 @@
                 <el-button @click="priceLevelMask = false">重置</el-button>
             </div>
         </el-dialog>-->
+        <!--删除弹窗-->
+        <delete-toast :id='delId' :url='delUrl' @msg='deleteToast' v-if="isShowDelToast"></delete-toast>
     </div>
 </template>
 
 <script>
     import vBreadcrumb from '../../common/Breadcrumb.vue';
     import icon from '../../common/ico.vue';
+    import deleteToast from "../../common/DeleteToast";
     import * as api from '../../../api/api';
 
     export default {
         components: {
-            vBreadcrumb,icon
+            vBreadcrumb,icon,deleteToast
         },
         data() {
             return {
@@ -120,7 +123,10 @@
                 //     status:'0',
                 //     remarks:''
                 // },
-                title:'添加层级'
+                title:'添加层级',
+                isShowDelToast: false,
+                delId: 66,
+                delUrl:'http://api',
             }
         },
         created(){
@@ -183,7 +189,12 @@
             // },
             //删除
             delItem(index,id){
-
+                this.delId = '999';
+                this.isShowDelToast = true;
+            },
+            // 删除弹窗
+            deleteToast(msg) {
+                this.isShowDelToast = msg;
             },
             //上传图片
             handleIconSuccess(res, file){

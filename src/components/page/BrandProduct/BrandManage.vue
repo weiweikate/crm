@@ -18,7 +18,7 @@
                     <el-table-column prop="status" label="状态"></el-table-column>
                     <el-table-column label="操作">
                         <template slot-scope="scope">
-                            <el-button type="primary" size="small" @click="toSecondClassify(scope.$index,scope.row)">品牌页</el-button>
+                            <el-button type="primary" size="small" @click="toBrand(scope.$index,scope.row)">品牌页</el-button>
                             <el-button type="warning" size="small" @click="editItem(scope.$index,scope.row)">编辑</el-button>
                             <el-button type="danger" size="small" @click="delItem(scope.$index,scope.row.id)">删除</el-button>
                         </template>
@@ -36,18 +36,20 @@
                 </el-pagination>
             </div>
         </div>
-
+        <!--删除弹窗-->
+        <delete-toast :id='delId' :url='delUrl' @msg='deleteToast' v-if="isShowDelToast"></delete-toast>
     </div>
 </template>
 
 <script>
     import vBreadcrumb from '../../common/Breadcrumb.vue';
     import icon from '../../common/ico.vue';
+    import deleteToast from "../../common/DeleteToast";
     import * as api from '../../../api/api';
 
     export default {
         components: {
-            vBreadcrumb,icon
+            vBreadcrumb,icon,deleteToast
         },
         data() {
             return {
@@ -58,13 +60,15 @@
                 },
                 height:'',
                 addOrEditMask:false,
+                isShowDelToast: false,
                 formLabelWidth:'100px',
                 form:{
                     name:'',
                     status:'0',
                     icon:''
                 },
-                title:'添加一级类目'
+                delId: 66,
+                delUrl:'http://api',
             }
         },
         created(){
@@ -97,7 +101,7 @@
                 this.page.currentPage=val;
                 this.getList(val)
             },
-            // 添加一级类目
+            // 添加品牌
             addBrand(){
                 this.$router.push('/addOrUpBrand')
             },
@@ -106,13 +110,18 @@
                 this.$router.push('/addOrUpBrand')
             },
 
-            //跳到二级类目页面
-            toSecondClassify(index,row){
-                this.$router.push({ path: "/secondClassify", query: { params: row } });
+            //跳到品牌页面
+            toBrand(index,row){
+                this.$router.push({ path: "/addOrUpBrand", query: { params: row } });
             },
             //删除
             delItem(index,id){
-
+                this.delId = '999';
+                this.isShowDelToast = true;
+            },
+            // 删除弹窗
+            deleteToast(msg) {
+                this.isShowDelToast = msg;
             },
             //上传图片
             handleIconSuccess(res, file){
