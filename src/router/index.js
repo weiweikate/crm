@@ -125,6 +125,31 @@ export default new Router({
                     component: resolve => require(['../components/page/MemberManage/JoinManage/InviteLink.vue'], resolve),
                     meta: { title: '邀请链接' }
                 },
+                //服务管理
+                {
+                    name:'noticeInformManage',
+                    path: '/noticeInformManage',
+                    component: resolve => require(['../components/page/ServiceManage/NoticeInformManage.vue'], resolve),
+                    meta: { title: '公告通知管理' }
+                },
+                {
+                    name:'addNoticeInform',
+                    path: '/addNoticeInform',
+                    component: resolve => require(['../components/page/ServiceManage/NoticeInformManage/AddNoticeInform.vue'], resolve),
+                    meta: { title: '发布通知/公告' }
+                },
+                {
+                    name:'feed',
+                    path: '/feed',
+                    component: resolve => require(['../components/page/ServiceManage/Feed.vue'], resolve),
+                    meta: { title: '问题反馈' }
+                },
+                {
+                    name:'feedDetail',
+                    path: '/feedDetail',
+                    component: resolve => require(['../components/page/ServiceManage/Feed/FeedDetail.vue'], resolve),
+                    meta: { title: '问题详情' }
+                },
                 // 溯源管理
                 {
                     name:'rootsCodeMange',

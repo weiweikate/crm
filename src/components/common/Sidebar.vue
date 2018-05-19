@@ -79,6 +79,20 @@ export default {
         },
           {
               icon: "el-icon-goods",
+              index: "9",
+              title: "服务管理",
+              subs: [
+                  {
+                      index: "NoticeInformManage",
+                      title: "通知公告管理"
+                  },{
+                      index: "Feed",
+                      title: "问题反馈"
+                  }
+              ]
+          },
+          {
+              icon: "el-icon-goods",
               index: "4",
               title: "品牌产品管理",
               subs: [

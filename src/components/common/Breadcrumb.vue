@@ -22,16 +22,15 @@ export default {
     }
   },
   created(){
-    console.log(123)
     this.timeDown();
   },
   methods:{
     timeDown(){
       let that = this;
       clearInterval(timer);
-      let timer = setInterval(function () {  
+      var timer = setInterval(function () {
         let nowDate = new Date();
-        that.time = moment(nowDate).format('YYYY年MM月DD日') +' '+ moment(nowDate).format('hh:mm:ss')
+        that.time = moment(nowDate).format('YYYY年MM月DD日') +' '+ moment(nowDate).format('HH:mm:ss')
       },1000)
     }
   }
