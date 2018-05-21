@@ -204,7 +204,7 @@ export default {
   float: left;
   margin-top: 20px;
   left: 300px;
-  width: 70%;
+  width: 69%;
   height: 30px;
 }
 @keyframes bounce-in {

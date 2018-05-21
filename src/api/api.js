@@ -13,6 +13,14 @@ export const getLevelList='/mock/5aeac1c6c186102e067af3f3/test/getLevelList';
 export const getManageList='/mock/5aeac1c6c186102e067af3f3/test/getManageList';
 
 // -----------------------------------------------------正式接口--------------------------------------
+// 登陆相关
+    // 密码登陆 
+    export const loginByPwd ='/admin/adminLogin/pswLogin';
+    // 获取验证码
+    export const getCode = '/commonAPI/phoneCode/sendLoginCode';
+    // 验证码登陆
+    export const loginByCode = '/admin/adminLogin/codeLogin';
+
 // 溯源管理
     // 获取所有防伪码模板列表
     export const rootsGetCodeTplList = '/admin/securityCodeTemplate/getPage';
@@ -24,3 +32,7 @@ export const getManageList='/mock/5aeac1c6c186102e067af3f3/test/getManageList';
     export const rootsEditCodeTplList = '/admin/securityCodeTemplate/updateById';
     // 删除防伪码模板
     export const rootsDelCodeTplList = '/admin/securityCodeTemplate/deleteById';
+
+// 权限管理
+    // 获取管理员列表
+    export const getMangerList = '/admin/adminUser/queryAdminUserPageList';

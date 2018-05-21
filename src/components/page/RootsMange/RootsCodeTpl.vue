@@ -6,7 +6,7 @@
             <el-table v-loading="tableLoading" class="w-table" stripe :data="tableData" :height="height" border style="width: 100%">
                 <el-table-column prop="id" label="编号" width="180" align="center"></el-table-column>
                 <el-table-column prop="templateName" label="模板名称" align="center"></el-table-column>
-                <el-table-column prop="bigBoxCodeNum" label="大箱码" align="center"></el-table-column>
+                <!-- <el-table-column prop="bigBoxCodeNum" label="大箱码" align="center"></el-table-column> -->
                 <el-table-column prop="smallBoxCodeNum" label="小箱码" align="center"></el-table-column>
                 <el-table-column prop="packagingCodeNum" label="包装码" align="center"></el-table-column>
                 <el-table-column label="操作" align="center">
@@ -33,9 +33,9 @@
                     <el-input class="rootscode-inp" v-model="addTplForm.templateName" placeholder="请输入模板名称"></el-input>
                 </el-form-item><br />
                     <el-form-item label="" ><h3 style="position:absolute;top:-15px;left:-70px">防伪码数量设置</h3></el-form-item><br/>
-                <el-form-item prop="bigBoxCodeNum" label="大箱码" >
+                <!-- <el-form-item prop="bigBoxCodeNum" label="大箱码" >
                     <el-input class="rootscode-inp" v-model="addTplForm.bigBoxCodeNum" placeholder="请输入大箱码"></el-input>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item prop="smallBoxCodeNum" label="小箱码" >
                     <el-input class="rootscode-inp" v-model="addTplForm.smallBoxCodeNum" placeholder="请输入小箱码"></el-input>
                 </el-form-item>
@@ -54,9 +54,9 @@
                     <el-input class="rootscode-inp" v-model="editTplForm.templateName" placeholder="请输入模板名称"></el-input>
                 </el-form-item><br />
                     <el-form-item label="" ><h3 style="position:absolute;top:-15px;left:-70px">防伪码数量设置</h3></el-form-item><br/>
-                <el-form-item prop="bigBoxCodeNum" label="大箱码" >
+                <!-- <el-form-item prop="bigBoxCodeNum" label="大箱码" >
                     <el-input class="rootscode-inp" v-model="editTplForm.bigBoxCodeNum" placeholder="请输入大箱码"></el-input>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item prop="smallBoxCodeNum" label="小箱码" >
                     <el-input class="rootscode-inp" v-model="editTplForm.smallBoxCodeNum" placeholder="请输入小箱码"></el-input>
                 </el-form-item>
@@ -89,7 +89,7 @@ export default {
       isShowaddCodeDialog: false,
       isShoweditCodeDialog: false,
       isShowDelToast: false,
-      delId: 66,
+      delId: 0,
       delUrl: "http://api",
       addTplForm: {
         templateName: "",
@@ -212,8 +212,7 @@ export default {
         .post(api.rootsQueryCodeTplList, data)
         .then(res => {
           if (res.data.code == 200) {
-              this.editTplForm = res.data.data;
-            this.$message.success(res.data.msg);
+            this.editTplForm = res.data.data;
           } else {
             this.$message.error(res.data.msg);
           }
@@ -229,7 +228,10 @@ export default {
         if (valid) {
           this.btnLoading = true;
           let data = {};
-          data = this.editTplForm;
+          data.id = this.editTplForm.id;
+          data.templateName = this.editTplForm.templateName;
+          data.smallBoxCodeNum = this.editTplForm.smallBoxCodeNum;
+          data.packagingCodeNum = this.editTplForm.packagingCodeNum;
           this.$axios
             .post(api.rootsEditCodeTplList, data)
             .then(res => {
@@ -258,11 +260,13 @@ export default {
 
     // 删除模板
     deleteTpl(row) {
-      this.delId = 666;
+      this.delId = row.id;
+      this.delUrl = api.rootsDelCodeTplList;
       this.isShowDelToast = true;
     },
     deleteToast(msg) {
       this.isShowDelToast = msg;
+      this.getList(this.page.currentPage);
     }
   }
 };

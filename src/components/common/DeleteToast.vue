@@ -43,7 +43,13 @@ export default {
           .post(url, data)
           .then(res => {
             that.btnLoading = false;
-            this.$emit("msg", false);
+            if(res.data.code == 200){
+              this.$message.success(res.data.msg);
+              this.$emit("msg", false);
+            }else{
+              this.$message.warning(res.data.msg);
+              this.$emit("msg", false);
+            }
           })
           .catch(err => {
             that.tableLoading = false;

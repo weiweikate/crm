@@ -3,9 +3,9 @@
         <breadcrumb :nav='nav'></breadcrumb>
         <el-card>
             <el-form ref="form" :model="form" inline label-width="100px">
-              <el-form-item prop="id" label="ID">
+              <!-- <el-form-item prop="id" label="ID">
                 <el-input v-model="form.id"></el-input>
-              </el-form-item>
+              </el-form-item> -->
               <el-form-item prop="name" label="管理员姓名">
                 <el-input v-model="form.name"></el-input>
               </el-form-item>
@@ -21,12 +21,12 @@
         <el-card class="con-card">
           <el-button type="primary" @click="addManger">新建管理员</el-button>
           <el-table v-loading="tableLoading" class="w-table" stripe :data="tableData" :height="height" border style="width: 100%">
-              <el-table-column prop="ID" label="ID" width="100" align="center"></el-table-column>
+              <el-table-column prop="id" label="ID" width="100" align="center"></el-table-column>
               <el-table-column prop="name" label="管理员姓名" align="center"></el-table-column>
-              <el-table-column prop="status" label="手机号" align="center"></el-table-column>
-              <el-table-column prop="name" label="部门" align="center"></el-table-column>
-              <el-table-column prop="status" label="岗位" align="center"></el-table-column>
-              <el-table-column prop="name" label="状态" align="center"></el-table-column>
+              <el-table-column prop="telephone" label="手机号" align="center"></el-table-column>
+              <el-table-column prop="deptmentName" label="部门" align="center"></el-table-column>
+              <el-table-column prop="jobName" label="岗位" align="center"></el-table-column>
+              <el-table-column prop="status" label="状态" align="center"></el-table-column>
               <el-table-column label="操作"  width="400" align="center">
                 <template slot-scope="scope">
                   <el-button size="mini" type="primary" @click="editManger(scope.row)">编辑</el-button>
@@ -77,7 +77,7 @@ export default {
       accountCtr:false,
       isShowResetPwd:false,
       form: {
-        id: "",
+        // id: "",
         name: "",
         phone: ""
       },
@@ -107,14 +107,16 @@ export default {
     //  获取数据
     getList(val) {
       let that = this;
-      let data = {
-        page: val
-      };
+      let data = {};
+      data.page = val;
+      data.name = this.form.name;
+      data.phone = this.phone;
       this.tableLoading = true;
       this.$axios
-        .post(api.getProductList, data)
+        .post(api.getMangerList, data)
         .then(res => {
-          that.tableData = res.data.data.list;
+          that.tableData = [];
+          that.tableData = res.data.data;
           that.tableLoading = false;
         })
         .catch(err => {
