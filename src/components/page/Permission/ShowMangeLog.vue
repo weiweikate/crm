@@ -22,7 +22,7 @@
                 </el-date-picker>
               </el-form-item>
               <el-form-item>
-                <el-button type="primary" @click="getList">搜索</el-button>
+                <el-button type="primary" @click="getList(1)">搜索</el-button>
                 <el-button @click="resetForm('form')">重置</el-button>
               </el-form-item>
             </el-form>
@@ -30,12 +30,12 @@
         <el-card class="con-card">
           <el-button type="primary" @click="addManger">新建管理员</el-button>
           <el-table v-loading="tableLoading" class="w-table" stripe :data="tableData" :height="height" border style="width: 100%">
-              <el-table-column prop="ID" label="日志号" width="100" align="center"></el-table-column>
+              <el-table-column prop="id" label="日志号" width="100" align="center"></el-table-column>
               <el-table-column prop="name" label="用户名" align="center"></el-table-column>
-              <el-table-column prop="status" label="内容摘要" align="center"></el-table-column>
-              <el-table-column prop="name" label="操作模块" align="center"></el-table-column>
-              <el-table-column prop="status" label="操作内容" align="center"></el-table-column>
-              <el-table-column prop="name" label="操作时间" align="center"></el-table-column>
+              <el-table-column prop="contentKey" label="内容摘要" align="center"></el-table-column>
+              <el-table-column prop="operateKey" label="操作模块" align="center"></el-table-column>
+              <el-table-column prop="content" label="操作内容" align="center"></el-table-column>
+              <el-table-column prop="createTime" label="操作时间" align="center"></el-table-column>
           </el-table>
           <div class="block">
               <el-pagination
@@ -53,6 +53,7 @@
 <script>
 import breadcrumb from "../../common/Breadcrumb";
 import * as api from "../../../api/api.js";
+import moment from 'moment';
 export default {
   components: {
     breadcrumb
@@ -67,6 +68,7 @@ export default {
     };
     return {
       nav: ["权限管理", "管理员账号管理", "admin", "操作日志"],
+      id:'',
       form: {
         beginTime: "",
         endTime: "",
@@ -85,23 +87,31 @@ export default {
     this.height = winHeight;
   },
   activated() {
-    let userId =
-      this.$route.params.userId || sessionStorage.getItem("showMangeLogTmp");
+    this.id = this.$route.params.userId || sessionStorage.getItem("showMangeLogTmp");
     this.getList(this.page.currentPage);
-    console.log(userId);
   },
   methods: {
     //  获取数据
     getList(val) {
       let that = this;
       let data = {
+        id:this.id,
+        beginTime:this.form.beginTime == ''?'':moment(this.form.beginTime).format('YYYY-MM-DD HH:mm:ss'),
+        endTime:this.form.endTime == ''?'':moment(this.form.endTime).format('YYYY-MM-DD HH:mm:ss'),
         page: val
       };
       this.tableLoading = true;
       this.$axios
-        .post(api.getProductList, data)
+        .post(api.getMangerLog, data)
         .then(res => {
-          that.tableData = res.data.data.list;
+          if(res.data.code == 200){
+            that.tableData = [];
+            that.tableData = res.data.data.data;
+            that.page.totalPage = res.data.data.resultCount;
+            that.$message.success(res.data.msg);
+          }else{
+            that.$message.warning(res.data.msg);
+          }
           that.tableLoading = false;
         })
         .catch(err => {

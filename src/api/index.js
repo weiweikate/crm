@@ -4,8 +4,8 @@ import { Message } from 'element-ui';
 import utils from '../utils/index.js';
 import qs from 'qs';
   
-// axios.defaults.baseURL = 'https://www.easy-mock.com';//局域网
-// axios.defaults.baseURL = 'http://172.16.10.252:8101/';//开发
+// axios.defaults.baseURL = 'https://www.easy-mock.com';
+// axios.defaults.baseURL = 'http://172.16.10.56:8101/';//开发
  
 
 axios.defaults.timeout = 20000;   
@@ -35,6 +35,11 @@ axios.interceptors.request.use(config => {
 
 axios.interceptors.response.use(
   res => {
+    if(res.data.code == 210){
+      Message.warning(res.data.msg);
+      sessionStorage.clear();
+      return;
+    }
     if (res.status != '200') {
       Message.error({duration:1000,message:'响应失败'})
       setTimeout(()=>{

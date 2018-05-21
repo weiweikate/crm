@@ -36,3 +36,18 @@ export const getManageList='/mock/5aeac1c6c186102e067af3f3/test/getManageList';
 // 权限管理
     // 获取管理员列表
     export const getMangerList = '/admin/adminUser/queryAdminUserPageList';
+    // 查看管理员操作日志
+    export const getMangerLog = '/admin/logAdminuser/getPage';
+
+// 品牌产品管理
+    // 获取一二级类目列表
+    export const getCategoryList = '/admin/productCategory/queryProductCategoryPageList';
+    // 添加一二级类目
+    export const addCategory = '/admin/productCategory/addProductCategory';
+    // 编辑一二级类目
+    export const editCategory = '/admin/productCategory/updateProductCategory';
+    // 删除一二级类目
+    export const deleteCategory = '/admin/productCategory/deleteProductCategory';
+    
+    // 上传图片
+    export const uploadImg = '/commonAPI/ossClient/aliyunOSSUploadImage';

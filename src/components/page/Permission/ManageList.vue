@@ -7,13 +7,13 @@
                 <el-input v-model="form.id"></el-input>
               </el-form-item> -->
               <el-form-item prop="name" label="管理员姓名">
-                <el-input v-model="form.name"></el-input>
+                <el-input v-model.trim="form.name"></el-input>
               </el-form-item>
               <el-form-item prop="phone" label="手机号">
-                <el-input v-model="form.phone"></el-input>
+                <el-input v-model.trim="form.phone"></el-input>
               </el-form-item>
                 <el-form-item label=" ">
-                    <el-button type="primary">搜索</el-button>
+                    <el-button @click="getList(1)" type="primary">搜索</el-button>
                     <el-button @click="resetForm('form')">重置</el-button>
                 </el-form-item>
             </el-form>
@@ -26,16 +26,21 @@
               <el-table-column prop="telephone" label="手机号" align="center"></el-table-column>
               <el-table-column prop="deptmentName" label="部门" align="center"></el-table-column>
               <el-table-column prop="jobName" label="岗位" align="center"></el-table-column>
-              <el-table-column prop="status" label="状态" align="center"></el-table-column>
+              <el-table-column prop="status" label="状态" align="center">
+                <template slot-scope="scope">
+                  <template v-if="scope.row.status == 0">关闭</template>
+                  <template v-else-if="scope.row.status == 1">正常</template>
+                </template>
+              </el-table-column>
               <el-table-column label="操作"  width="400" align="center">
                 <template slot-scope="scope">
                   <el-button size="mini" type="primary" @click="editManger(scope.row)">编辑</el-button>
-                  <el-button v-if='accountCtr' size="mini" type="warning" @click="resetPwd(scope.row)">密码重置</el-button>
+                  <el-button v-if='scope.row.status == 1' size="mini" type="warning" @click="resetPwd(scope.row)">密码重置</el-button>
                   <el-button size="mini" type="warning" @click="showLog(scope.row)">查看日志</el-button>
-                  <el-button v-if='!accountCtr' size="mini" type="danger"  >账号删除</el-button>
+                  <el-button v-if='scope.row.status == 0' size="mini" type="danger"  >账号删除</el-button>
                   <template>
-                    <el-button v-if='accountCtr' size="mini" type="danger" @click='accountMange(false)' >账号关闭</el-button>
-                    <el-button v-if='!accountCtr' size="mini" type="danger" @click='accountMange(true)' >账号开启</el-button>
+                    <el-button v-if='scope.row.status == 1' size="mini" type="danger" @click='accountMange(false)' >账号关闭</el-button>
+                    <el-button v-if='scope.row.status == 0' size="mini" type="danger" @click='accountMange(true)' >账号开启</el-button>
                   </template>
                 </template>
               </el-table-column>
@@ -54,7 +59,7 @@
         <el-dialog :visible.sync="isShowResetPwd" width="20%">
             <el-form ref="pwdForm" :rules="rules" :model="pwdForm" inline label-width="100px">
               <el-form-item prop="password" label='密码重置'>
-                <el-input v-model="pwdForm.password"></el-input>
+                <el-input v-model.trim="pwdForm.password"></el-input>
               </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
@@ -110,13 +115,14 @@ export default {
       let data = {};
       data.page = val;
       data.name = this.form.name;
-      data.phone = this.phone;
+      data.phone = this.form.phone;
       this.tableLoading = true;
       this.$axios
         .post(api.getMangerList, data)
         .then(res => {
           that.tableData = [];
-          that.tableData = res.data.data;
+          that.tableData = res.data.data.data;
+          that.page.totalPage = res.data.data.resultCount;
           that.tableLoading = false;
         })
         .catch(err => {
