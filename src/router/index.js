@@ -139,15 +139,15 @@ export default new Router({
                     meta: { title: '发布通知/公告' }
                 },
                 {
-                    name:'feed',
-                    path: '/feed',
-                    component: resolve => require(['../components/page/ServiceManage/Feed.vue'], resolve),
+                    name:'feedBack',
+                    path: '/feedBack',
+                    component: resolve => require(['../components/page/ServiceManage/FeedBack.vue'], resolve),
                     meta: { title: '问题反馈' }
                 },
                 {
                     name:'feedDetail',
                     path: '/feedDetail',
-                    component: resolve => require(['../components/page/ServiceManage/Feed/FeedDetail.vue'], resolve),
+                    component: resolve => require(['../components/page/ServiceManage/FeedBack/FeedbackDetail.vue'], resolve),
                     meta: { title: '问题详情' }
                 },
                 // 溯源管理

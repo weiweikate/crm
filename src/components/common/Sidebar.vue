@@ -113,6 +113,20 @@ export default {
                   }
               ]
           },
+          {
+              icon: "icon-huiyuanzhanghaoguanli",
+              index: "9",
+              title: "服务管理",
+              subs: [
+                  {
+                      index: "noticeInformManage",
+                      title: "公告通知管理"
+                  },{
+                      index: "feedBack",
+                      title: "问题反馈"
+                  }
+              ]
+          },
         {
           icon: "icon-shezhi",
           index: "7",
