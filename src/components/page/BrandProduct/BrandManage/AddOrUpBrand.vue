@@ -8,24 +8,24 @@
                         <span class="label"><span class="required">*</span>品牌名称</span>
                         <el-input placeholder="请输入品牌名称" v-model="form.name"></el-input>
                     </el-form-item>
-                    <el-form-item prop="region">
+                    <el-form-item prop="area">
                         <span class="label"><span class="required">*</span>品牌区域</span>
                         <el-input placeholder="请输入品牌区域" v-model="form.area"></el-input>
                     </el-form-item>
                     <el-form-item class="classify-area" prop="productcIds">
                         <span class="label"><span class="required">*</span>品牌类目</span>
-                        <v-choosearea @productcIds="productcIds" v-model="form.productcIds"></v-choosearea>
+                        <v-choosearea @productcIds="productcIds" v-model="form.productcIds" :detailData="detailData" :addOrUp="isUp?'update':''"></v-choosearea>
                         <div class="clearfix"></div>
                     </el-form-item>
                     <el-form-item label="品牌logo">
                         <el-upload
                                 class="avatar-uploader"
-                                action="111"
+                                action="/commonAPI/ossClient/aliyunOSSUploadImage"
                                 :show-file-list="false"
                                 :on-preview="handlePreview"
                                 :on-remove="handleRemove"
                                 :on-success="handleAvatarSuccess"
-                                :before-upload="beforeAvatarUpload">
+                        >
                             <img v-if="form.originalImg" :src="form.originalImg" class="avatar">
                             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                             <el-input v-model="form.smallImg"></el-input>
@@ -33,12 +33,12 @@
                     </el-form-item>
                     <el-form-item label="是否启用">
                         <el-radio-group v-model="form.status">
-                            <el-radio label="启用"></el-radio>
-                            <el-radio label="停用"></el-radio>
+                            <el-radio label="1">启用</el-radio>
+                            <el-radio label="2">停用</el-radio>
                         </el-radio-group>
                     </el-form-item>
                     <div class="submit-btn">
-                        <el-button type="primary" @click="submitForm('form')">确认保存</el-button>
+                        <el-button type="primary" v-loading="btnLoading" @click="submitForm('form')">确认保存</el-button>
                         <el-button @click="cancel">取消</el-button>
                     </div>
                 </el-form>
@@ -53,7 +53,6 @@
     import vChoosearea from '../../../common/chooseBrandClassify.vue';
     import * as api from '../../../../api/api'
 
-    const cityOptions = ['上海', '北京', '广州', '深圳'];
     export default {
         components: {
             vBreadcrumb, icon, vChoosearea
@@ -62,37 +61,64 @@
             return {
                 form: {
                     name: "",
-                    isUse: "1",
-                    originalImg: '',
-                    productcIds: [],
-                    region: '',
-                    status: '启用'
+                    originalImg: '1111',
+                    smallImg:'2222',
+                    area: '',
+                    status: '1',
+                    productcIds:''
                 },
+                detailData:[],
+                btnLoading:false,
                 classifyId:[],
-                activeName2: 'first',
                 checkAll: false,
-                checkedCities: ['上海', '北京'],
-                cities: cityOptions,
                 rules: {
                     name: [
                         {required: true, message: "请输入品牌名称", trigger: "blur"}
                     ],
-                    region: [
+                    area: [
                         {required: true, message: "请输入品牌区域", trigger: "blur"}
                     ],
                     productcIds: [
                         {required: true, message: "请选择品牌类目", trigger: "blur"}
                     ]
                 },
+                isUp:false,//添加false，修改true
+                id:''
             }
         },
         created() {
             let that=this;
-            // that.$on('productcIds',function (aa) {
-            //     console.log(aa)
-            // })
+            that.id =
+                that.$route.query.brandId ||localStorage.getItem('brandId');
+            if(that.id){
+                that.getDetail();
+                that.isUp=true;
+            }
         },
         methods: {
+            //获取详情
+            getDetail(){
+                let that=this;
+                let data={
+                    id:that.id
+                };
+                that.loading=true;
+                that.$axios
+                    .post(api.findBrandById,data)
+                    .then(res=>{
+                        if(res.data.code==200){
+                            that.loading=false;
+                            that.form=res.data.data.product;
+                            that.detailData=res.data.data.userProduct;
+                        }else{
+                            that.loading=false;
+                            that.$message.warning(res.data.msg);
+                        }
+                    })
+                    .catch(err=>{
+                        that.loading=false
+                    })
+            },
             handlePreview(file) {
                 console.log(file);
             },
@@ -101,29 +127,7 @@
                 this.form.originalImg = URL.createObjectURL(file.raw);
             },
             productcIds(productcIds){
-                this.form.productcIds=JSON.stringify(productcIds);
-            },
-            beforeAvatarUpload(file) {
-                var that = this;
-                let fd = new FormData();
-                fd.append("file", file);
-                this.$axios
-                    .post(api.addImg, fd, {
-                        headers: {
-                            "Content-Type": "multipart/form-data"
-                        }
-                    })
-                    .then(res => {
-                        if (res.data.success == true) {
-                            that.$message.success("上传成功！");
-                            that.form.originalImg = res.data.data.originalImg;
-                        } else {
-                            that.$message.error(res.data.message);
-                        }
-                    })
-                    .catch(err => {
-                        console.log(err);
-                    });
+                this.form.productcIds=productcIds.join(',');
             },
             handleRemove() {
                 this.form.originalImg = ''
@@ -131,32 +135,38 @@
             // 提交表单
             submitForm(form) {
                 let that=this;
+                that.btnLoading=true;
                 that.$refs[form].validate(valid => {
-                    // if(that.classifyId.length){
-                        // console.log(that.$emit('productcIds')
                         if (valid) {
                             let data = this[form];
                             this.$axios
                                 .post(api.addBrand, data)
                                 .then(res => {
-
+                                    that.btnLoading=false;
+                                    if(res.data.code==200){
+                                        that.$message.success(res.data.msg);
+                                        setTimeout(function () {
+                                            that.$router.push('/brandManage')
+                                        },1000)
+                                    }else{
+                                        that.$message.warning(res.data.msg);
+                                    }
                                 })
                                 .catch(err => {
                                     console.log(err);
+                                    that.btnLoading=false;
                                 });
                         } else {
                             console.log("error submit!!");
+                            that.btnLoading=false;
                             return false;
                         }
-                    // }
-
                 });
             },
             //取消
             cancel() {
                 this.$router.push('/brandManage')
             },
-
         }
     };
 </script>

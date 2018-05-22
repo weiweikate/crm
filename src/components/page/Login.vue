@@ -97,6 +97,7 @@ export default {
               if (res.data.code == 200) {
                 this.$message.success("登陆成功！");
                 localStorage.setItem("ms_username", '小猪佩奇');
+                localStorage.setItem("ms_userID", 111);
                 this.$router.push("/dashboard");
               } else {
                 this.$message.warning(res.data.msg);

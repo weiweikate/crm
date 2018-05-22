@@ -4,7 +4,7 @@
         <div class="table-block">
             <el-button type="primary" style="margin-bottom: 20px" @click="addBrand">添加品牌</el-button>
             <template>
-                <el-table :data="tableData" :height="height" border style="width: 100%">
+                <el-table v-loading="tableLoading" :data="tableData" :height="height" border style="width: 100%">
                     <el-table-column prop="id" label="ID" width="100"></el-table-column>
                     <el-table-column prop="name" label="品牌名称"></el-table-column>
                     <el-table-column prop="area" label="品牌区域"></el-table-column>
@@ -15,11 +15,16 @@
                         </template>
                     </el-table-column>
                     <!--<el-table-column prop="name" label="产品数" width="180"></el-table-column>-->
-                    <el-table-column prop="status" label="状态" width="180"></el-table-column>
+                    <el-table-column label="状态" width="180">
+                        <template slot-scope="scope">
+                            <template v-if="scope.row.status == 1">启用</template>
+                            <template v-if="scope.row.status == 2">停用</template>
+                        </template>
+                    </el-table-column>
                     <el-table-column label="操作">
                         <template slot-scope="scope">
-                            <el-button type="primary" size="small" @click="toBrand(scope.$index,scope.row)">品牌页</el-button>
-                            <el-button type="warning" size="small" @click="editItem(scope.$index,scope.row)">编辑</el-button>
+                            <!--<el-button type="primary" size="small" @click="toBrand(scope.$index,scope.row)">品牌页</el-button>-->
+                            <el-button type="warning" size="small" @click="editItem(scope.$index,scope.row.id)">编辑</el-button>
                             <el-button type="danger" size="small" @click="delItem(scope.$index,scope.row.id)">删除</el-button>
                         </template>
                     </el-table-column>
@@ -54,9 +59,10 @@
         data() {
             return {
                 tableData:[],
+                tableLoading: false,
                 page:{
                     currentPage:1,
-                    totalPage:''
+                    totalPage:1
                 },
                 height:'',
                 addOrEditMask:false,
@@ -67,11 +73,16 @@
                     status:'0',
                     icon:''
                 },
-                delId: 66,
-                delUrl:'http://api',
+                delId: '',
+                delUrl:'',
             }
         },
         created(){
+            let winHeight=window.screen.availHeight-600;
+            this.height=winHeight;
+            this.getList(this.page.currentPage)
+        },
+        activated(){
             let winHeight=window.screen.availHeight-600;
             this.height=winHeight;
             this.getList(this.page.currentPage)
@@ -81,31 +92,25 @@
             getList(val){
               let that=this;
               let data={
-                  page:val,
-                  pageSize:15
+                  page:val
               };
+              that.tableLoading=true;
                 that.$axios
                   .post(api.getBrandList,data)
                   .then(res=>{
                       if(res.data.code==200){
+                          that.tableLoading=false;
                           that.tableData=res.data.data.data;
-                          that.page.totalPage=res.data.data.resultCount;
-                          for(let i in res.data.data.data){
-                              if(res.data.data.data[i].status==1){
-                                  res.data.data.data[i].status='启用'
-                              }else if(res.data.data.data[i].status==2){
-                                  res.data.data.data[i].status='停用'
-                              }else{
-                                  res.data.data.data[i].status='删除'
-                              }
-                          }
+                          that.page.totalPage = res.data.data.resultCount;
                       }else{
                           that.$message.warning(res.data.msg);
+                          that.tableLoading=false;
                       }
 
                   })
                   .catch(err=>{
-                      console.log(err)
+                      console.log(err);
+                      that.tableLoading=false;
                   })
             },
             //分页
@@ -122,22 +127,25 @@
                 this.$router.push('/addOrUpBrand')
             },
             //编辑
-            editItem(index,row){
-                this.$router.push('/addOrUpBrand')
+            editItem(index,id){
+                localStorage.setItem('brandId',id);
+                this.$router.push({path:'/addOrUpBrand',query:{brandId:id}})
             },
 
             //跳到品牌页面
-            toBrand(index,row){
-                this.$router.push({ path: "/addOrUpBrand", query: { params: row } });
-            },
+            // toBrand(index,row){
+            //     this.$router.push({ path: "/addOrUpBrand", query: { params: row } });
+            // },
             //删除
             delItem(index,id){
-                this.delId = '999';
+                this.delId = id;
+                this.delUrl=api.deleteBrand;
                 this.isShowDelToast = true;
             },
             // 删除弹窗
             deleteToast(msg) {
                 this.isShowDelToast = msg;
+                this.getList(this.page.currentPage);
             },
             //上传图片
             handleIconSuccess(res, file){
