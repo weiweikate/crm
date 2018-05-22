@@ -27,8 +27,8 @@
                                 :on-success="handleAvatarSuccess"
                                 :before-upload="beforeAvatarUpload">
                             <img v-if="form.originalImg" :src="form.originalImg" class="avatar">
-                            <el-input v-model="form.smallImg"></el-input>
                             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                            <el-input v-model="form.smallImg"></el-input>
                         </el-upload>
                     </el-form-item>
                     <el-form-item label="是否启用">
