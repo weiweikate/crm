@@ -208,7 +208,7 @@ export default {
       let fd = new FormData();
       fd.append("file", file);
       this.$axios
-        .post(api.uploadImg, fd, {
+        .post(api.addImg, fd, {
           headers: {
             "Content-Type": "multipart/form-data"
           }

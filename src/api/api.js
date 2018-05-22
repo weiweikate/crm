@@ -21,6 +21,10 @@ export const getManageList='/mock/5aeac1c6c186102e067af3f3/test/getManageList';
     // 验证码登陆
     export const loginByCode = '/admin/adminLogin/codeLogin';
 
+// 授权管理
+    // 续约审核
+    export const queryPermitRecordList ='/admin/permitRecord/queryPermitRecordList';
+
 // 溯源管理
     // 获取所有防伪码模板列表
     export const rootsGetCodeTplList = '/admin/securityCodeTemplate/getPage';
@@ -38,6 +42,10 @@ export const getManageList='/mock/5aeac1c6c186102e067af3f3/test/getManageList';
     export const getMangerList = '/admin/adminUser/queryAdminUserPageList';
     // 查看管理员操作日志
     export const getMangerLog = '/admin/logAdminuser/getPage';
+    // 获取管理员权限列表
+    export const getRoleList = '/admin/privilege/queryPrivilegeList';
+    // 添加管理员
+    export const addManger = '/admin/adminUser/addAdminUser';
 
 // 品牌产品管理
     // 获取一二级类目列表
@@ -48,27 +56,25 @@ export const getManageList='/mock/5aeac1c6c186102e067af3f3/test/getManageList';
     export const editCategory = '/admin/productCategory/updateProductCategory';
     // 删除一二级类目
     export const deleteCategory = '/admin/productCategory/deleteProductCategory';
-    
-    // 上传图片
-    export const uploadImg = '/commonAPI/ossClient/aliyunOSSUploadImage';
-
-
-// 品牌产品管理
-// 获取品牌列表
-export const getBrandList='/admin/brand/queryBrandPageList';
-export const getFirstList='/admin/productCategory/queryProductCategoryName';
-export const getSecondList='/admin/productCategory/queryProductCategoryFatherid';
-//添加品牌
-export const addBrand='/admin/brand/addBrand';
-//获取产品分类列表
-export const getProductClassifyList='/admin/productCategory/queryProductCategoryPageList';
+    // 获取品牌列表
+    export const getBrandList='/admin/brand/queryBrandPageList';
+    export const getFirstList='/admin/productCategory/queryProductCategoryName';
+    export const getSecondList='/admin/productCategory/queryProductCategoryFatherid';
+    //添加品牌
+    export const addBrand='/admin/brand/addBrand';
+    //获取产品分类列表
+    export const getProductClassifyList='/admin/productCategory/queryProductCategoryPageList';
 
 
 
 //上传图片、文件、音乐
-//上传图片
-export const addImg='http://172.16.10.252:8100/commonAPI/ossClient/aliyunOSSUploadImage';
-//上传文件
-export const addFile='/commonAPI/ossClient/aliyunOSSUpload';
-//上传音乐
-export const addMusic='/commonAPI/ossClient/aliyunOSSUploadMusic';
+    //上传图片
+    export const addImg='/commonAPI/ossClient/aliyunOSSUploadImage';
+    //上传文件
+    export const addFile='/commonAPI/ossClient/aliyunOSSUpload';
+    //上传音乐
+    export const addMusic='/commonAPI/ossClient/aliyunOSSUploadMusic';
+    // 获取省、市、区
+    export const getProvinced = '/admin/area/getProvinceList';
+    export const getCity = '/admin/area/getCityList';
+    export const getArea = '/admin/area/getAreaList';

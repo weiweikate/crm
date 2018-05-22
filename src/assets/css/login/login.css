@@ -9,13 +9,7 @@
   background-size: cover;
   overflow: hidden;
 }
-.ms-title {
-  position: absolute;
-  top: 15%;
-  font-size: 30px;
-  color: #fff;
-}
-.ms-login {
+.login-wrap .ms-login {
   position: relative;
   width: 500px;
   height: 405px;
@@ -23,17 +17,17 @@
   overflow: hidden;
   background: #fff;
 }
-.login-btn {
+.login-wrap .login-btn {
   text-align: center;
 }
-.login-btn button {
+.login-wrap .login-btn button {
   width: 100%;
   height: 36px;
 }
-.tab {
+.login-wrap .tab {
   width: 100%;
 }
-.tab .el-tabs__item {
+.login-wrap .tab .el-tabs__item {
   height: 75px;
   width: 166px;
   text-align: center;
@@ -42,38 +36,38 @@
   background-color: #eee;
   margin-top: -1px;
 }
-.tab .el-tabs__item:first-child {
+.login-wrap .tab .el-tabs__item:first-child {
   margin-left: -1px;
 }
-.tab .el-tabs__item:last-child {
+.login-wrap .tab .el-tabs__item:last-child {
   margin-left: 1px;
 }
-.tab .el-tabs__item:hover {
+.login-wrap .tab .el-tabs__item:hover {
   color: #ff6868;
 }
-.tab .el-tabs__item.is-active {
+.login-wrap .tab .el-tabs__item.is-active {
   color: white;
   background-color: #ff6868;
 }
-.tab .login-inp {
+.login-wrap .tab .login-inp {
   width: 380px;
   height: 50px;
   margin: 30px auto;
   margin-left: 60px;
 }
-.tab .el-input--prefix .el-input__inner {
+.login-wrap .tab .el-input--prefix .el-input__inner {
   padding-left: 55px;
 }
-.tab .el-input__inner {
+.login-wrap .tab .el-input__inner {
   border-radius: 10px;
   height: 50px;
 }
-.tab .login-ico {
+.login-wrap .tab .login-ico {
   font-size: 20px;
   margin-top: 15px;
   margin-left: 20px;
 }
-.tab .code-btn {
+.login-wrap .tab .code-btn {
   width: 92px;
   position: absolute;
   top: 40px;
@@ -82,12 +76,12 @@
   background-color: #33b4ff;
   border-color: #33b4ff;
 }
-.tab .code-btn:hover,
-.tab .code-btn:focus {
-  background-color: #33b4ff!important;
-  border-color: #33b4ff!important;
+.login-wrap .tab .code-btn:hover,
+.login-wrap .tab .code-btn:focus {
+  background-color: #33b4ff !important;
+  border-color: #33b4ff !important;
 }
-.login-btn button {
+.login-wrap .login-btn button {
   width: 380px;
   height: 50px;
   background-color: #ff6868;
@@ -96,17 +90,23 @@
   font-size: 20px;
   border-color: #ff6868;
 }
-.el-button:focus,
-.el-button:hover {
-  color: #fff!important;
-  background-color: #ff6868!important;
-  border-color: #ff6868!important;
+.login-wrap .el-button:focus,
+.login-wrap .el-button:hover {
+  color: #fff !important;
+  background-color: #ff6868 !important;
+  border-color: #ff6868 !important;
 }
-.el-input.is-active .el-input__inner,
-.el-input__inner:focus {
-  border-color: #ff6868!important;
+.login-wrap .el-input.is-active .el-input__inner,
+.login-wrap .el-input__inner:focus {
+  border-color: #ff6868 !important;
 }
-.el-form-item__error {
-  top: 75%!important;
-  left: 15%!important;
+.login-wrap .el-form-item__error {
+  top: 75% !important;
+  left: 15% !important;
+}
+.ms-title {
+  position: absolute;
+  top: 15%;
+  font-size: 30px;
+  color: #fff;
 }
