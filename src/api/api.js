@@ -51,3 +51,24 @@ export const getManageList='/mock/5aeac1c6c186102e067af3f3/test/getManageList';
     
     // 上传图片
     export const uploadImg = '/commonAPI/ossClient/aliyunOSSUploadImage';
+
+
+// 品牌产品管理
+// 获取品牌列表
+export const getBrandList='/admin/brand/queryBrandPageList';
+export const getFirstList='/admin/productCategory/queryProductCategoryName';
+export const getSecondList='/admin/productCategory/queryProductCategoryFatherid';
+//添加品牌
+export const addBrand='/admin/brand/addBrand';
+//获取产品分类列表
+export const getProductClassifyList='/admin/productCategory/queryProductCategoryPageList';
+
+
+
+//上传图片、文件、音乐
+//上传图片
+export const addImg='http://172.16.10.252:8100/commonAPI/ossClient/aliyunOSSUploadImage';
+//上传文件
+export const addFile='/commonAPI/ossClient/aliyunOSSUpload';
+//上传音乐
+export const addMusic='/commonAPI/ossClient/aliyunOSSUploadMusic';

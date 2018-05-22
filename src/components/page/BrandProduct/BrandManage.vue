@@ -5,16 +5,16 @@
             <el-button type="primary" style="margin-bottom: 20px" @click="addBrand">添加品牌</el-button>
             <template>
                 <el-table :data="tableData" :height="height" border style="width: 100%">
-                    <el-table-column prop="ID" label="ID" width="100"></el-table-column>
+                    <el-table-column prop="id" label="ID" width="100"></el-table-column>
                     <el-table-column prop="name" label="品牌名称"></el-table-column>
-                    <el-table-column prop="name" label="品牌区域"></el-table-column>
-                    <el-table-column prop="name" label="品牌分类"></el-table-column>
+                    <el-table-column prop="area" label="品牌区域"></el-table-column>
+                    <el-table-column prop="category" label="品牌分类"></el-table-column>
                     <el-table-column label="品牌LOGO" width="180">
                         <template slot-scope="scope">
-                            <img :src="scope.row.icon" alt="">
+                            <img :src="scope.row.original_img" alt="">
                         </template>
                     </el-table-column>
-                    <el-table-column prop="name" label="产品数" width="180"></el-table-column>
+                    <!--<el-table-column prop="name" label="产品数" width="180"></el-table-column>-->
                     <el-table-column prop="status" label="状态" width="180"></el-table-column>
                     <el-table-column label="操作">
                         <template slot-scope="scope">
@@ -56,7 +56,7 @@
                 tableData:[],
                 page:{
                     currentPage:1,
-                    totalPage:20
+                    totalPage:''
                 },
                 height:'',
                 addOrEditMask:false,
@@ -72,7 +72,7 @@
             }
         },
         created(){
-            let winHeight=window.screen.availHeight-500;
+            let winHeight=window.screen.availHeight-600;
             this.height=winHeight;
             this.getList(this.page.currentPage)
         },
@@ -81,12 +81,28 @@
             getList(val){
               let that=this;
               let data={
-                  page:val
+                  page:val,
+                  pageSize:15
               };
-              this.$axios
-                  .post(api.getProductList,data)
+                that.$axios
+                  .post(api.getBrandList,data)
                   .then(res=>{
-                      that.tableData=res.data.data.list;
+                      if(res.data.code==200){
+                          that.tableData=res.data.data.data;
+                          that.page.totalPage=res.data.data.resultCount;
+                          for(let i in res.data.data.data){
+                              if(res.data.data.data[i].status==1){
+                                  res.data.data.data[i].status='启用'
+                              }else if(res.data.data.data[i].status==2){
+                                  res.data.data.data[i].status='停用'
+                              }else{
+                                  res.data.data.data[i].status='删除'
+                              }
+                          }
+                      }else{
+                          that.$message.warning(res.data.msg);
+                      }
+
                   })
                   .catch(err=>{
                       console.log(err)

@@ -10,28 +10,24 @@
                     </el-form-item>
                     <el-form-item prop="region">
                         <span class="label"><span class="required">*</span>品牌区域</span>
-                        <el-input placeholder="请输入品牌区域" v-model="form.region"></el-input>
+                        <el-input placeholder="请输入品牌区域" v-model="form.area"></el-input>
                     </el-form-item>
-                    <el-form-item class="classify-area" prop="brandKey">
+                    <el-form-item class="classify-area" prop="productcIds">
                         <span class="label"><span class="required">*</span>品牌类目</span>
-                        <el-input
-                                placeholder="输入品牌关键词搜索"
-                                suffix-icon="el-icon-search"
-                                v-model="form.brandKey">
-                        </el-input>
-                        <div style="margin: 10px 114px">
-                            <v-choosearea></v-choosearea>
-                        </div>
+                        <v-choosearea @productcIds="productcIds" v-model="form.productcIds"></v-choosearea>
                         <div class="clearfix"></div>
                     </el-form-item>
                     <el-form-item label="品牌logo">
                         <el-upload
                                 class="avatar-uploader"
-                                action="https://jsonplaceholder.typicode.com/posts/"
+                                action="111"
                                 :show-file-list="false"
+                                :on-preview="handlePreview"
+                                :on-remove="handleRemove"
                                 :on-success="handleAvatarSuccess"
                                 :before-upload="beforeAvatarUpload">
-                            <img v-if="form.imageUrl" :src="form.imageUrl" class="avatar">
+                            <img v-if="form.originalImg" :src="form.originalImg" class="avatar">
+                            <el-input v-model="form.smallImg"></el-input>
                             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                         </el-upload>
                     </el-form-item>
@@ -55,6 +51,7 @@
     import icon from "../../../common/ico";
     import vBreadcrumb from '../../../common/Breadcrumb.vue';
     import vChoosearea from '../../../common/chooseBrandClassify.vue';
+    import * as api from '../../../../api/api'
 
     const cityOptions = ['上海', '北京', '广州', '深圳'];
     export default {
@@ -66,11 +63,12 @@
                 form: {
                     name: "",
                     isUse: "1",
-                    imageUrl: '',
-                    brandKey: '',
+                    originalImg: '',
+                    productcIds: [],
                     region: '',
                     status: '启用'
                 },
+                classifyId:[],
                 activeName2: 'first',
                 checkAll: false,
                 checkedCities: ['上海', '北京'],
@@ -82,41 +80,76 @@
                     region: [
                         {required: true, message: "请输入品牌区域", trigger: "blur"}
                     ],
-                    brandKey: [
+                    productcIds: [
                         {required: true, message: "请选择品牌类目", trigger: "blur"}
                     ]
                 },
-
             }
         },
         created() {
-
+            let that=this;
+            // that.$on('productcIds',function (aa) {
+            //     console.log(aa)
+            // })
         },
         methods: {
+            handlePreview(file) {
+                console.log(file);
+            },
             //上传图片
             handleAvatarSuccess(res, file) {
-                this.form.imageUrl = URL.createObjectURL(file.raw);
+                this.form.originalImg = URL.createObjectURL(file.raw);
+            },
+            productcIds(productcIds){
+                this.form.productcIds=JSON.stringify(productcIds);
             },
             beforeAvatarUpload(file) {
-
+                var that = this;
+                let fd = new FormData();
+                fd.append("file", file);
+                this.$axios
+                    .post(api.addImg, fd, {
+                        headers: {
+                            "Content-Type": "multipart/form-data"
+                        }
+                    })
+                    .then(res => {
+                        if (res.data.success == true) {
+                            that.$message.success("上传成功！");
+                            that.form.originalImg = res.data.data.originalImg;
+                        } else {
+                            that.$message.error(res.data.message);
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+            },
+            handleRemove() {
+                this.form.originalImg = ''
             },
             // 提交表单
             submitForm(form) {
-                this.$refs[form].validate(valid => {
-                    if (valid) {
-                        let data = this[form];
-                        this.$axios
-                            .post('url', data)
-                            .then(res => {
+                let that=this;
+                that.$refs[form].validate(valid => {
+                    // if(that.classifyId.length){
+                        // console.log(that.$emit('productcIds')
+                        if (valid) {
+                            let data = this[form];
+                            this.$axios
+                                .post(api.addBrand, data)
+                                .then(res => {
 
-                            })
-                            .catch(err => {
-                                console.log(err);
-                            });
-                    } else {
-                        console.log("error submit!!");
-                        return false;
-                    }
+                                })
+                                .catch(err => {
+                                    console.log(err);
+                                });
+                        } else {
+                            console.log("error submit!!");
+                            return false;
+                        }
+                    // }
+
                 });
             },
             //取消
