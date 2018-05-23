@@ -64,7 +64,10 @@ export const getManageList='/mock/5aeac1c6c186102e067af3f3/test/getManageList';
     export const addBrand='/admin/brand/addBrand';
     //获取产品分类列表
     export const getProductClassifyList='/admin/productCategory/queryProductCategoryPageList';
-
+//删除品牌
+export const deleteBrand='/admin/brand/deleteBrand';
+//根据ID查找详情
+export const findBrandById='/admin/brand/findBrandById';
 
 
 //上传图片、文件、音乐
@@ -78,3 +81,12 @@ export const getManageList='/mock/5aeac1c6c186102e067af3f3/test/getManageList';
     export const getProvinced = '/admin/area/getProvinceList';
     export const getCity = '/admin/area/getCityList';
     export const getArea = '/admin/area/getAreaList';
+
+
+// 问题反馈
+// 反馈列表
+export const feedbackList='/admin/feedback/queryFeedbackList';
+// 问题详情
+export const feedbackDetail='/admin/feedback/findFeedbackByid';
+//修改反馈详情
+export const updateFeedback='/admin/feedback/updateFeedback';
