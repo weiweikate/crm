@@ -93,11 +93,11 @@ export default {
           this.$axios
             .post(url, data)
             .then(res => {
-                console.log(res.data)
               if (res.data.code == 200) {
                 this.$message.success("登陆成功！");
-                localStorage.setItem("ms_username", '小猪佩奇');
-                localStorage.setItem("ms_userID", 111);
+                localStorage.setItem("ms_username", res.data.data.name);
+                localStorage.setItem("ms_userID", res.data.data.id);
+                localStorage.setItem("ms_hadFirstLogin", res.data.data.hadFirstLogin);
                 this.$router.push("/dashboard");
               } else {
                 this.$message.warning(res.data.msg);

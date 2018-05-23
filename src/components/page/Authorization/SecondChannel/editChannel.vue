@@ -11,9 +11,9 @@
                         <el-input v-model="form.channel" disabled size="medium"></el-input>
                     </el-form-item>
                     <el-form-item label="是否启用">
-                        <el-select v-model="form.isUse">
+                        <el-select v-model="form.status">
                             <el-option value="1" label="是"></el-option>
-                            <el-option value="0" label="否"></el-option>
+                            <el-option value="2" label="否"></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item class="submit-btn">
@@ -27,18 +27,27 @@
 </template>
 <script>
 import icon from "../../../common/ico";
+import * as api from '../../../../api/api.js';
 export default {
+  props:['row'],
   components: {
     icon
   },
   data() {
     return {
       form: {
-         channel: "一级渠道",
+        id:'',
+        channel: "一级渠道",
         name: "",
-        isUse: "1"
+        status: ""
       }
     };
+  },
+  mounted(){
+    this.form.channel = this.row.fatherName;
+    this.form.name = this.row.name;
+    this.form.status = this.row.status.toString();
+    this.form.id = this.row.id;
   },
   methods: {
     //  取消弹窗
@@ -47,7 +56,26 @@ export default {
     },
     // 提交表单
     submitForm(form) {
-      this.closeToask();
+      if(this.form.name == ''){
+        this.$message.warning('请输入渠道名称');
+        return;
+      }
+      let data = {}
+      data.id = this.form.id;
+      data.name = this.form.name;
+      data.status = this.form.status;
+      this.$axios.post(api.updatePermitChannel,data)
+      .then(res=>{
+        if(res.data.code == 200){
+          this.$message.success(res.data.msg);
+          this.closeToask();
+        }else{
+          this.$message.warning(res.data.msg);
+        }
+      })
+      .catch(err=>{
+        console.log(err);
+      })
     }
   }
 };

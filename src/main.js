@@ -3,6 +3,10 @@ import App from './App';
 import router from './router';
 import axios from './api/index.js';
 import ElementUI from 'element-ui';
+import vueQuillEditor from 'vue-quill-editor' // 引入富文本工具
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
 import 'element-ui/lib/theme-chalk/index.css';    // 默认主题
 // import '../static/css/theme-green/index.css';       // 浅绿色主题
 import "babel-polyfill";
@@ -11,6 +15,7 @@ Vue.use(ElementUI, { size: 'small' });
 Vue.use(Vue=>{
     Vue.prototype.$axios = axios;
 })
+Vue.use(vueQuillEditor)
 
 // 全局过滤器
 import moment from 'moment';

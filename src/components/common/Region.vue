@@ -29,25 +29,24 @@ export default {
       region: []
     };
   },
-  watch:{
-      regionMsg(params){
-        if(params.length == 0){
-            this.province = '';
-            this.city = '';
-            this.area = '';
-        }else{
-            this.province = this.regionMsg[0];
-            this.getCity(true);
-        }
+  watch: {
+    regionMsg(params) {
+      if (params.length == 0) {
+        this.province = "";
+        this.city = "";
+        this.area = "";
+      } else {
+        this.province = this.regionMsg[0];
+        this.getCity(true);
       }
+    }
   },
   created() {
-      this.getProvinceList();
-    // if(this.regionMsg != undefined && this.regionMsg.length != 0){
-    //     this.province = this.regionMsg[0];
-    //     this.getCity(true);
-    //     console.log(this.regionMsg+'====='+this.city);
-    // }
+    this.getProvinceList();
+    if (this.regionMsg != undefined && this.regionMsg.length != 0) {
+      this.province = this.regionMsg[0];
+      this.getCity(true);
+    }
   },
   methods: {
     //   获取省份列表
@@ -57,6 +56,7 @@ export default {
         .post(api.getProvinced, {})
         .then(res => {
           this.provinceArr = [];
+          this.provinceArr.push({ label: "全部", value: "" });
           res.data.data.forEach((v, k) => {
             this.provinceArr.push({ label: v.name, value: v.zipcode });
             this.pLoading = false;
@@ -68,25 +68,25 @@ export default {
     },
     // 获取城市列表
     getCity(val) {
+      let that = this;
       this.cLoading = true;
       this.$axios
         .post(api.getCity, { fatherZipcode: this.province })
         .then(res => {
-          if (res.data.data.length != 0 && val == false) {
-            this.city = res.data.data[0].zipcode;
-          }else if(val == true){
-              this.city = this.regionMsg[1];
-          } else {
-            this.city = "";
-          }
           this.cityArr = [];
+          this.cityArr.push({ label: "全部", value: "" });
+          if (val == false) {
+            this.city = this.cityArr[0].value;
+          } else {
+            this.city = this.regionMsg[1];
+          }
           res.data.data.forEach((v, k) => {
-            this.cityArr.push({ label: v.name, value: v.zipcode });
-            this.cLoading = false;
+            that.cityArr.push({ label: v.name, value: v.zipcode });
+            that.cLoading = false;
           });
-          if(val == true){
-              this.getArea(true);
-              return;
+          if (val == true) {
+            this.getArea(true);
+            return;
           }
           this.getArea(false);
         })
@@ -96,33 +96,39 @@ export default {
     },
     // 获取区
     getArea(val) {
-      this.aLoading = true;
+      let that = this;
       let data = {};
-      if (this.city == "") {
-        data.fatherZipcode = this.province;
+      if (this.city.value == "") {
+        this.areaArr = [];
+        this.areaArr.push({ label: "全部", value: "" });
+        this.area = this.areaArr[0];
+        if (val == false) {
+          this.$emit("regionMsg", this.region);
+        }
+        return;
       } else {
         data.fatherZipcode = this.city;
       }
       this.$axios
         .post(api.getArea, data)
         .then(res => {
-          if (res.data.data.length != 0 && val == false) {
-            this.area = res.data.data[0].zipcode;
-          }else if(val == true){
-            this.area = this.regionMsg[2];
-          } else {
-            this.area = "";
-          }
           this.areaArr = [];
+          this.areaArr.push({ label: "全部", value: "" });
+          if (val == false) {
+            this.area = this.areaArr[0].value;
+          } else {
+            this.area = this.regionMsg[2];
+          }
           res.data.data.forEach((v, k) => {
-            this.areaArr.push({ label: v.name, value: v.zipcode });
-            this.aLoading = false;
+            that.areaArr.push({ label: v.name, value: v.zipcode });
           });
           this.region = [];
           this.region.push(this.province);
           this.region.push(this.city);
           this.region.push(this.area);
-          this.$emit("regionMsg", this.region);
+          if (val == false) {
+            this.$emit("regionMsg", this.region);
+          }
         })
         .catch(err => {
           console.log(err);

@@ -90,6 +90,7 @@
                 </el-card>
             </el-col>
         </el-row>
+        <router-link to="/editor">editor</router-link>
         <act-account-code @status='isShowCode' v-if="isShowActAccCode"></act-account-code>
         <act-account-pwd @status='isShowPwd' v-if="isShowActAccPwd"></act-account-pwd>
     </div>
@@ -110,10 +111,17 @@ export default {
   data() {
     return {
       isShowActAccPwd: false,
-      isShowActAccCode:true
+      isShowActAccCode:false
     };
   },
+  created(){
+      console.log(localStorage.getItem('ms_hadFirstLogin'));
+      if(localStorage.getItem('ms_hadFirstLogin') == 1){
+          this.isShowActAccCode = true;
+      }
+  },
   methods: {
+    //  激活账号弹窗
     isShowCode(msg) {
         this.isShowActAccCode = msg;
         this.isShowActAccPwd = !msg;

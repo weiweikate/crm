@@ -21,7 +21,8 @@ export default {
     },
     url: {
       require: true
-    }
+    },
+    status:{}
   },
   components: {
     icon
@@ -38,7 +39,7 @@ export default {
         let that = this;
         that.btnLoading = true;
         let url = that.url;
-        let data = {id:that.id};
+        let data = {id:that.id,status:that.status};
         this.$axios
           .post(url, data)
           .then(res => {

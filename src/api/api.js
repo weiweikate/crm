@@ -21,7 +21,21 @@ export const getManageList='/mock/5aeac1c6c186102e067af3f3/test/getManageList';
     // 验证码登陆
     export const loginByCode = '/admin/adminLogin/codeLogin';
 
+// 首页
+    // 修改密码短信验证
+    export const sendUpdatePwdCode = '/commonAPI/phoneCode/sendUpdatePwdCode';
+    // 修改密码验证码校验
+    export const loginUpdateCheckCode = ' /admin/adminLogin/loginUpdateCheckCode';
+    // 修改密码
+    export const loginUpdatePassword = '/admin/adminLogin/loginUpdatePassword';
+
 // 授权管理
+    // 获取渠道列表
+    export const permitChannelGetList = '/admin/permitChannel/getList';
+    // 渠道类目添加
+    export const addPermitChannel = '/admin/permitChannel/addPermitChannel';
+    // 编辑渠道类目
+    export const updatePermitChannel ='/admin/permitChannel/updatePermitChannel';
     // 续约审核
     export const queryPermitRecordList ='/admin/permitRecord/queryPermitRecordList';
 
@@ -46,6 +60,14 @@ export const getManageList='/mock/5aeac1c6c186102e067af3f3/test/getManageList';
     export const getRoleList = '/admin/privilege/queryPrivilegeList';
     // 添加管理员
     export const addManger = '/admin/adminUser/addAdminUser';
+    // 岗位列表查询
+    export const queryRolePageList = '/admin/role/queryRolePageList';
+    // 重置登陆密码
+    export const resetPassword = ' /admin/adminUser/resetPassword';
+    // 开启/关闭管理员账号
+    export const updateAdminUserStatus = '/admin/adminUser/updateAdminUserStatus';
+    // 删除管理员账号
+    export const deleteAdminUser = '/admin/adminUser/deleteAdminUser';
 
 // 品牌产品管理
     // 获取一二级类目列表
@@ -64,10 +86,10 @@ export const getManageList='/mock/5aeac1c6c186102e067af3f3/test/getManageList';
     export const addBrand='/admin/brand/addBrand';
     //获取产品分类列表
     export const getProductClassifyList='/admin/productCategory/queryProductCategoryPageList';
-//删除品牌
-export const deleteBrand='/admin/brand/deleteBrand';
-//根据ID查找详情
-export const findBrandById='/admin/brand/findBrandById';
+    //删除品牌
+    export const deleteBrand='/admin/brand/deleteBrand';
+    //根据ID查找详情
+    export const findBrandById='/admin/brand/findBrandById';
 
 
 //上传图片、文件、音乐
@@ -84,9 +106,9 @@ export const findBrandById='/admin/brand/findBrandById';
 
 
 // 问题反馈
-// 反馈列表
-export const feedbackList='/admin/feedback/queryFeedbackList';
-// 问题详情
-export const feedbackDetail='/admin/feedback/findFeedbackByid';
-//修改反馈详情
-export const updateFeedback='/admin/feedback/updateFeedback';
+    // 反馈列表
+    export const feedbackList='/admin/feedback/queryFeedbackList';
+    // 问题详情
+    export const feedbackDetail='/admin/feedback/findFeedbackByid';
+    //修改反馈详情
+    export const updateFeedback='/admin/feedback/updateFeedback';

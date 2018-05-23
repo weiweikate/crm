@@ -24,7 +24,7 @@
                 <el-input v-model.trim="form.telephone"></el-input>
             </el-form-item>
             <el-form-item prop="provinceId" label="地址">
-              <region @regionMsg='getRegion' :regionMsg='address'></region>
+              <region @regionMsg='getRegion' :regionMsg='oriAddress'></region>
             </el-form-item>
             <el-form-item label=" ">
                 <el-button type="primary" @click="getList(1)">搜索</el-button>
@@ -37,7 +37,11 @@
                 <el-table-column prop="code" label="申请编号" width="180" align="center"></el-table-column>
                 <el-table-column prop="nickname" label="申请人" align="center"></el-table-column>
                 <el-table-column prop="phone" label="联系方式" align="center"></el-table-column>
-                <el-table-column prop="create_time" label="注册时间" align="center"></el-table-column>
+                <el-table-column label="注册时间" align="center">
+                  <template slot-scope="scope">
+                    {{scope.row.reg_time|formatDate}}
+                  </template>
+                </el-table-column>
                 <el-table-column prop="status" label="交易金额（累计）" align="center"></el-table-column>
                 <el-table-column prop="upNum" label="下级代理" align="center"></el-table-column>
                 <el-table-column prop="levelName" label="现层级" align="center"></el-table-column>
@@ -110,7 +114,8 @@ export default {
           value: "执行总监"
         }
       ],
-      address: [],
+      oriAddress: [],
+      address:[],
       form: {
         date: "",
         levelId: "",
@@ -147,12 +152,11 @@ export default {
       data.cityId = this.address[1];
       data.areaId = this.address[2];
       data.page = val;
-      console.log(data);
       this.tableLoading = true;
+      console.log(data);
       this.$axios
         .post(api.queryPermitRecordList, data)
         .then(res => {
-          console.log(res.data);
           this.tableLoading = false;
           if(res.data.code == 200){
             this.tableData = [];
@@ -179,7 +183,7 @@ export default {
 
     //   重置表单
     resetForm(formName) {
-      this.address = [];
+      this.oriAddress = [];
       this.$refs[formName].resetFields();
     },
 

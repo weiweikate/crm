@@ -12,7 +12,7 @@
                         <el-input class="add-mange-inp" v-model="form.phone"></el-input>
                     </el-form-item>
                     <div class="avatar">
-                        <img v-if="form.imageUrl" :src="form.imageUrl">
+                        <img v-if="form.face" :src="form.face">
                         <img v-else src="../../../assets/images/logo.png" alt="">
                         <el-upload
                                 :action="uploadImg"
@@ -100,7 +100,7 @@ export default {
         departmentId: [],
         jobId: "",
         superior: "",
-        // imageUrl: ""
+        face: ""
       },
       rules:{
         username:[{ required: true, message: '请输入姓名', trigger: 'blur' }],
@@ -127,26 +127,27 @@ export default {
       })
       data = this.form;
       data.role = role.join(',');
-      this.$refs[formName].validate((valid) => {
-          if (valid) {
-            this.$axios
-            .post(api.addManger, data)
-            .then(res => {
-              if(res.data.code == 200){
-                this.$message.success(res.data.msg);
-                this.$router.push('/manageList');
-              }else{
-                this.$message.warning(res.data.msg);
-              }
-            })
-            .catch(err => {
-              console.log(err);
-            });
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
-        });
+      console.log(data);
+      // this.$refs[formName].validate((valid) => {
+      //     if (valid) {
+      //       this.$axios
+      //       .post(api.addManger, data)
+      //       .then(res => {
+      //         if(res.data.code == 200){
+      //           this.$message.success(res.data.msg);
+      //           this.$router.push('/manageList');
+      //         }else{
+      //           this.$message.warning(res.data.msg);
+      //         }
+      //       })
+      //       .catch(err => {
+      //         console.log(err);
+      //       });
+      //     } else {
+      //       console.log('error submit!!');
+      //       return false;
+      //     }
+      //   });
     },
     // 重置表单
     resetForm(formName) {
@@ -156,7 +157,7 @@ export default {
     // 上传图片
     uploadAvatar(res) {
       if(res.code == 200){
-        this.form.imageUrl = res.data.imageUrl;
+        this.form.face = res.data.imageUrl;
       }else{
         this.$message.warning(res.msg);
       }
