@@ -157,7 +157,8 @@ export default {
 
     // 编辑管理员
     editManger(row){
-      this.$router.push('/editManger');
+      sessionStorage.setItem('editManger',row.id);
+      this.$router.push({name:'editManger',query:{id:row.id}});
     },
 
     // 查看操作日志

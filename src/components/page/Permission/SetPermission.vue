@@ -3,11 +3,11 @@
         <breadcrumb :nav='nav'></breadcrumb>
         <el-card>
             <el-button type='primary' @click="addModule">新增功能模块</el-button>
-            <el-table :span-method='mergeRow' v-loading="tableLoading" class="w-table" stripe :data="tableData" :height="height" border style="width: 100%">
+            <el-table :span-method='mergeRow' v-loading="tableLoading" class="w-table" :data="tableData" :height="height" border style="width: 100%">
                 <el-table-column prop="id" label="ID" width="180" align="center"></el-table-column>
-                <el-table-column prop="templateName" label="模块" align="center"></el-table-column>
                 <el-table-column prop="name" label="模块" align="center"></el-table-column>
-                <el-table-column prop="smallBoxCodeNum" label="模块" align="center"></el-table-column>
+                <el-table-column prop="name" label="模块" align="center"></el-table-column>
+                <el-table-column prop="smallBoxCodeNum" label="权限" align="center"></el-table-column>
                 <el-table-column label="操作" align="center">
                     <template slot-scope="scope">
                         <el-button type="primary" @click='addPermission(scope.row)'>添加权限</el-button>
@@ -99,20 +99,28 @@ export default {
         }
       ],
       first: [{ value: "aa", label: "aa" }],
-      tableData: [
-        { id: 1, name: "会员管理", children: "经销商层级管理" },
-        { id: 1, name: "会员管理", children: "经销商邀请管理" },
-        { id: 1, name: "会员管理", children: "经销商会员管理" },
-        { id: 2, name: "品牌产品管理", children: "品牌分类管理" },
-        { id: 2, name: "品牌产品管理", children: "品牌管理" },
-        { id: 2, name: "品牌产品管理", children: "产品管理" },
-        { id: 2, name: "品牌产品管理", children: "价格设置模板" },
-        { id: 3, name: "授权审核管理", children: "渠道管理" },
-        { id: 3, name: "授权审核管理", children: "经销商层级管理" },
-        { id: 3, name: "授权审核管理", children: "经销商层级管理" },
-        { id: 4, name: "溯源管理", children: "经销商层级管理" },
-        { id: 5, name: "权限管理", children: "经销商层级管理" },
-        { id: 5, name: "权限管理", children: "经销商层级管理" }
+      tableData: [],
+      aData: [
+        {
+          id: 1,
+          name: "会员管理",
+          second: ["1-1", "1-2", "1-3","1-4"]
+        },
+        {
+          id: 2,
+          name: "品牌产品管理",
+          second: ["2-1", "2-2"]
+        },
+        {
+          id: 3,
+          name: "溯源管理",
+          second: ["3-1", "3-2", "3-3"]
+        },
+        {
+          id: 4,
+          name: "杨小猛",
+          second: ["3-1", "3-2", "3-3"]
+        }
       ],
       addModuleForm: {
         name: "",
@@ -125,14 +133,19 @@ export default {
         belongModule: "",
         perName: ""
       },
+      spanData: [],
       page: {
         currentPage: 1,
         totalPage: 0
       },
       rules: {
         url: [{ required: true, message: "请输入URL", trigger: "blur" }],
-        perName: [{ required: true, message: "请输入权限名称", trigger: "blur" }],
-        belongModule: [{ required: true, message: "请输入所属模块名称", trigger: "blur" }],
+        perName: [
+          { required: true, message: "请输入权限名称", trigger: "blur" }
+        ],
+        belongModule: [
+          { required: true, message: "请输入所属模块名称", trigger: "blur" }
+        ]
       }
     };
   },
@@ -140,6 +153,18 @@ export default {
     let winHeight = window.screen.availHeight - 360;
     this.height = winHeight;
     // this.getList(this.page.currentPage);
+    this.spanData = [];
+    this.tableData = [];
+    let t = 0;
+    this.aData.forEach((v, k) => {
+      this.spanData.push({ startIndex: t, num: v.second.length });
+      t += v.second.length;
+    });
+    this.aData.forEach((v,k)=>{
+      v.second.forEach((val,ind)=>{
+        this.tableData.push({id:v.id,name:v.name,children:val});
+      })
+    })
   },
   methods: {
     //获取列表
@@ -180,10 +205,11 @@ export default {
 
     // 添加权限
     addPermission(row) {
-      this.addPermissionForm = {};
-      this.addPermissionForm.id = row.name;
-      this.addPermissionForm.belongModule = '666';
-      this.isShowPermission = true;
+      console.log(row);
+      // this.addPermissionForm = {};
+      // this.addPermissionForm.id = row.name;
+      // this.addPermissionForm.belongModule = "666";
+      // this.isShowPermission = true;
     },
     confirmAddPer(formName) {
       this.$refs[formName].validate(valid => {
@@ -197,34 +223,21 @@ export default {
       });
     },
 
-    // 合并行
+    // 合并行(第几行开始合并，合并几行)
     mergeRow({ row, column, rowIndex, columnIndex }) {
       if (columnIndex === 0 || columnIndex === 1) {
-        if (rowIndex === 0 || rowIndex === 7) {
-          return {
-            rowspan: 3,
-            colspan: 1
-          };
-        } else if (rowIndex === 3) {
-          return {
-            rowspan: 4,
-            colspan: 1
-          };
-        } else if (rowIndex === 11) {
-          return {
-            rowspan: 2,
-            colspan: 1
-          };
-        } else if (rowIndex === 10) {
-          return {
-            rowspan: 1,
-            colspan: 1
-          };
-        } else {
-          return {
-            rowspan: 0,
-            colspan: 0
-          };
+        for(let i =0;i<this.spanData.length;i++){
+          if(rowIndex === this.spanData[i].startIndex){
+            return {
+              rowspan:this.spanData[i].num,
+              colspan:1
+            }
+          }
+          
+        }
+        return {
+          rowspan:0,
+          colspan:0
         }
       }
     }

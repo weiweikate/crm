@@ -5,10 +5,8 @@
             <div class="add-box">
                 <el-form ref="form" :rules="rules" :model="form" label-width="100px">
                     <span class="add-box-title">基础信息</span>
-                    <el-form-item prop="job" label="所在岗位">
-                        <el-select v-model="form.job" placeholder="请选择">
-                            <el-option v-for="item in department" :key="item.value" :label="item.label" :value="item.value"></el-option>
-                        </el-select>
+                    <el-form-item prop="name" label="所在岗位">
+                        <el-input style="width:220px" v-model="form.name" placeholder="请选择"></el-input>
                     </el-form-item>
                     <el-form-item prop="department" label="所属部门">
                         <el-select v-model="form.department" multiple placeholder="请选择">
@@ -17,11 +15,6 @@
                     </el-form-item>
                     <hr width='90%' size='1' color='#ccc' class='add-box-sep'>
                     <span class="add-box-title">权限设置</span>
-                    <el-form-item prop="defPermission" label="默认权限">
-                        <el-select v-model="form.defPermission" placeholder="请选择">
-                            <el-option v-for="item in defPermission" :key="item.value" :label="item.label" :value="item.value"></el-option>
-                        </el-select>
-                    </el-form-item>
                     <el-collapse accordion>
                         <el-collapse-item>
                             <template slot="title">
@@ -94,7 +87,7 @@ export default {
   },
   data() {
     return {
-      nav: ["权限管理", "岗位权限管理",'添加岗位'],
+      nav: ["权限管理", "岗位权限管理", "添加岗位"],
       checkAllUser: false,
       isIndeterminateUser: false,
       checkedUser: [],
@@ -103,57 +96,56 @@ export default {
         { group: "经销商邀请", label: "体验VIP" },
         { group: "经销商会员管理", label: "省代" }
       ],
-      department: [
-        {
-          label: "技术部",
-          value: "技术部"
-        },
-        {
-          label: "财务部",
-          value: "财务部"
-        },
-        {
-          label: "人事部",
-          value: "人事部"
-        }
-      ],
-      defPermission:[
-          {
-              value:'管理员',
-              label:'管理员'
-          }
-      ],
+      department: [],
       form: {
         department: [],
-        job: "",
-        defPermission:''
+        name: "",
       },
-      rules:{
-          department:{ required: true, message: '请选择所在岗位', trigger: 'blur' },
-          job:{ required: true, message: '请选择所属部门', trigger: 'blur' },
-          defPermission:{ required: true, message: '请选择默认权限', trigger: 'blur' }
+      rules: {
+        name: { required: true, message: "请选择所在岗位", trigger: "blur" },
+        department: {
+          required: true,
+          message: "请选择所属部门",
+          trigger: "blur"
+        },
       }
     };
   },
+  activated() {
+    this.getDepartmentList();
+    this.getRoleList();
+  },
   methods: {
-    // 上传图片
-    uploadAvatar(file) {},
-
     // 提交表单
-    submitForm(formName){
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            alert('submit!');
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
-        });
+    submitForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          let data = {};
+          data.name = this.form.name;
+          data.department = this.form.department.join(",");
+          this.$axios
+            .post(api.addRole, data)
+            .then(res => {
+              if(res.data.code == 200){
+                  this.$message.success(res.data.msg);
+                  this.$router.push('/jobsPermissionMange');
+              }else{
+                  this.$message.warning(res.data.msg);
+              }
+            })
+            .catch(err => {
+              console.log(err);
+            });
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
     },
 
     // 重置表单
     resetForm(formName) {
-        this.$refs[formName].resetFields();
+      this.$refs[formName].resetFields();
     },
 
     // 全选用户管理
@@ -170,7 +162,38 @@ export default {
       this.checkAllUser = checkedCount === this.userManList.length;
       this.isIndeterminateUser =
         checkedCount > 0 && checkedCount < this.userManList.length;
-    }
+    },
+
+    // 获取权限列表
+    getRoleList() {
+      let data = {};
+      this.$axios
+        .post(api.getRoleList, data)
+        .then(res => {
+          this.userManList = res.data.data;
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    // 获取部门列表
+    getDepartmentList() {
+      this.department = [];
+      this.$axios
+        .post(api.queryDepartmentList, {})
+        .then(res => {
+          if (res.data.code == 200) {
+            res.data.data.forEach((v, k) => {
+              this.department.push({ label: v.name, value: v.id });
+            });
+          } else {
+            this.$message.warning(res.data.msg);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
   }
 };
 </script>
@@ -222,16 +245,16 @@ export default {
     float: left;
     height: 38px;
     line-height: 38px;
-    margin:0px 10px 0px 20px;
+    margin: 0px 10px 0px 20px;
     font-size: 14px;
   }
   .el-checkbox {
     margin-left: 20px;
   }
-  .sub-btn{
-      margin-top: 20px;
-      padding-left:30%;
-      box-sizing: border-box;
+  .sub-btn {
+    margin-top: 20px;
+    padding-left: 30%;
+    box-sizing: border-box;
   }
 }
 </style>

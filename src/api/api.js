@@ -28,6 +28,8 @@ export const getManageList='/mock/5aeac1c6c186102e067af3f3/test/getManageList';
     export const loginUpdateCheckCode = ' /admin/adminLogin/loginUpdateCheckCode';
     // 修改密码
     export const loginUpdatePassword = '/admin/adminLogin/loginUpdatePassword';
+    // 修改密码2
+    export const updateAdminUserPassword = '/admin/adminUser/updateAdminUserPassword';
 
 // 授权管理
     // 获取渠道列表
@@ -52,6 +54,10 @@ export const getManageList='/mock/5aeac1c6c186102e067af3f3/test/getManageList';
     export const rootsDelCodeTplList = '/admin/securityCodeTemplate/deleteById';
 
 // 权限管理
+    // 查询部门列表
+    export const queryDepartmentList = '/admin/role/queryDepartmentList';
+    // 查询岗位列表
+    export const queryJobList = '/admin/role/queryJobList';
     // 获取管理员列表
     export const getMangerList = '/admin/adminUser/queryAdminUserPageList';
     // 查看管理员操作日志
@@ -60,14 +66,26 @@ export const getManageList='/mock/5aeac1c6c186102e067af3f3/test/getManageList';
     export const getRoleList = '/admin/privilege/queryPrivilegeList';
     // 添加管理员
     export const addManger = '/admin/adminUser/addAdminUser';
-    // 岗位列表查询
-    export const queryRolePageList = '/admin/role/queryRolePageList';
     // 重置登陆密码
     export const resetPassword = ' /admin/adminUser/resetPassword';
     // 开启/关闭管理员账号
     export const updateAdminUserStatus = '/admin/adminUser/updateAdminUserStatus';
     // 删除管理员账号
     export const deleteAdminUser = '/admin/adminUser/deleteAdminUser';
+    // 根据ID查找管理员信息
+    export const findAdminUserbyId = '/admin/adminUser/findAdminUserbyId';
+    // 编辑管理员
+    export const updateAdminUser = '/admin/adminUser/updateAdminUser';
+    // 岗位列表查询
+    export const queryRolePageList = '/admin/role/queryRolePageList';
+    // 添加岗位
+    export const addRole = '/admin/role/addRole';
+    // 根据id查询岗位
+    export const findRoleById = '/admin/role/findRoleById';
+    // 修改岗位
+    export const updateRole = '/admin/role/updateRole';
+    // 删除岗位
+    export const deleteRole = '/admin/role/deleteRole';
 
 // 品牌产品管理
     // 获取一二级类目列表

@@ -54,6 +54,8 @@ export default {
   created() {
     let winHeight = window.screen.availHeight - 360;
     this.height = winHeight;
+  },
+  activated(){
     this.getList(this.page.currentPage);
   },
   methods: {
@@ -97,17 +99,18 @@ export default {
 
     // 编辑角色
     editRole(row){
-        console.log(row.id)
         sessionStorage.setItem('editJobsPermission',row.id);
         this.$router.push({name:'editJobsPermission',params:{userId:row.id}});
     },
 
     // 删除模板
     deleteRole(row) {
-      this.delId = 666;
+      this.delId = row.id;
+      this.delUrl = api.deleteRole;
       this.isShowDelToast = true;
     },
     deleteToast(msg) {
+      this.getList(this.page.currentPage);
       this.isShowDelToast = msg;
     }
   }

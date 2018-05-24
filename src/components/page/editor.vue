@@ -12,7 +12,6 @@
 
 <script>
 import Quill from "quill";
-const STATICDOMAIN = "http://otq0t8ph7.bkt.clouddn.com/"; // 图片服务器的域名，展示时使用
 
 export default {
   data() {
@@ -44,16 +43,13 @@ export default {
     };
   },
   computed: {
-    // 上传七牛的actiond地址，http 和 https 不一样
     qnLocation() {
       return location.protocol === "http:"
-        ? "http://upload.qiniu.com"
-        : "https://up.qbox.me";
+        ? "/commonAPI/ossClient/aliyunOSSUploadImage"
+        : "/commonAPI/ossClient/aliyunOSSUploadImage";
     }
   },
   methods: {
-    // 图片上传之前调取的函数
-    // 这个钩子还支持 promise
     beforeUpload(file) {
       return this.qnUpload(file);
     },
@@ -64,9 +60,7 @@ export default {
       const ext = suffix.splice(suffix.length - 1, 1)[0];
       console.log(this.uploadType);
       if (this.uploadType === "image") {
-        // 如果是点击插入图片
-        // TODO 图片格式/大小限制
-        alert("上传图片");
+        this.$message.warning('正在上传');
         return this.$axios("/commonAPI/ossClient/aliyunOSSUploadImage").then(res => {
           this.uploadData = {
             key: `image/${suffix.join(".")}_${new Date().getTime()}.${ext}`,
@@ -78,18 +72,16 @@ export default {
 
     // 图片上传成功回调 插入到编辑器中
     upScuccess(e, file, fileList) {
-      console.log(e);
       this.fullscreenLoading = false;
       let vm = this;
       let url = "";
       if (this.uploadType === "image") {
         // 获得文件上传后的URL地址
-        url = STATICDOMAIN + e.key;
+        url = e.data.imageUrl;
       }
       if (url != null && url.length > 0) {
         // 将文件上传后的URL地址插入到编辑器文本中
         let value = url;
-        // API: https://segmentfault.com/q/1010000008951906
         // this.$refs.myTextEditor.quillEditor.getSelection();
         // 获取光标位置对象，里面有两个属性，一个是index 还有 一个length，这里要用range.index，即当前光标之前的内容长度，然后再利用 insertEmbed(length, 'image', imageUrl)，插入图片即可。
         vm.addRange = vm.$refs.myQuillEditor.quill.getSelection();
@@ -100,6 +92,7 @@ export default {
           value,
           Quill.sources.USER
         ); // 调用编辑器的 insertEmbed 方法，插入URL
+        this.$message.success('插入成功');
       } else {
         this.$message.error(`${vm.uploadType}插入失败`);
       }
@@ -115,6 +108,7 @@ export default {
       }
       this.uploadType = "image";
     },
+    // 每次输入都会调用这个方法
     onEditorChange({ editor, html, text }) {
       console.log("editor change!", html);
       this.content = html;
@@ -129,7 +123,6 @@ export default {
   // 页面加载后执行 为编辑器的图片图标和视频图标绑定点击事件
   mounted() {
     // 为图片ICON绑定事件 getModule 为编辑器的内部属性
-    console.log(this.$refs.myQuillEditor.quill);
     this.$refs.myQuillEditor.quill
       .getModule("toolbar")
       .addHandler("image", this.imgHandler);

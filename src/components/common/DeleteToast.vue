@@ -45,7 +45,7 @@ export default {
           .then(res => {
             that.btnLoading = false;
             if(res.data.code == 200){
-              this.$message.success(res.data.msg);
+              this.$message.success('删除成功');
               this.$emit("msg", false);
             }else{
               this.$message.warning(res.data.msg);
