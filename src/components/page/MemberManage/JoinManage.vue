@@ -1,24 +1,22 @@
 <template>
     <div>
         <v-breadcrumb :nav="['会员管理','经销商加盟管理']"></v-breadcrumb>
-        <transition name="move" appear>
             <el-card style="margin:10px 0 20px">
                 <el-form ref="form" :inline="true" :model="form">
-                    <el-form-item label="发起人" label-width="120">
-                        <el-input style="width:200px" placeholder="请输入发起人姓名" v-model="form.name"></el-input>
+                    <el-form-item prop="initiator" label="发起人" label-width="120">
+                        <el-input style="width:200px" placeholder="请输入发起人姓名" v-model="form.initiator"></el-input>
                     </el-form-item>
 
                     <el-form-item>
-                        <el-button @click="search" type="primary">查询</el-button>
-                        <el-button>重置</el-button>
+                        <el-button @click="getList(1)" type="primary">查询</el-button>
+                        <el-button @click="resetForm('form')">重置</el-button>
                     </el-form-item>
                 </el-form>
             </el-card>
-        </transition>
         <div class="table-block">
             <el-button @click="sendInvite" style="margin-bottom: 20px" type="primary">发起邀请</el-button>
             <template>
-                <el-table :data="tableData" :height="height" border style="width: 100%">
+                <el-table v-loading="tableLoading" :data="tableData" :height="height" border style="width: 100%">
                     <el-table-column prop="ID" label="邀请记录ID" width="150"></el-table-column>
                     <el-table-column prop="level" label="邀请层级" width="150"></el-table-column>
                     <el-table-column prop="dayLogin" label="授权渠道"></el-table-column>
@@ -60,6 +58,7 @@
         data() {
             return {
                 tableData:[],
+                tableLoading:false,
                 page:{
                     currentPage:1,
                     totalPage:20
@@ -67,7 +66,7 @@
                 height:'',
                 formLabelWidth:'100px',
                 form:{
-                    name:''
+                    initiator:''
                 },
                 selected:''
             }
@@ -77,21 +76,36 @@
             this.height=winHeight;
             this.getList(this.page.currentPage)
         },
+        activated() {
+            let winHeight=window.screen.availHeight-520;
+            this.height=winHeight;
+            this.getList(this.page.currentPage)
+        },
         methods: {
             //获取列表
-            getList(val){
-              let that=this;
-              let data={
-                  page:val
-              };
-              this.$axios
-                  .post(api.getManageList,data)
-                  .then(res=>{
-                      that.tableData=res.data.data.list;
-                  })
-                  .catch(err=>{
-                      console.log(err)
-                  })
+            getList(val) {
+                let that = this;
+                let data = {
+                    page: val,
+                    initiator:that.form.initiator,
+                };
+                that.tableLoading = true;
+                that.$axios
+                    .post(api.getInvitePageList, data)
+                    .then(res => {
+                        if (res.data.code == 200) {
+                            that.tableLoading=false;
+                            that.tableData=res.data.data.data;
+                            that.page.totalPage = res.data.data.resultCount;
+                        } else {
+                            that.$message.warning(res.data.msg);
+                            that.tableLoading=false;
+                        }
+                    })
+                    .catch(err => {
+                        that.tableLoading = false;
+                        console.log(err)
+                    })
             },
             //分页
             handleSizeChange(val) {
@@ -104,20 +118,22 @@
             },
             //详情
             detailItem(index,row){
+                sessionStorage.setItem('inviteDetail',JSON.stringify({ id:row.id }));
                 this.$router.push({path:'/inviteDetail',query:{id:row.id}})
             },
             //查看邀请
             watchItem(index,id){
-                this.$router.push('/inviteLink')
+                sessionStorage.setItem('inviteLink',JSON.stringify({ id:id}));
+                this.$router.push({path:'/inviteLink',query:{id:row.id}})
             },
             //发起邀请
             sendInvite(){
                 this.$router.push('/sendInvite')
             },
-            //查询
-            search(){
-
-            }
+            //重置表单
+            resetForm(formName) {
+                this.$refs[formName].resetFields();
+            },
         }
     }
 </script>

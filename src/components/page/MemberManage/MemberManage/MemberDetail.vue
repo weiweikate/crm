@@ -48,7 +48,7 @@
                 </div>
                 <div class="right">
                     <div>
-                        <img class="img" src="../../../assets/images/logo.png" alt="">
+                        <img class="img" src="../../../../assets/images/logo.png" alt="">
                     </div>
                     <div>
                         <el-button type="primary" @click="toLowerAgent">下级代理({{detail.number}})</el-button>
@@ -174,11 +174,11 @@
 </template>
 
 <script>
-    import vBreadcrumb from '../../common/Breadcrumb.vue';
-    import editBasic from './MemberManage/editBasicInf'
-    import editAuthor from './MemberManage/editAuthorInf'
-    import icon from '../../common/ico.vue';
-    import * as api from '../../../api/api';
+    import vBreadcrumb from '../../../common/Breadcrumb.vue';
+    import editBasic from './editBasicInf'
+    import editAuthor from './editAuthorInf'
+    import icon from '../../../common/ico.vue';
+    import * as api from '../../../../api/api';
 
     export default {
         components: {

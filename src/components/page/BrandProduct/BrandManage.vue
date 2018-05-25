@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="brand-manage">
         <v-breadcrumb :nav="['品牌产品管理','品牌管理']"></v-breadcrumb>
         <div class="table-block">
             <el-button type="primary" style="margin-bottom: 20px" @click="addBrand">添加品牌</el-button>
@@ -24,8 +24,10 @@
                     <el-table-column label="操作">
                         <template slot-scope="scope">
                             <!--<el-button type="primary" size="small" @click="toBrand(scope.$index,scope.row)">品牌页</el-button>-->
-                            <el-button type="warning" size="small" @click="editItem(scope.$index,scope.row.id)">编辑</el-button>
-                            <el-button type="danger" size="small" @click="delItem(scope.$index,scope.row.id)">删除</el-button>
+                            <el-button type="warning" size="small" @click="editItem(scope.$index,scope.row.id)">编辑
+                            </el-button>
+                            <el-button type="danger" size="small" @click="delItem(scope.$index,scope.row.id)">删除
+                            </el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -54,64 +56,64 @@
 
     export default {
         components: {
-            vBreadcrumb,icon,deleteToast
+            vBreadcrumb, icon, deleteToast
         },
         data() {
             return {
-                tableData:[],
+                tableData: [],
                 tableLoading: false,
-                page:{
-                    currentPage:1,
-                    totalPage:1
+                page: {
+                    currentPage: 1,
+                    totalPage: 1
                 },
-                height:'',
-                addOrEditMask:false,
+                height: '',
+                addOrEditMask: false,
                 isShowDelToast: false,
-                formLabelWidth:'100px',
-                form:{
-                    name:'',
-                    status:'0',
-                    icon:''
+                formLabelWidth: '100px',
+                form: {
+                    name: '',
+                    status: '0',
+                    icon: ''
                 },
                 delId: '',
-                delUrl:'',
+                delUrl: '',
             }
         },
-        created(){
-            let winHeight=window.screen.availHeight-600;
-            this.height=winHeight;
+        created() {
+            let winHeight = window.screen.availHeight - 600;
+            this.height = winHeight;
             this.getList(this.page.currentPage)
         },
-        activated(){
-            let winHeight=window.screen.availHeight-600;
-            this.height=winHeight;
+        activated() {
+            let winHeight = window.screen.availHeight - 600;
+            this.height = winHeight;
             this.getList(this.page.currentPage)
         },
         methods: {
             //获取列表
-            getList(val){
-              let that=this;
-              let data={
-                  page:val
-              };
-              that.tableLoading=true;
+            getList(val) {
+                let that = this;
+                let data = {
+                    page: val
+                };
+                that.tableLoading = true;
                 that.$axios
-                  .post(api.getBrandList,data)
-                  .then(res=>{
-                      if(res.data.code==200){
-                          that.tableLoading=false;
-                          that.tableData=res.data.data.data;
-                          that.page.totalPage = res.data.data.resultCount;
-                      }else{
-                          that.$message.warning(res.data.msg);
-                          that.tableLoading=false;
-                      }
+                    .post(api.getBrandList, data)
+                    .then(res => {
+                        if (res.data.code == 200) {
+                            that.tableLoading = false;
+                            that.tableData = res.data.data.data;
+                            that.page.totalPage = res.data.data.resultCount;
+                        } else {
+                            that.$message.warning(res.data.msg);
+                            that.tableLoading = false;
+                        }
 
-                  })
-                  .catch(err=>{
-                      console.log(err);
-                      that.tableLoading=false;
-                  })
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        that.tableLoading = false;
+                    })
             },
             //分页
             handleSizeChange(val) {
@@ -119,17 +121,18 @@
             },
             handleCurrentChange(val) {
                 console.log(`当前页: ${val}`);
-                this.page.currentPage=val;
+                this.page.currentPage = val;
                 this.getList(val)
             },
             // 添加品牌
-            addBrand(){
-                this.$router.push('/addOrUpBrand')
+            addBrand() {
+                // sessionStorage.setItem('addBrand', '1');
+                this.$router.push({path: '/addOrUpBrand'})
             },
             //编辑
-            editItem(index,id){
-                localStorage.setItem('brandId',id);
-                this.$router.push({path:'/addOrUpBrand',query:{brandId:id}})
+            editItem(index, id) {
+                sessionStorage.setItem('brandId', id);
+                this.$router.push({path: '/addOrUpBrand', query: {brandId: id}})
             },
 
             //跳到品牌页面
@@ -137,9 +140,9 @@
             //     this.$router.push({ path: "/addOrUpBrand", query: { params: row } });
             // },
             //删除
-            delItem(index,id){
+            delItem(index, id) {
                 this.delId = id;
-                this.delUrl=api.deleteBrand;
+                this.delUrl = api.deleteBrand;
                 this.isShowDelToast = true;
             },
             // 删除弹窗
@@ -148,35 +151,88 @@
                 this.getList(this.page.currentPage);
             },
             //上传图片
-            handleIconSuccess(res, file){
+            handleIconSuccess(res, file) {
 
             },
-            beforeIconUpload(file){
-                this.form.icon=file.name;
+            beforeIconUpload(file) {
+                this.form.icon = file.name;
             }
         }
     }
 </script>
 
-<style>
-    /*表格样式*/
-    .table-block{padding: 20px 20px 60px;background: #fff}
-    .block{float:right;margin-top: 10px}
+<style lang="less">
+    .brand-manage {
+        img{
+            width: 38px;
+            height: 38px;
+            border-radius: 5px;
+            vertical-align: middle;
+        }
+        /*表格样式*/
+        .table-block {
+            padding: 20px 20px 60px;
+            background: #fff
+        }
+        .block {
+            float: right;
+            margin-top: 10px
+        }
 
-    /*弹窗样式*/
-    .el-dialog{width: 530px;border-radius: 10px}
-    .el-dialog__header{border-bottom: 1px solid #eee;padding: 20px 20px 10px 50px}
-    .el-dialog__title{color: #ff6868}
-    .el-dialog .el-input{display: inline}
-    .el-dialog .el-input__inner{width: 360px}
-    .el-select .el-input__inner{width: 200px}
-    .el-dialog .el-upload--text{width: 100px;height: 40px;border: none}
-    .icon-area .el-input__inner{width: 240px}
-    .el-input__suffix{line-height: 24px}
-    .icon-uploader{float: right;margin-right: 31px;height: 33px}
-    .icon-uploader .el-button--small{border-radius: 5px;width: 100px}
-    .el-upload--text .el-icon-upload{line-height:0;margin:0;color: #fff;font-size: 14px}
-    .el-dialog__footer{margin-right: 30px}
-    .el-upload-list{display: none}
+        /*弹窗样式*/
+        .el-dialog {
+            width: 530px;
+            border-radius: 10px
+        }
+        .el-dialog__header {
+            border-bottom: 1px solid #eee;
+            padding: 20px 20px 10px 50px
+        }
+        .el-dialog__title {
+            color: #ff6868
+        }
+        .el-dialog .el-input {
+            display: inline
+        }
+        .el-dialog .el-input__inner {
+            width: 360px
+        }
+        .el-select .el-input__inner {
+            width: 200px
+        }
+        .el-dialog .el-upload--text {
+            width: 100px;
+            height: 40px;
+            border: none
+        }
+        .icon-area .el-input__inner {
+            width: 240px
+        }
+        .el-input__suffix {
+            line-height: 24px
+        }
+        .icon-uploader {
+            float: right;
+            margin-right: 31px;
+            height: 33px
+        }
+        .icon-uploader .el-button--small {
+            border-radius: 5px;
+            width: 100px
+        }
+        .el-upload--text .el-icon-upload {
+            line-height: 0;
+            margin: 0;
+            color: #fff;
+            font-size: 14px
+        }
+        .el-dialog__footer {
+            margin-right: 30px
+        }
+        .el-upload-list {
+            display: none
+        }
+    }
+
 
 </style>

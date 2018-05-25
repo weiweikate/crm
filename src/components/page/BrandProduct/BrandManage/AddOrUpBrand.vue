@@ -4,20 +4,20 @@
         <div class="container">
             <div class="brand-box">
                 <el-form :model="form" ref="form" :rules="rules">
-                    <el-form-item prop="name">
-                        <span class="label"><span class="required">*</span>品牌名称</span>
+                    <el-form-item prop="name" label="品牌名称">
                         <el-input placeholder="请输入品牌名称" v-model="form.name"></el-input>
                     </el-form-item>
-                    <el-form-item prop="area">
-                        <span class="label"><span class="required">*</span>品牌区域</span>
+                    <el-form-item prop="area" label="品牌区域">
                         <el-input placeholder="请输入品牌区域" v-model="form.area"></el-input>
                     </el-form-item>
-                    <el-form-item class="classify-area" prop="productcIds">
-                        <span class="label"><span class="required">*</span>品牌类目</span>
-                        <v-choosearea @productcIds="productcIds" v-model="form.productcIds" :detailData="detailData" :addOrUp="isUp?'update':''"></v-choosearea>
+                    <el-form-item class="classify-area" prop="productcIds" label="品牌类目">
+                        <!--<v-choosearea @productcIds="productcIds" @brandsId="brandsId" v-model="form.productcIds" :detailData="detailData"-->
+                                      <!--:addOrUp="isUp?'update':''"></v-choosearea>-->
+                        <v-choosearea @productcIds="productcIds" v-model="form.productcIds" :detailData="detailData"
+                                      :addOrUp="isUp?'update':''"></v-choosearea>
                         <div class="clearfix"></div>
                     </el-form-item>
-                    <el-form-item label="品牌logo">
+                    <el-form-item prop="original_img" label="品牌logo">
                         <el-upload
                                 class="avatar-uploader"
                                 action="/commonAPI/ossClient/aliyunOSSUploadImage"
@@ -26,12 +26,12 @@
                                 :on-remove="handleRemove"
                                 :on-success="handleAvatarSuccess"
                         >
-                            <img v-if="form.originalImg" :src="form.originalImg" class="avatar">
+                            <img v-if="form.original_img" :src="form.original_img" class="avatar">
                             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                            <el-input v-model="form.smallImg"></el-input>
+                            <el-input v-model="form.small_img"></el-input>
                         </el-upload>
                     </el-form-item>
-                    <el-form-item label="是否启用">
+                    <el-form-item prop="status" label="是否启用">
                         <el-radio-group v-model="form.status">
                             <el-radio label="1">启用</el-radio>
                             <el-radio label="2">停用</el-radio>
@@ -50,7 +50,7 @@
 <script>
     import icon from "../../../common/ico";
     import vBreadcrumb from '../../../common/Breadcrumb.vue';
-    import vChoosearea from '../../../common/chooseBrandClassify.vue';
+    import vChoosearea from '../../../common/chooseClassify.vue';
     import * as api from '../../../../api/api'
 
     export default {
@@ -61,15 +61,15 @@
             return {
                 form: {
                     name: "",
-                    originalImg: '1111',
-                    smallImg:'2222',
+                    original_img: '',
+                    small_img: '',
                     area: '',
                     status: '1',
-                    productcIds:''
+                    productcIds: ''
                 },
-                detailData:[],
-                btnLoading:false,
-                classifyId:[],
+                detailData: [],
+                btnLoading: false,
+                classifyId: [],
                 checkAll: false,
                 rules: {
                     name: [
@@ -80,43 +80,66 @@
                     ],
                     productcIds: [
                         {required: true, message: "请选择品牌类目", trigger: "blur"}
+                    ],
+                    original_img: [
+                        {required: true, message: "请上传品牌LOGO", trigger: "blur"}
                     ]
                 },
-                isUp:false,//添加false，修改true
-                id:''
+                isUp: false,//添加false，修改true
+                id: '',
+                addBrand:''
             }
         },
         created() {
-            let that=this;
+            let that = this;
             that.id =
-                that.$route.query.brandId ||localStorage.getItem('brandId');
-            if(that.id){
+                that.$route.query.brandId || sessionStorage.getItem('brandId');
+            that.addBrand =
+                that.$route.query.addBrand || sessionStorage.getItem('addBrand');
+            if (that.id&&!that.isUp) {
                 that.getDetail();
-                that.isUp=true;
+                that.isUp = true;
+            }
+        },
+        activated() {
+            let that = this;
+            that.id =
+                that.$route.query.brandId || sessionStorage.getItem('brandId');
+            if (that.id&&!that.isUp) {
+                that.getDetail();
+                that.isUp = true;
+            }
+        },
+        mounted() {
+            let that = this;
+            that.addBrand =
+                that.$route.query.addBrand || sessionStorage.getItem('addBrand');
+            if (that.addBrand=='1') {
+                that.$refs['form'].resetFields();
             }
         },
         methods: {
             //获取详情
-            getDetail(){
-                let that=this;
-                let data={
-                    id:that.id
+            getDetail() {
+                let that = this;
+                let data = {
+                    id: that.id
                 };
-                that.loading=true;
+                that.loading = true;
                 that.$axios
-                    .post(api.findBrandById,data)
-                    .then(res=>{
-                        if(res.data.code==200){
-                            that.loading=false;
-                            that.form=res.data.data.product;
-                            that.detailData=res.data.data.userProduct;
-                        }else{
-                            that.loading=false;
+                    .post(api.findBrandById, data)
+                    .then(res => {
+                        if (res.data.code == 200) {
+                            that.loading = false;
+                            that.form = res.data.data.product;
+                            that.detailData = res.data.data.userProduct;
+                        } else {
+                            that.loading = false;
                             that.$message.warning(res.data.msg);
                         }
                     })
-                    .catch(err=>{
-                        that.loading=false
+                    .catch(err => {
+                        that.loading = false
                     })
             },
             handlePreview(file) {
@@ -124,49 +147,72 @@
             },
             //上传图片
             handleAvatarSuccess(res, file) {
-                this.form.originalImg = URL.createObjectURL(file.raw);
+                this.form.original_img = res.data.imageUrl;
+                this.form.small_img = res.data.imageThumbUrl;
             },
-            productcIds(productcIds){
-                this.form.productcIds=productcIds.join(',');
+            productcIds(productcIds) {
+                this.form.productcIds = productcIds.join(',');
             },
+            // brandsId(brandsId) {
+            // },
             handleRemove() {
-                this.form.originalImg = ''
+                this.form.original_img = ''
             },
             // 提交表单
             submitForm(form) {
-                let that=this;
-                that.btnLoading=true;
+                let that = this;
+                that.btnLoading = true;
                 that.$refs[form].validate(valid => {
-                        if (valid) {
-                            let data = this[form];
-                            this.$axios
-                                .post(api.addBrand, data)
-                                .then(res => {
-                                    that.btnLoading=false;
-                                    if(res.data.code==200){
-                                        that.$message.success(res.data.msg);
-                                        setTimeout(function () {
-                                            that.$router.push('/brandManage')
-                                        },1000)
-                                    }else{
-                                        that.$message.warning(res.data.msg);
-                                    }
-                                })
-                                .catch(err => {
-                                    console.log(err);
-                                    that.btnLoading=false;
-                                });
+                    if (valid) {
+                        let url = '';
+                        let data = {};
+                        data.originalImg = this[form].original_img;
+                        data.smallImg = this[form].small_img;
+                        data.name=this[form].name;
+                        data.area=this[form].area;
+                        data.status=this[form].status;
+                        data.productcIds=this[form].productcIds;
+                        if (that.isUp) {//修改
+                            url = api.updateBrand;
+                            data.id = that.id;
                         } else {
-                            console.log("error submit!!");
-                            that.btnLoading=false;
-                            return false;
+                            url = api.addBrand;
                         }
+                        this.$axios
+                            .post(url, data)
+                            .then(res => {
+                                that.btnLoading = false;
+                                if (res.data.code == 200) {
+                                    that.$message.success(res.data.msg);
+                                    setTimeout(function () {
+                                        that.$router.push('/brandManage')
+                                    }, 1000)
+                                } else {
+                                    that.$message.warning(res.data.msg);
+                                }
+                            })
+                            .catch(err => {
+                                console.log(err);
+                                that.btnLoading = false;
+                            });
+                        this.clearStorage();
+                    } else {
+                        console.log("error submit!!");
+                        that.btnLoading = false;
+                        return false;
+                    }
                 });
             },
             //取消
             cancel() {
-                this.$router.push('/brandManage')
+                this.$router.push('/brandManage');
+                this.clearStorage()
             },
+            //清空缓存
+            clearStorage(){
+                sessionStorage.setItem('addBrand','');
+                sessionStorage.setItem('brandId','');
+            }
         }
     };
 </script>
@@ -177,6 +223,7 @@
             text-align: right;
             display: inline-block;
             margin-right: 10px;
+            vertical-align: top;
         }
         .el-input {
             width: 350px
@@ -224,6 +271,7 @@
         }
         .avatar-uploader {
             height: 70px;
+            display: inline-block;
         }
         .avatar-uploader .el-upload {
             border: 1px dashed #d9d9d9;
