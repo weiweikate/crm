@@ -6,9 +6,9 @@ MODULE_NAME=${2}
 echo 'get params 1:' $PROJECT_NAME 'get params 2:' $MODULE_NAME
 
 echo 'create workspace start'
-ROOTPATH=/data/wwwroot/default/$PROJECT_NAME/
+ROOTPATH=/usr/local/$PROJECT_NAME/
 echo $ROOTPATH
-BACKUPSPATH=/data/wwwroot/default/backups/$PROJECT_NAME/$MODULE_NAME
+BACKUPSPATH=/usr/local/backups/$PROJECT_NAME/$MODULE_NAME
 echo $BACKUPSPATH
 if [ ! -d $ROOTPATH ];
 then
