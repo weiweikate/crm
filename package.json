@@ -2,7 +2,7 @@
   "name": "vue-manage-system",
   "version": "3.1.0",
   "description": "基于Vue.js 2.x系列 + element-ui 内容管理系统解决方案",
-  "author": "lin-xin <2981207131@qq.com>",
+  "author": "wuchengji",
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
@@ -10,16 +10,21 @@
     "build:dll": "webpack --config build/webpack.dll.conf.js"
   },
   "dependencies": {
+    "area-data": "^5.0.6",
     "axios": "^0.15.3",
     "babel-polyfill": "^6.23.0",
+    "dependencies": "0.0.1",
     "element-ui": "2.3.3",
     "js-md5": "^0.7.3",
     "less": "^3.0.4",
     "less-loader": "^4.1.0",
     "mavon-editor": "^2.5.4",
+    "moment": "^2.22.1",
+    "peer": "^0.2.8",
     "vue": "^2.5.16",
+    "vue-area-linkage": "^5.0.0",
     "vue-cropperjs": "^2.2.0",
-    "vue-quill-editor": "3.0.6",
+    "vue-quill-editor": "^3.0.6",
     "vue-router": "^3.0.1",
     "vue-schart": "^0.1.4",
     "vuedraggable": "^2.16.0"

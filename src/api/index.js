@@ -4,7 +4,9 @@ import { Message } from 'element-ui';
 import utils from '../utils/index.js';
 import qs from 'qs';
   
-axios.defaults.baseURL = 'https://www.easy-mock.com';//局域网   
+// axios.defaults.baseURL = 'https://www.easy-mock.com';
+// axios.defaults.baseURL = 'http://172.16.10.56:8101/';//开发
+ 
 
 axios.defaults.timeout = 20000;   
 
@@ -12,15 +14,20 @@ axios.defaults.headers.post['Content-Type'] = "application/x-www-form-urlencoded
 
 var loading;
 axios.interceptors.request.use(config => {
-  let sessionId = sessionStorage.getItem('sessionId') || 'adsadsasasasd';
-  let sessionPwd = sessionStorage.getItem('sessionPwd') || 'qewqeqeqeqwqe';
   let receiveData = config.data;
-  receiveData.sessionId = sessionId;
-  receiveData.sessionPwd = sessionPwd;
+  // 免session
+  // let nocheckout = ['/admin/adminLogin/pswLogin'];
+  // let url = '/'+config.url.split(axios.defaults.baseURL)[1];
+  // if(nocheckout.indexOf(url) == -1){
+  //   let sessionId = sessionStorage.getItem('sessionId') || 'adsadsasasasd';
+  //   let sessionPwd = sessionStorage.getItem('sessionPwd') || 'qewqeqeqeqwqe';
+  //   receiveData.sessionId = sessionId;
+  //   receiveData.sessionPwd = sessionPwd;
+  // }
   if(config.method == 'post'){
-    var sentData = qs.stringify(utils.encryptData(receiveData));
+    var sentData = qs.stringify(receiveData);
   }else{
-    var sentData = utils.encryptData(receiveData);
+    var sentData = receiveData;
   }
   config.data = sentData;
     return config;
@@ -28,6 +35,11 @@ axios.interceptors.request.use(config => {
 
 axios.interceptors.response.use(
   res => {
+    if(res.data.code == 210){
+      Message.warning(res.data.msg);
+      sessionStorage.clear();
+      return;
+    }
     if (res.status != '200') {
       Message.error({duration:1000,message:'响应失败'})
       setTimeout(()=>{

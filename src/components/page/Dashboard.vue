@@ -33,7 +33,7 @@
                 </el-card>
             </el-col>
         </el-row >
-        <el-row :gutter="20" style="margin-top:20px">
+        <el-row :gutter="20" style="margin-top:20px;">
             <el-col :span="10">
                 <el-card class="top-card clearfix">
                     <div slot="header" class="clearfix">
@@ -90,24 +90,42 @@
                 </el-card>
             </el-col>
         </el-row>
+        <act-account-code @status='isShowCode' v-if="isShowActAccCode"></act-account-code>
+        <act-account-pwd @status='isShowPwd' v-if="isShowActAccPwd"></act-account-pwd>
     </div>
 </template>
 
 <script>
 import icon from "../common/ico";
-import breadcrumb from '../common/Breadcrumb';
+import breadcrumb from "../common/Breadcrumb";
+import actAccountPwd from "./Dashboard/actAccountPwd";
+import actAccountCode from './Dashboard/actAccountCode';
 export default {
   components: {
     icon,
     breadcrumb,
+    actAccountPwd,
+    actAccountCode
   },
   data() {
-    return {};
+    return {
+      isShowActAccPwd: false,
+      isShowActAccCode:true
+    };
+  },
+  methods: {
+    isShowCode(msg) {
+        this.isShowActAccCode = msg;
+        this.isShowActAccPwd = !msg;
+    },
+    isShowPwd(msg){
+        this.isShowActAccPwd = false;
+    }
   }
 };
 </script>
 
 
 <style scoped>
-@import "../../assets/css/dashboard.css";
+@import "../../assets/css/dashboard/dashboard.css";
 </style>

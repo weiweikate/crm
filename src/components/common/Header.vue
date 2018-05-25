@@ -35,7 +35,7 @@
                         {{username}} <i class="el-icon-caret-bottom"></i>
                     </span>
                     <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item>个人信息</el-dropdown-item>
+                        <el-dropdown-item command='editMangerMsg'>个人信息</el-dropdown-item>
                         <el-dropdown-item divided  command="loginout">退出登录</el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
@@ -45,10 +45,10 @@
 </template>
 <script>
 import bus from "../common/bus";
-import vTags from './Tags.vue';
+import vTags from "./Tags.vue";
 export default {
-  components:{
-  vTags
+  components: {
+    vTags
   },
   data() {
     return {
@@ -70,7 +70,11 @@ export default {
     handleCommand(command) {
       if (command == "loginout") {
         localStorage.removeItem("ms_username");
+        sessionStorage.clear();
         this.$router.push("/login");
+      } else if (command == "editMangerMsg") {
+        sessionStorage.setItem("editMangerMsg", "admin");
+        this.$router.push({name:'editMangerMsg',params:{editMangerMsg:'admin'}});
       }
     },
     // 侧边栏折叠
@@ -200,23 +204,23 @@ export default {
   float: left;
   margin-top: 20px;
   left: 300px;
-  width: 70%;
+  width: 69%;
   height: 30px;
 }
 @keyframes bounce-in {
   0% {
-    width: 250px
+    width: 250px;
   }
   100% {
-    width: 0px
+    width: 0px;
   }
 }
 @keyframes bounce-out {
   0% {
-    width: 0px
+    width: 0px;
   }
   100% {
-    width: 250px
+    width: 250px;
   }
 }
 </style>

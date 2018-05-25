@@ -12,6 +12,12 @@ Vue.use(Vue=>{
     Vue.prototype.$axios = axios;
 })
 
+// 全局过滤器
+import moment from 'moment';
+Vue.filter('formatDate',function (value) {  
+    return moment(value).format('YYYY-MM-DD HH:mm:ss');
+})
+
 //使用钩子函数对路由进行权限跳转
 router.beforeEach((to, from, next) => {
     const role = localStorage.getItem('ms_username');

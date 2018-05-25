@@ -5,8 +5,8 @@
             <el-tabs class="tab" v-model="loginType" type="card" @tab-click="tabClick">
                 <el-tab-pane label="账号登陆" name="first">
                     <el-form :model="form1" :rules="rules" ref="form1" label-width="0px">
-                        <el-form-item prop="username">
-                            <el-input class="login-inp" size="large" placeholder="请输入登陆手机号" v-model="form1.username">
+                        <el-form-item prop="phone">
+                            <el-input class="login-inp" size="large" placeholder="请输入登陆手机号" v-model="form1.phone">
                                 <icon slot="prefix" class="login-ico" ico="icon-zhucedengluyonghuming"></icon>
                             </el-input>
                         </el-form-item>
@@ -22,8 +22,8 @@
                 </el-tab-pane>
                 <el-tab-pane label="手机验证登陆" name="second">
                     <el-form :model="form2" :rules="rules" ref="form2" label-width="0px">
-                        <el-form-item prop="username">
-                            <el-input class="login-inp" size="large" placeholder="请输入登陆手机号" v-model="form2.username">
+                        <el-form-item prop="phone">
+                            <el-input class="login-inp" size="large" placeholder="请输入登陆手机号" v-model="form2.phone">
                                 <icon slot="prefix" class="login-ico" ico="icon-zhucedengluyonghuming"></icon>
                             </el-input>
                         </el-form-item>
@@ -35,7 +35,7 @@
                             <el-button class="code-btn" type="primary" v-else>{{codeTime}}s</el-button>
                         </el-form-item>
                         <div class="login-btn">
-                            <el-button @click="submitForm('form1')">登录</el-button>
+                            <el-button @click="submitForm('form2')">登录</el-button>
                         </div>
                     </el-form>
                 </el-tab-pane>
@@ -46,85 +46,113 @@
 </template>
 
 <script>
-import * as api from "../../api/api.js";
-import icon from "../common/ico";
-export default {
-  components: {
-    icon
-  },
-  data() {
-    return {
-      loginType: "first",
-      code:true,
-      codeTime:5,
-      form1: {
-        username: "admin",
-        password: "123123"
-      },
-      form2: {
-        username: "admin",
-        code: ""
-      },
-      rules: {
-        username: [
-          { required: true, message: "请输入登陆手机号", trigger: "blur" }
-        ],
-        password: [
-          { required: true, message: "请输入登陆密码", trigger: "blur" }
-        ],
-        code: [
-          { required: true, message: "请输入验证码", trigger: "blur" }
-        ]
-      }
-    };
-  },
-  methods: {
-    // 提交表单
-    submitForm(formName) {
-      this.$refs[formName].validate(valid => {
-        if (valid) {
-          let data = this[formName];
-          this.$axios
-            .post(api.LOGIN, data)
-            .then(res => {
-              if (res.data.code == 200) {
-                this.$message.success("登陆成功！");
-                localStorage.setItem("ms_username", res.data.ms_username);
-                this.$router.push("/");
-              } else {
-                this.$message.warning("登陆失败！");
-              }
-            })
-            .catch(err => {
-              console.log(err);
-            });
-        } else {
-          console.log("error submit!!");
-          return false;
-        }
-      });
-    },
-    // 获取验证码
-    getCode(){
-        let that = this;
-        this.code = false;
-        this.codeTime = 5;
-        let timer = setInterval(function(){
-            that.codeTime--;
-            if(that.codeTime <=0){
-                that.code = true;
-                clearInterval(timer);
+    import * as api from "../../api/api.js";
+    import icon from "../common/ico";
+
+    export default {
+        components: {
+            icon
+        },
+        data() {
+            return {
+                loginType: "first",
+                code: true,
+                codeTime: 5,
+                form1: {
+                    phone: "13987456875",
+                    password: "123abc"
+                },
+                form2: {
+                    phone: "17612341234",
+                    code: "123456789"
+                },
+                rules: {
+                    username: [
+                        {required: true, message: "请输入登陆手机号", trigger: "blur"}
+                    ],
+                    password: [
+                        {required: true, message: "请输入登陆密码", trigger: "blur"}
+                    ],
+                    code: [
+                        {required: true, message: "请输入验证码", trigger: "blur"}
+                    ]
+                }
+            };
+        },
+        methods: {
+            // 提交表单
+            submitForm(formName) {
+                this.$refs[formName].validate(valid => {
+                    if (valid) {
+                        let data = this[formName];
+                        let url;
+                        if (formName == 'form1') {
+                            url = api.loginByPwd;
+                        } else {
+                            url = api.loginByCode;
+                        }
+                        this.$axios
+                            .post(url, data)
+                            .then(res => {
+                                console.log(res.data)
+                                if (res.data.code == 200) {
+                                    this.$message.success("登陆成功！");
+                                    localStorage.setItem("ms_username", '小猪佩奇');
+                                    localStorage.setItem("ms_userID", 111);
+                                    this.$router.push("/dashboard");
+                                } else {
+                                    this.$message.warning(res.data.msg);
+                                }
+                            })
+                            .catch(err => {
+                                console.log(err);
+                            });
+                    } else {
+                        console.log("error submit!!");
+                        return false;
+                    }
+                });
+            },
+            // 获取验证码
+            getCode() {
+                let phoneNum = this.form2.phone;
+                if (phoneNum == '') {
+                    this.$message.warning('请输入手机号!');
+                    return;
+                }
+                let that = this;
+                this.code = false;
+                this.codeTime = 60;
+                let timer = setInterval(function () {
+                    that.codeTime--;
+                    if (that.codeTime <= 0) {
+                        that.code = true;
+                        clearInterval(timer);
+                    }
+                }, 1000)
+                let data = {phone: this.form2.phone}
+                this.$axios
+                    .post(api.getCode, data)
+                    .then(res => {
+                        if (res.data.code == 200) {
+                            this.$message.success(res.data.msg);
+                            alert(res.data.data);
+                        } else {
+                            this.$message.warning(res.data.msg);
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+            },
+            // tab切换
+            tabClick(params) {
+                console.log(params);
             }
-        },1000)
-    },
-    // tab切换
-    tabClick(params) {
-      console.log(params);
-    }
-  }
-};
+        }
+    };
 </script>
 
 <style lang='less'>
-@import "../../assets/css/login.css";
+    @import "../../assets/css/login/login.css";
 </style>

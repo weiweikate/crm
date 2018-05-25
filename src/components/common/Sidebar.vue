@@ -3,13 +3,14 @@
         <div v-if="isShowLogo" class="search-area">
             <img class="logo-img" src="../../assets/images/logo.png" alt="" />
         </div>
-        <el-menu class="sidebar-el-menu" :default-active="onRoutes" :collapse="collapse" background-color="#222d32"
+        <el-menu :unique-opened='true' class="sidebar-el-menu" :default-active="onRoutes" :collapse="collapse" background-color="#222d32"
             text-color="#b1b1b1" active-text-color="#fff" router>
             <template v-for="item in items">
                 <template v-if="item.subs">
                     <el-submenu :index="item.index" :key="item.index">
                         <template slot="title">
-                            <i :class="item.icon"></i><span slot="title">{{ item.title }}</span>
+                          <icon :ico="item.icon"></icon><span slot="title">{{ item.title }}</span>
+                            <!-- <i :class="item.icon"></i><span slot="title">{{ item.title }}</span> -->
                         </template>
                         <el-menu-item v-for="(subItem,i) in item.subs" :key="i" :index="subItem.index">
                             {{ subItem.title }}
@@ -18,7 +19,7 @@
                 </template>
                 <template v-else>
                     <el-menu-item :index="item.index" :key="item.index">
-                        <i :class="item.icon"></i><span slot="title">{{ item.title }}</span>
+                        <icon :ico="item.icon"></icon><span slot="title">{{ item.title }}</span>
                     </el-menu-item>
                 </template>
             </template>
@@ -28,52 +29,122 @@
 
 <script>
 import bus from "../common/bus";
+import icon from './ico'
 export default {
+  components:{
+    icon
+  },
   data() {
     return {
       collapse: false,
-      isShowLogo:true,
+      isShowLogo: true,
       items: [
         {
-          icon: "el-icon-setting",
+          icon: "icon-shouye",
           index: "dashboard",
           title: "系统首页"
         },
         {
-          icon: "el-icon-date",
+          icon: "icon-shouquanfuwu",
           index: "3",
-          title: "表单相关",
+          title: "授权管理",
           subs: [
             {
-              index: "form",
-              title: "基本表单"
+              index: "channelItemManage",
+              title: "渠道类目管理"
+            },
+            {
+              index: "certificateUse",
+              title: "授权证书模板"
+            },
+            {
+              index: "contractReview",
+              title: "续约审核"
+            }
+          ]
+        },
+        {
+          icon: "icon-suyuan",
+          index: "101",
+          title: "溯源管理",
+          subs: [
+            {
+              index: "rootsCodeMange",
+              title: "溯源防伪码管理"
+            },
+            {
+              index: "rootsCodeQuery",
+              title: "防伪码查询"
+            },
+            {
+              index: "rootsCodeTpl",
+              title: "防伪码模板"
             }
           ]
         },
           {
-              icon: "el-icon-goods",
+              icon: "icon-fenlei",
               index: "4",
               title: "品牌产品管理",
               subs: [
                   {
                       index: "brandProductClassify",
-                      title: "品牌产品类型管理"
-                  },{
+                      title: "产品分类管理"
+                  }, {
                       index: "brandManage",
                       title: "品牌管理"
+                  }
+              ]
+          },
+          {
+              icon: "icon-huiyuanzhanghaoguanli",
+              index: "6",
+              title: "会员管理",
+              subs: [
+                  {
+                      index: "levelManage",
+                      title: "经销商层级管理"
                   },{
-                      index: "productManage",
-                      title: "品牌管理"
+                      index: "joinManage",
+                      title: "经销商加盟管理"
                   },{
-                      index: "productAudit",
-                      title: "产品审核"
+                      index: "memberManage",
+                      title: "经销商会员管理"
+                  }
+              ]
+          },
+          {
+              icon: "icon-huiyuanzhanghaoguanli",
+              index: "9",
+              title: "服务管理",
+              subs: [
+                  {
+                      index: "noticeInformManage",
+                      title: "公告通知管理"
+                  },{
+                      index: "feedBack",
+                      title: "问题反馈"
                   }
               ]
           },
         {
-          icon: "el-icon-warning",
-          index: "permission",
-          title: "权限测试"
+          icon: "icon-shezhi",
+          index: "7",
+          title: "权限管理",
+          subs: [
+            {
+              index: "manageList",
+              title: "管理员账号管理"
+            },
+            {
+              index: "jobsPermissionMange",
+              title: "岗位权限管理"
+            },
+            {
+              index: "setPermission",
+              title: "权限设置"
+            }
+          ]
         }
       ]
     };
@@ -111,11 +182,11 @@ export default {
   .el-menu-item .is-active,
   .el-submenu .is-active {
     border-left: 5px solid #ff1e30;
-    background-color:rgba(255, 255, 255, .2)!important;
+    background-color: rgba(255, 255, 255, 0.2) !important;
   }
-  .el-menu-item:hover{
-    color: white!important;
-    background-color:rgba(255, 255, 255, .2)!important;
+  .el-menu-item:hover {
+    color: white !important;
+    background-color: rgba(255, 255, 255, 0.2) !important;
   }
   .search-area {
     height: 150px;
