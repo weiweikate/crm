@@ -36,4 +36,3 @@ rm -rf $ROOTPATH/*
 echo 'start ' $MODULE_NAME ' server'
 cp -rf ../$MODULE_NAME/ $ROOTPATH/
 echo $MODULE_NAME Start Success!
-
