@@ -48,8 +48,9 @@
                 </el-form-item>
                 <el-form-item label="类目图标" :label-width="formLabelWidth" class="icon-area">
                     <el-input v-model="form.img" auto-complete="off"></el-input>
-                    <el-upload action="123" class="icon-uploader"
-                            :before-upload="beforeIconUpload">
+                    <el-upload class="icon-uploader"
+                               action="/commonAPI/ossClient/aliyunOSSUploadImage"
+                               :on-success="handleAvatarSuccess">
                         <el-button size="small" type="primary"><i class="el-icon-upload"></i>上传</el-button>
                     </el-upload>
                 </el-form-item>
@@ -74,237 +75,247 @@
 </template>
 
 <script>
-import vBreadcrumb from "../../common/Breadcrumb.vue";
-import icon from "../../common/ico.vue";
-import deleteToast from "../../common/DeleteToast";
-import * as api from "../../../api/api";
+    import vBreadcrumb from "../../common/Breadcrumb.vue";
+    import icon from "../../common/ico.vue";
+    import deleteToast from "../../common/DeleteToast";
+    import * as api from "../../../api/api";
 
-export default {
-  components: {
-    vBreadcrumb,
-    icon,
-    deleteToast
-  },
-  data() {
-    return {
-      tableData: [],
-      page: {
-        currentPage: 1,
-        totalPage: 20
-      },
-      height: "",
-      addOrEditMask: false,
-      isShowDelToast: false,
-      formLabelWidth: "100px",
-      form: {
-        name: "",
-        status: "1",
-        img: ""
-      },
-      title: "添加二级类目",
-      id: "",
-      itemId: "",
-      name: "",
-      itype: "",
-      delId: 66,
-      delUrl: "http://api"
-    };
-  },
-  created() {
-    let winHeight = window.screen.availHeight - 500;
-    this.height = winHeight;
-    this.name =
-      this.$route.query.name ||
-      JSON.parse(sessionStorage.getItem("secondClassify").name);
-    this.id =
-      this.$route.query.id ||
-      JSON.parse(sessionStorage.getItem("secondClassify").id);
-  },
-  activated() {
-    this.name =
-      this.$route.query.name ||
-      JSON.parse(sessionStorage.getItem("secondClassify").name);
-    this.id =
-      this.$route.query.id ||
-      JSON.parse(sessionStorage.getItem("secondClassify").id);
-    this.getList(this.page.currentPage);
-  },
-  methods: {
-    //获取列表
-    getList(val) {
-      let that = this;
-      let data = {
-        page: val,
-        fatherid: this.id
-      };
-      this.$axios
-        .post(api.getCategoryList, data)
-        .then(res => {
-          if (res.data.code == 200) {
-            this.tableData = [];
-            this.tableData = res.data.data.data;
-            this.page.totalPage = res.data.data.resultCount;
-          } else {
-            this.$message.warning(res.data.msg);
-          }
-          console.log(res.data);
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    },
-    //分页
-    handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
-    },
-    handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
-      this.page.currentPage = val;
-      this.getList(val);
-    },
-    // 添加二级类目
-    addClassify() {
-      this.title = "添加二级类目";
-      this.addOrEditMask = true;
-      this.itype = "add";
-    },
-    //编辑
-    editItem(row) {
-      this.title = "编辑二级类目";
-      this.addOrEditMask = true;
-      this.form = row;
-      this.itemId = row.id;
-      this.itype = "edit";
-    },
-    //添加修改确定
-    addOrEdit() {
-      let url = "";
-      let data = {};
-      data.name = this.form.name;
-      data.img = this.form.img;
-      data.status = this.form.status;
-      if (this.itype == "add") {
-        url = api.addCategory;
-        data.fatherid = this.id;
-      } else {
-        url = api.editCategory;
-        data.id = this.itemId;
-      }
-      this.btnLoading = true;
-      this.$axios
-        .post(url, data)
-        .then(res => {
-          if (res.data.code == 200) {
-            this.$message.success(res.data.msg);
-            this.btnLoading = false;
-            this.addOrEditMask = false;
+    export default {
+        components: {
+            vBreadcrumb,
+            icon,
+            deleteToast
+        },
+        data() {
+            return {
+                tableData: [],
+                page: {
+                    currentPage: 1,
+                    totalPage: 20
+                },
+                height: "",
+                addOrEditMask: false,
+                isShowDelToast: false,
+                formLabelWidth: "100px",
+                form: {
+                    name: "",
+                    status: "1",
+                    img: ""
+                },
+                title: "添加二级类目",
+                id: "",
+                itemId: "",
+                name: "",
+                itype: "",
+                delId: 66,
+                delUrl: "http://api"
+            };
+        },
+        created() {
+            let winHeight = window.screen.availHeight - 500;
+            this.height = winHeight;
+            this.name =
+                this.$route.query.name ||
+                JSON.parse(sessionStorage.getItem("secondClassify").name);
+            this.id =
+                this.$route.query.id ||
+                JSON.parse(sessionStorage.getItem("secondClassify").id);
+        },
+        activated() {
+            this.name =
+                this.$route.query.name ||
+                JSON.parse(sessionStorage.getItem("secondClassify").name);
+            this.id =
+                this.$route.query.id ||
+                JSON.parse(sessionStorage.getItem("secondClassify").id);
             this.getList(this.page.currentPage);
-          } else {
-            this.btnLoading = false;
-            this.$message.warning(res.data.msg);
-          }
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    },
-    //删除
-    delItem(id) {
-      this.delId = id;
-      this.delUrl = api.deleteCategory;
-      this.isShowDelToast = true;
-    },
-    // 删除弹窗
-    deleteToast(msg) {
-      this.isShowDelToast = msg;
-      this.getList(this.page.currentPage);
-    },
-    //上传图片
-    beforeIconUpload(file) {
-      let fd = new FormData();
-      fd.append("file", file);
-      this.$axios
-        .post(api.addImg, fd, {
-          headers: {
-            "Content-Type": "multipart/form-data"
-          }
-        })
-        .then(res => {
-          console.log(res.data);
-          this.form.img = "http://img";
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    }
-  }
-};
+        },
+        methods: {
+            //获取列表
+            getList(val) {
+                let that = this;
+                let data = {
+                    page: val,
+                    fatherid: this.id
+                };
+                this.$axios
+                    .post(api.getCategoryList, data)
+                    .then(res => {
+                        if (res.data.code == 200) {
+                            this.tableData = [];
+                            this.tableData = res.data.data.data;
+                            this.page.totalPage = res.data.data.resultCount;
+                        } else {
+                            this.$message.warning(res.data.msg);
+                        }
+                        console.log(res.data);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+            },
+            //分页
+            handleSizeChange(val) {
+                console.log(`每页 ${val} 条`);
+            },
+            handleCurrentChange(val) {
+                console.log(`当前页: ${val}`);
+                this.page.currentPage = val;
+                this.getList(val);
+            },
+            // 添加二级类目
+            addClassify() {
+                this.title = "添加二级类目";
+                this.addOrEditMask = true;
+                this.itype = "add";
+            },
+            //编辑
+            editItem(row) {
+                this.title = "编辑二级类目";
+                this.addOrEditMask = true;
+                this.form = row;
+                this.itemId = row.id;
+                this.itype = "edit";
+            },
+            //添加修改确定
+            addOrEdit() {
+                let url = "";
+                let data = {};
+                data.name = this.form.name;
+                data.img = this.form.img;
+                data.status = this.form.status;
+                if (this.itype == "add") {
+                    url = api.addCategory;
+                    data.fatherid = this.id;
+                } else {
+                    url = api.editCategory;
+                    data.id = this.itemId;
+                }
+                this.btnLoading = true;
+                this.$axios
+                    .post(url, data)
+                    .then(res => {
+                        if (res.data.code == 200) {
+                            this.$message.success(res.data.msg);
+                            this.btnLoading = false;
+                            this.addOrEditMask = false;
+                            this.getList(this.page.currentPage);
+                        } else {
+                            this.btnLoading = false;
+                            this.$message.warning(res.data.msg);
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+            },
+            //删除
+            delItem(id) {
+                this.delId = id;
+                this.delUrl = api.deleteCategory;
+                this.isShowDelToast = true;
+            },
+            // 删除弹窗
+            deleteToast(msg) {
+                this.isShowDelToast = msg;
+                this.getList(this.page.currentPage);
+            },
+            //上传图片
+            handleAvatarSuccess(res, file) {
+                this.form.img = URL.createObjectURL(file.raw);
+            },
+            //上传图片
+            // beforeIconUpload(file) {
+            //     let fd = new FormData();
+            //     fd.append("file", file);
+            //     this.$axios
+            //         .post(api.addImg, fd, {
+            //             headers: {
+            //                 "Content-Type": "multipart/form-data"
+            //             }
+            //         })
+            //         .then(res => {
+            //             console.log(res.data);
+            //             this.form.img = "http://img";
+            //         })
+            //         .catch(err => {
+            //             console.log(err);
+            //         });
+            // }
+        }
+    };
 </script>
 
 <style lang="less">
-.second-classify {
-  /*表格样式*/
-  .table-block {
-    padding: 20px 20px 60px;
-    background: #fff;
-  }
-  .block {
-    float: right;
-    margin-top: 10px;
-  }
+    .second-classify {
+        /*表格样式*/
+        .table-block {
+            padding: 20px 20px 60px;
+            background: #fff;
+        }
+        img {
+            width: 38px;
+            height: 38px;
+            border-radius: 5px;
+            vertical-align: middle;
+        }
+        .block {
+            float: right;
+            margin-top: 10px;
+        }
 
-  /*弹窗样式*/
-  .el-dialog {
-    width: 530px;
-    border-radius: 10px;
-  }
-  .el-dialog__header {
-    border-bottom: 1px solid #eee;
-    padding: 20px 20px 10px 50px;
-  }
-  .el-dialog__title {
-    color: #ff6868;
-  }
-  .el-dialog .el-input {
-    display: inline;
-  }
-  .el-dialog .el-input__inner {
-    width: 360px;
-  }
-  .el-select .el-input__inner {
-    width: 200px;
-  }
-  .el-dialog .el-upload--text {
-    width: 100px;
-    height: 40px;
-    border: none;
-  }
-  .icon-area .el-input__inner {
-    width: 240px;
-  }
-  .el-input__suffix {
-    line-height: 24px;
-  }
-  .icon-uploader {
-    float: right;
-    margin-right: 31px;
-    height: 33px;
-  }
-  .icon-uploader .el-button--small {
-    border-radius: 5px;
-    width: 100px;
-  }
-  .el-upload--text .el-icon-upload {
-    line-height: 0;
-    margin: 0;
-    color: #fff;
-    font-size: 14px;
-  }
-  .el-dialog__footer {
-    margin-right: 30px;
-  }
-  .el-upload-list {
-    display: none;
-  }
-}
+        /*弹窗样式*/
+        .el-dialog {
+            width: 530px;
+            border-radius: 10px;
+        }
+        .el-dialog__header {
+            border-bottom: 1px solid #eee;
+            padding: 20px 20px 10px 50px;
+        }
+        .el-dialog__title {
+            color: #ff6868;
+        }
+        .el-dialog .el-input {
+            display: inline;
+        }
+        .el-dialog .el-input__inner {
+            width: 360px;
+        }
+        .el-select .el-input__inner {
+            width: 200px;
+        }
+        .el-dialog .el-upload--text {
+            width: 100px;
+            height: 40px;
+            border: none;
+        }
+        .icon-area .el-input__inner {
+            width: 240px;
+        }
+        .el-input__suffix {
+            line-height: 24px;
+        }
+        .icon-uploader {
+            float: right;
+            margin-right: 31px;
+            height: 33px;
+        }
+        .icon-uploader .el-button--small {
+            border-radius: 5px;
+            width: 100px;
+        }
+        .el-upload--text .el-icon-upload {
+            line-height: 0;
+            margin: 0;
+            color: #fff;
+            font-size: 14px;
+        }
+        .el-dialog__footer {
+            margin-right: 30px;
+        }
+        .el-upload-list {
+            display: none;
+        }
+    }
 </style>

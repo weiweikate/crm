@@ -1,31 +1,34 @@
 <template>
     <div class="choose-box">
-        <el-input
-                placeholder="输入品牌关键词搜索"
-                suffix-icon="el-icon-search"
-                @change="search" v-model="value">
-        </el-input>
+        <!--<el-input-->
+        <!--placeholder="输入品牌关键词搜索"-->
+        <!--suffix-icon="el-icon-search"-->
+        <!--@change="search" v-model="value">-->
+        <!--</el-input>-->
         <div style="margin-top: 10px">
             <div class="check-area">
                 <div class="title">选择品牌</div>
                 <div>
                     <ul v-loading="loading" v-if="brandList">
-                        <li v-for="(item,index) in brandList" v-if="!item.allChecked"
+                        <li v-for="(item,index) in brandList"
                             @click="chooseBrand(item,index)"
-                            :class="item.checked?'selected':''">{{item.name}}
+                            :class="brandIndex==index?'selected':''">{{item.name}}
                         </li>
                     </ul>
                 </div>
             </div>
             <div class="check-area">
                 <div class="title">选择品类</div>
-                <div>
+                <div v-if="!brandList[brandIndex].allChecked">
                     <ul v-loading="loading" v-if="brandList[brandIndex]">
                         <li v-for="(item,index) in brandList[brandIndex].classifyList" v-if="!item.hasChecked"
                             @click="chooseClassify(item,index)"
                             :class="item.checked?'selected':''">{{item.name}}
                         </li>
                     </ul>
+                </div>
+                <div v-else class="nodata">
+                    暂无数据~
                 </div>
             </div>
             <div class="opr-area">
@@ -53,32 +56,36 @@
         components: {
             icon
         },
-        props: ['detailData', 'addOrUp'],
+        props: ['productcIds', 'detailData', 'addOrUp', 'isLevel'],
         data() {
             return {
-                value: '',
-                brandList: [],
-                tempChooseList: [],
-                chooseList: [],
-                brandName: '',
-                classifyName: [],
-                brandIndex: '0',
-                brandId: '',
-                classifyId: [],
-                delBrandId: '',
-                delClassifyId: [],
+                value: '',//查询关键词
+                brandList: [{
+                    allChecked: false
+                }],//品牌列表
+                tempChooseList: [],//缓存选择的品类
+                chooseList: [],//选择的品类
+                brandName: '',//选择的品牌名称
+                brandId: '',//选择的品牌id
+                brandsId: [],//选择的品牌id
+                classifyName: [],//选择的品类
+                brandIndex: '0',//品牌索引值
+                classifyId: [],//选择的品类id
+                delBrandId: '',//删除的品牌id
+                delClassifyId: [],//删除的品类id
                 loading: false,
             };
         },
         created() {
             //获取品牌列表并默认加载第一个品牌对于的品类列表
             let that = this;
-            that.search(that.value);
-            setTimeout(function () {//延迟加载获取父组件数据
+            setTimeout(function () {
                 if (that.addOrUp == 'update') {
                     that.getHistoryClassify()
                 }
-            },1000)
+                that.search(that.value);
+            }, 1000)
+
         },
         methods: {
             //修改时获取原数据
@@ -87,7 +94,7 @@
                 for (let i in that.detailData) {
                     let brandName = that.detailData[i].product_name;
                     let brandId = that.detailData[i].product_id;
-                    let child = that.detailData[i].name;
+                    let child = that.detailData[i].category_name;
                     let id = that.detailData[i].c_id;
                     let param = {
                         brandId: brandId,
@@ -95,7 +102,12 @@
                         checked: false,
                         classifyId: id,
                     };
+                    that.tempChooseList.push({
+                        brandId: brandId,
+                        brandName: brandName
+                    });
                     that.classifyId.push(id);
+                    that.classifyName.push(child);
                     that.chooseList.push(param);
                 }
             },
@@ -107,7 +119,7 @@
                 };
                 that.loading = true;
                 that.$axios
-                    .post(api.getFirstList, data)
+                    .post(api.getList, data)
                     .then(res => {
                         that.loading = false;
                         if (res.data.code == 200) {
@@ -120,6 +132,8 @@
                             that.brandList = res.data.data;
                             that.brandName = that.brandList[0].name;
                             that.brandId = that.brandList[0].id;
+                            that.brandsId.push(that.brandList[0].id);
+
                             that.getClassifyList(0, that.brandList[0].id);
                         } else {
                             that.$message.warning(res.data.msg);
@@ -140,19 +154,27 @@
                 };
                 that.loading = true;
                 that.$axios
-                    .post(api.getSecondList, data)
+                    .post(api.getProductCategoryList, data)
                     .then(res => {
                         that.loading = false;
                         if (res.data.code == 200) {
-                            for (let i in res.data.data) {
-                                let itemId = res.data.data[i].id;
-                                if (that.classifyId.indexOf(itemId) == -1 && that.brandList[index].classifyList.indexOf(itemId) == -1) {
-                                    res.data.data[i].checked = false;
-                                    res.data.data[i].hasChecked = false;
-                                    that.brandList[index].classifyList.push(res.data.data[i])
+                            if (res.data.data.length) {
+                                for (let i in res.data.data) {
+                                    let itemId = res.data.data[i].id;
+                                    if (that.classifyId.indexOf(itemId) == -1) {
+                                        res.data.data[i].checked = false;
+                                        res.data.data[i].hasChecked = false;
+                                    } else {
+                                        res.data.data[i].checked = true;
+                                        res.data.data[i].hasChecked = true;
+                                    }
                                 }
-                                that.brandIsAllCheck();
+                            } else {
+                                that.brandList[index].allChecked = true
                             }
+                            that.brandList[index].classifyList = res.data.data;
+                            that.brandIsAllCheck();
+                            console.log(that.brandList[index])
                         } else {
                             that.$message.warning(res.data.msg);
                         }
@@ -170,14 +192,18 @@
                 that.brandName = that.brandList[index].name;
                 that.brandIndex = index;
                 that.brandId = item.id;
-                that.getClassifyList(index, item.id);
-                for (let i in that.brandList) {
-                    if (i == index) {
-                        that.brandList[i].checked = true;
-                    } else {
-                        that.brandList[i].checked = false;
-                    }
+                if (that.brandsId.indexOf(item.id) == -1) {
+                    that.brandsId.push(item.id)
                 }
+                that.$emit('brandsId', that.brandsId);
+                that.getClassifyList(index, item.id);
+                // for (let i in that.brandList) {
+                //     if (i == index) {
+                //         that.brandList[i].checked = true;
+                //     } else {
+                //         that.brandList[i].checked = false;
+                //     }
+                // }
             }
             ,
             //选择品类
@@ -208,23 +234,42 @@
             addBrandClassify() {
                 let that = this;
                 // that.chooseList = [];
+
+                // for (let i in that.chooseList) {
+                //     for (let j in that.tempChooseList) {
+                //         if (that.classifyId[j] != that.chooseList[i].classifyId) {
+                //             let param = {
+                //                 brandId: that.tempChooseList[j].brandId,
+                //                 classifyId: that.classifyId[j],
+                //                 name: that.tempChooseList[j].brandName + '-' + that.classifyName[j],
+                //                 checked: false
+                //             };
+                //             that.chooseList.push(param);
+                //             that.changeClassifyList(that.tempChooseList[j].brandId, that.classifyId[j], 'add');
+                //             that.brandIsAllCheck();
+                //         }
+                //         continue;
+                //     }
+                //     that.$emit('productcIds', that.classifyId)
+                // }
+                that.chooseList = [];
                 for (let i in that.tempChooseList) {
-                    for(let j in that.chooseList){
-                        if(that.classifyId[i]!=that.chooseList[j].classifyId){
-                            let param = {
-                                brandId: that.tempChooseList[i].brandId,
-                                classifyId: that.classifyId[i],
-                                name: that.tempChooseList[i].brandName + '-' + that.classifyName[i],
-                                checked: false
-                            };
-                            that.chooseList.push(param);
-                            that.changeClassifyList(that.tempChooseList[i].brandId, that.classifyId[i], 'add');
-                            that.brandIsAllCheck();
-                        }else{
-                            break
-                        }
+                    let param = {
+                        brandId: that.tempChooseList[i].brandId,
+                        classifyId: that.classifyId[i],
+                        name: that.tempChooseList[i].brandName + '-' + that.classifyName[i],
+                        checked: false
+                    };
+                    let brandId=that.tempChooseList[i].brandId;
+                    if(that.brandsId.indexOf(brandId)==-1){
+                        that.brandsId.push(brandId);
                     }
+                    that.chooseList.push(param);
+                    that.changeClassifyList(that.tempChooseList[i].brandId, that.classifyId[i], 'add');
+                    that.brandIsAllCheck();
                 }
+                that.$emit('productcIds', that.classifyId);
+                that.$emit('brandsId',that.brandsId);
             }
             ,
             //选中已选择的品类
@@ -260,6 +305,7 @@
                         }
                     }
                 }
+                that.$emit('productcIds', that.classifyId)
             }
             ,
             // 判断品牌是否已被全选
@@ -350,6 +396,10 @@
         .selected {
             background: #409EFF;
             color: #fff
+        }
+        .nodata {
+            height: 120px;
+            text-align: center;
         }
     }
 

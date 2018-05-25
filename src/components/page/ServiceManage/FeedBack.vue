@@ -4,7 +4,10 @@
             <el-card style="margin:10px 0 20px">
                 <el-form ref="form" inline :model="form">
                     <el-form-item prop="level" label="用户层级" label-width="120">
-                        <el-input style="width:200px" placeholder="请输入用户层级" v-model="form.level"></el-input>
+                        <el-select v-model="form.level" placeholder="全部层级">
+                            <el-option label="全部层级" value=""></el-option>
+                            <el-option :label="item.name" :value="item.level" v-for="(item,index) in levelList" :key="index"></el-option>
+                        </el-select>
                     </el-form-item>
                     <el-form-item prop="type" label="问题类型" label-width="120">
                         <el-select v-model="form.type" placeholder="请选择">
@@ -45,14 +48,19 @@
                     <el-table-column prop="nickname" label="用户"></el-table-column>
                     <el-table-column label="类型">
                         <template slot-scope="scope">
-                            <template v-if="scope.row.status == 1">待处理</template>
-                            <template v-if="scope.row.status == 2">已处理</template>
+                            <template v-if="scope.row.d_type == 1">网信经销商</template>
+                            <template v-if="scope.row.d_type == 2">供货经销商</template>
+                            <template v-if="scope.row.d_type == 3">网红经销商</template>
                         </template>
                     </el-table-column>
                     <el-table-column prop="name" label="层级"></el-table-column>
                     <el-table-column prop="phone" label="联系电话"></el-table-column>
                     <el-table-column prop="address" label="所在区域"></el-table-column>
-                    <el-table-column prop="create_time" label="反馈时间"></el-table-column>
+                    <el-table-column label="反馈时间">
+                        <template slot-scope="scope">
+                            {{scope.row.create_time|formatDate}}
+                        </template>
+                    </el-table-column>
                     <el-table-column label="问题类型" width="100">
                         <template slot-scope="scope">
                             <template v-if="scope.row.type_key == 1">账户问题</template>
@@ -117,13 +125,21 @@
                     type:'',
                     status:''
                 },
+                levelList:[],//用户层级列表
                 selected: ''
             }
         },
         created() {
             let winHeight = window.screen.availHeight - 520;
             this.height = winHeight;
-            this.getList(this.page.currentPage)
+            this.getList(this.page.currentPage);
+            this.getLevelList()
+        },
+        activated() {
+            let winHeight = window.screen.availHeight - 520;
+            this.height = winHeight;
+            this.getList(this.page.currentPage);
+            // this.getLevelList()
         },
         methods: {
             //获取列表
@@ -143,10 +159,6 @@
                     .then(res => {
                         if (res.data.code == 200) {
                             that.tableLoading=false;
-                            for(let i in res.data.data.data){
-                                let item=res.data.data.data[i];
-                                item.create_time=moment(item.create_time).format('YYYY-MM-DD HH:mm:ss');
-                            }
                             that.tableData=res.data.data.data;
                             that.page.totalPage = res.data.data.resultCount;
                         } else {
@@ -157,6 +169,24 @@
                     .catch(err => {
                         that.tableLoading = false;
                         console.log(err)
+                    })
+            },
+            //获取用户层级列表
+            getLevelList() {
+                let that = this;
+                let data={};
+                that.$axios
+                    .post(api.getDealerLevelList, data)
+                    .then(res => {
+                        if (res.data.code == 200) {
+                            that.levelList = res.data.data;
+                        } else {
+                            that.$message.warning(res.data.msg);
+                        }
+
+                    })
+                    .catch(err => {
+                        console.log(err);
                     })
             },
             //分页

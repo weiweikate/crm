@@ -41,8 +41,8 @@
                         处理人：{{username}}
                     </div>
                     <div style="margin-top: 30px">
-                        <el-button type="primary" @click="update">确认回复</el-button>
-                        <el-button type="success" @click="update">修改问题类型</el-button>
+                        <el-button type="primary" v-loading="btnLoading" @click="update">确认回复</el-button>
+                        <el-button type="success" v-loading="btnLoading" @click="update">修改问题类型</el-button>
                         <el-button>取消</el-button>
                     </div>
                 </div>
@@ -57,14 +57,14 @@
                             <template v-if="item.type_key == 4">推广机制</template>
                         </template>
                         </div>
-                        <div class="item" style="width: 20%">反馈时间：{{item.create_time}}</div>
+                        <div class="item" style="width: 20%">反馈时间：{{item.create_time|formatDate}}</div>
                         <div class="item" style="width: 10%">状态：
                             <template>
                                 <template v-if="item.status == 1">待处理</template>
                                 <template v-if="item.status == 2">已处理</template>
                             </template>
                         </div>
-                        <div class="item" style="width: 20%">处理时间：234234-324-23-4</div>
+                        <div class="item" style="width: 20%">处理时间：{{item.reply_time|formatDate}}</div>
                         <div class="item" style="width: 10%">处理人员：{{item.adminName}}</div>
                         <div class="item" style="width: 4%"><i :class="item.checked?'el-icon-caret-bottom':'el-icon-caret-top'"></i></div>
                     </div>
@@ -103,13 +103,13 @@
                             <el-input type="textarea" v-model="item.reply_content"></el-input>
                         </div>
                         <div class="detail-item">
-                            处理人：{{username}}
+                            处理人：{{item.adminName}}
                         </div>
-                        <div style="margin-top: 30px">
-                            <el-button type="primary" @click="update">确认回复</el-button>
-                            <el-button type="success" @click="update">修改问题类型</el-button>
-                            <el-button>取消</el-button>
-                        </div>
+                        <!--<div style="margin-top: 30px">-->
+                            <!--<el-button type="primary" v-loading="btnLoading" @click="update">确认回复</el-button>-->
+                            <!--<el-button type="success" v-loading="btnLoading" @click="update">修改问题类型</el-button>-->
+                            <!--<el-button>取消</el-button>-->
+                        <!--</div>-->
                     </div>
                 </div>
             </div>
@@ -133,6 +133,7 @@
                 detail:{},
                 id:'',
                 loading:false,
+                btnLoading:false,
                 username:'',
                 userId:'',
                 item:{
@@ -163,12 +164,15 @@
                   .then(res=>{
                       if(res.data.code==200){
                           let detailInf=res.data.data.detail_record;
-                          detailInf.create_time=moment(detailInf.create_time).format('YYYY-MM-DD HH:mm:ss');
-                          that.detail=Object.assign(detailInf[0]);
+                          // that.detail=Object.assign(detailInf[0]);
+                          let temp=detailInf[0];
+                          temp.checked=true;
+                          temp.type_key=temp.type_key.toString();
+                          that.detail=Object.assign(temp);
                           for(let i in res.data.data.history_record){
                               let item=res.data.data.history_record[i];
+                              item.type_key=item.type_key.toString();
                               item.checked=false;
-                              item.create_time=moment(item.create_time).format('YYYY-MM-DD HH:mm:ss');
                           }
                           that.list=res.data.data.history_record;
                           that.loading=false;
@@ -185,23 +189,32 @@
             expandItem(index) {
                 this.list[index].checked = !this.list[index].checked
             },
+
             //修改
             update(){
                 let that=this;
                 let params={
-                    id:1,
+                    id:that.id,
                     typeKey:that.item.type_key,
                     replyContent:that.detail.reply_content
                 };
+                that.btnLoading=true;
                 that.$axios
                     .post(api.updateFeedback,params)
                     .then(res=>{
                         if(res.data.code==200){
-                            that.loading=false;
+                            that.btnLoading=false;
+                            that.$message.success(res.data.msg);
+                            setTimeout(function () {
+                                that.$router.push('/feedBack')
+                            },1000)
+                        }else{
+                            that.btnLoading = false;
+                            that.$message.warning(res.data.msg);
                         }
                     })
                     .catch(err=>{
-                        that.loading=false
+                        that.btnLoading=false
                     })
             }
         }

@@ -5,9 +5,11 @@
             <div class="inf-box">
                 <div style="margin: -30px 0 20px 80px">
                     <div class="tab-item" :class="checked[0]?'checked':''" @click="change(0)">公告</div>
-                    <div class="tab-item" :class="checked[1]?'checked':''" @click="change(1)" style="margin-left: -5px">通知</div>
+                    <div class="tab-item" :class="checked[1]?'checked':''" @click="change(1)" style="margin-left: -5px">
+                        通知
+                    </div>
                 </div>
-                <el-form :model="form">
+                <el-form :model="form" v-loading="loading">
                     <el-form-item v-if="checked[0]">
                         <span class="label"><span class="required">*</span>公告标题</span>
                         <el-input placeholder="请输入公告标题" v-model="form.name"></el-input>
@@ -15,6 +17,23 @@
                     <el-form-item>
                         <span class="label" v-if="checked[0]"><span class="required">*</span>公告详情</span>
                         <span class="label" v-else><span class="required">*</span>通知详情</span>
+                        <template>
+                            <div>
+                                <!-- quill-editor插件标签 分别绑定各个事件-->
+                                <quill-editor v-model="form.content" ref="myQuillEditor" :options="editorOption"
+                                              @change="onEditorChange($event)">
+                                </quill-editor>
+                                <!-- 文件上传input 将它隐藏-->
+                                <el-upload class="upload-demo" :action="qnLocation" :before-upload='beforeUpload'
+                                           :data="uploadData" :on-success='upScuccess'
+                                           ref="upload" style="display:none">
+                                    <el-button size="small" type="primary" id="imgInput" element-loading-text="插入中,请稍候">
+                                        点击上传
+                                    </el-button>
+                                </el-upload>
+                            </div>
+
+                        </template>
                     </el-form-item>
 
                     <el-form-item label="推送方式" style="position: relative">
@@ -29,7 +48,9 @@
                         </el-date-picker>
                     </el-form-item>
                     <el-form-item label="推送人群">
-                        <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全部用户</el-checkbox>
+                        <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">
+                            全部用户
+                        </el-checkbox>
                         <div style="margin: 15px 0;"></div>
                         <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
                             <el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>
@@ -63,7 +84,11 @@
 <script>
     import icon from "../../../common/ico";
     import vBreadcrumb from '../../../common/Breadcrumb.vue';
+    import Quill from 'quill';
+    import * as api from '../../../../api/api'
 
+    const STATICDOMAIN = 'http://otq0t8ph7.bkt.clouddn.com/' // 图片服务器的域名，展示时使用
+    const STATVIDEO = 'http://otq0t8ph7.bkt.clouddn.com/'
     const cityOptions = ['上海', '北京', '广州', '深圳'];
     export default {
         components: {
@@ -71,16 +96,18 @@
         },
         data() {
             return {
-                checked:[true,false],
+                checked: [true, false],
                 form: {
                     name: "",
                     isUse: "1",
                     imageUrl: '',
                     brandKey: '',
                     region: '',
+                    content:'',
                     status: '即时推送',
-                    date:''
+                    date: ''
                 },
+                loading:false,
                 checkAll: false,
                 checkedCities: ['上海', '北京'],
                 cities: cityOptions,
@@ -281,9 +308,155 @@
                     }]
                 }],
                 selectedOptions: [],
+                content: '', // 文章内容
+                editorOption: {
+                    placeholder: '请输入内容',
+                    modules: { // 配置富文本
+                        toolbar: [
+                            ['bold', 'italic', 'underline', 'strike'],
+                            ['blockquote', 'code-block'],
+                            [{'header': 1}, {'header': 2}],
+                            [{'direction': 'rtl'}],
+                            [{'size': ['small', false, 'large', 'huge']}],
+                            [{'header': [1, 2, 3, 4, 5, 6, false]}],
+                            [{'color': []}, {'background': []}],
+                            [{'font': []}],
+                            [{'align': []}],
+                            ['clean'],
+                            ['link', 'image', 'video']
+                        ]
+                    }
+                },
+                addRange: [],
+                uploadData: {},
+                photoUrl: '', // 上传图片地址
+                uploadType: '', // 上传的文件类型（图片、视频）
+                id:''
             };
         },
+        computed: {
+// 上传七牛的actiond地址，http 和 https 不一样
+            qnLocation() {
+                return location.protocol === 'http:' ? 'http://upload.qiniu.com' : 'https://up.qbox.me'
+            }
+        },
+        // 页面加载后执行 为编辑器的图片图标和视频图标绑定点击事件
+        mounted() {
+// 为图片ICON绑定事件 getModule 为编辑器的内部属性
+            console.log(this.$refs.myQuillEditor.quill)
+            this.$refs.myQuillEditor.quill.getModule('toolbar').addHandler('image', this.imgHandler)
+            this.$refs.myQuillEditor.quill.getModule('toolbar').addHandler('video', this.videoHandler) // 为视频ICON绑定事件
+        },
+        created() {
+            this.$refs = {
+                myQuillEditor: HTMLInputElement,
+                imgInput: HTMLInputElement
+            };
+            this.id =
+                this.$route.query.id ||
+                JSON.parse(sessionStorage.getItem("addNoticeInform").id);
+            this.getDetail();
+        },
         methods: {
+            //获取详情
+            getDetail(){
+                let that=this;
+                let data={
+                    id:that.id
+                };
+                that.loading=true;
+                that.$axios
+                    .post(api.getNoticeDetailById,data)
+                    .then(res=>{
+                        if(res.data.code==200){
+                            that.form=res.data.data;
+                            that.loading=false;
+                        }else{
+                            that.loading=false;
+                            that.$message.warning(res.data.msg);
+                        }
+                    })
+                    .catch(err=>{
+                        that.loading=false
+                    })
+            },
+            // 图片上传之前调取的函数
+// 这个钩子还支持 promise
+            beforeUpload(file) {
+                return this.qnUpload(file)
+            },
+// 图片上传前获得数据token数据
+            qnUpload(file) {
+                this.fullscreenLoading = true
+                const suffix = file.name.split('.')
+                const ext = suffix.splice(suffix.length - 1, 1)[0]
+                console.log(this.uploadType)
+                if (this.uploadType === 'image') { // 如果是点击插入图片
+// TODO 图片格式/大小限制
+                    alert('上传图片')
+                    return this.$axios('common/get_qiniu_token').then(res => {
+                        this.uploadData = {
+                            key: `image/${suffix.join('.')}_${new Date().getTime()}.${ext}`,
+                            token: res.data
+                        }
+                    })
+                } else if (this.uploadType === 'video') { // 如果是点击插入视频
+                    return this.$axios('common/get_qiniu_token').then(res => {
+                        this.uploadData = {
+                            key: `video/${suffix.join('.')}_${new Date().getTime()}.${ext}`,
+                            token: res
+                        }
+                    })
+                }
+            },
+
+// 图片上传成功回调 插入到编辑器中
+            upScuccess(e, file, fileList) {
+                console.log(e)
+                this.fullscreenLoading = false
+                let vm = this
+                let url = ''
+                if (this.uploadType === 'image') { // 获得文件上传后的URL地址
+                    url = STATICDOMAIN + e.key
+                } else if (this.uploadType === 'video') {
+                    url = STATVIDEO + e.key
+                }
+                if (url != null && url.length > 0) { // 将文件上传后的URL地址插入到编辑器文本中
+                    let value = url
+// API: https://segmentfault.com/q/1010000008951906
+// this.$refs.myTextEditor.quillEditor.getSelection();
+// 获取光标位置对象，里面有两个属性，一个是index 还有 一个length，这里要用range.index，即当前光标之前的内容长度，然后再利用 insertEmbed(length, 'image', imageUrl)，插入图片即可。
+                    vm.addRange = vm.$refs.myQuillEditor.quill.getSelection()
+                    value = value.indexOf('http') !== -1 ? value : 'http:' + value
+                    vm.$refs.myQuillEditor.quill.insertEmbed(vm.addRange !== null ? vm.addRange.index : 0, vm.uploadType, value, Quill.sources.USER) // 调用编辑器的 insertEmbed 方法，插入URL
+                } else {
+                    this.$message.error(`${vm.uploadType}插入失败`)
+                }
+                this.$refs['upload'].clearFiles() // 插入成功后清除input的内容
+            },
+
+// 点击图片ICON触发事件
+            imgHandler(state) {
+                this.addRange = this.$refs.myQuillEditor.quill.getSelection()
+                if (state) {
+                    let fileInput = document.getElementById('imgInput')
+                    fileInput.click() // 加一个触发事件
+                }
+                this.uploadType = 'image'
+            },
+            onEditorChange({editor, html, text}) {
+                console.log('editor change!', html)
+                this.form.content = html
+            },
+// 点击视频ICON触发事件
+            videoHandler(state) {
+                this.addRange = this.$refs.myQuillEditor.quill.getSelection()
+                if (state) {
+                    let fileInput = document.getElementById('imgInput')
+                    fileInput.click() // 加一个触发事件
+                }
+                this.uploadType = 'video'
+            },
             handleChange(value) {
                 console.log(value);
             },
@@ -296,10 +469,10 @@
                 this.checkAll = checkedCount === this.cities.length;
                 this.isIndeterminate = checkedCount > 0 && checkedCount < this.cities.length;
             },
-            change(num){
-                let that=this;
-                that.checked=[false,false];
-                that.checked[num]=true;
+            change(num) {
+                let that = this;
+                that.checked = [false, false];
+                that.checked[num] = true;
 
             },
             //上传图片
@@ -317,18 +490,18 @@
 </script>
 <style lang="less">
     .inf-box {
-        .tab-item{
+        .tab-item {
             width: 116px;
             height: 50px;
             line-height: 50px;
             border-radius: 0 0 5px 5px;
             text-align: center;
-            color:#fff;
+            color: #fff;
             background: #dddddd;
             display: inline-block;
             cursor: pointer;
         }
-        .checked{
+        .checked {
             background: #ff6868;
         }
         .label {
@@ -336,6 +509,7 @@
             text-align: right;
             display: inline-block;
             margin-right: 10px;
+            vertical-align: top;
         }
         .el-input {
             width: 350px
@@ -424,38 +598,40 @@
         .submit-btn {
             padding: 0 50px 20px 100px
         }
-       .el-checkbox-group{
-           margin-left: 112px;
-       }
-        .el-radio{
+        .el-checkbox-group {
+            margin-left: 112px;
+        }
+        .el-radio {
             display: block;
             margin-left: 0;
             line-height: 32px;
         }
-        .el-date-editor{
+        .el-date-editor {
             position: absolute;
-            top:32px;
+            top: 32px;
             left: 210px;
-            .el-input__inner{
+            .el-input__inner {
                 width: 200px;
             }
         }
-        .el-date-editor.el-input{width: 200px}
-        .region-area{
+        .el-date-editor.el-input {
+            width: 200px
+        }
+        .region-area {
             position: relative;
-            .el-checkbox{
+            .el-checkbox {
                 display: block;
                 margin-left: 0;
             }
         }
-        .el-cascader{
+        .el-cascader {
             position: absolute;
-            top:0;
+            top: 0;
             left: 180px;
-            .el-input{
+            .el-input {
                 width: 230px;
             }
-            .el-input__inner{
+            .el-input__inner {
                 width: 230px;
             }
         }

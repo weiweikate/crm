@@ -8,29 +8,30 @@
         <transition name="move" appear>
             <el-card style="margin:10px 0 20px">
                 <el-form ref="form" :inline="true" :model="form" >
-                    <el-form-item label="状态" label-width="120">
-                        <el-select v-model="exportForm.level" placeholder="请选择">
-                            <el-option label="全部状态" value="0"></el-option>
+                    <el-form-item prop="status" label="状态" label-width="120">
+                        <el-select v-model="form.status" placeholder="请选择">
+                            <el-option label="全部状态" value=""></el-option>
                             <el-option label="待推送" value="1"></el-option>
                             <el-option label="已发送" value="2"></el-option>
                             <el-option label="取消推送" value="3"></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="发布者" label-width="120">
-                        <el-input style="width:200px" placeholder="请输入发布者" v-model="form.id"></el-input>
+                    <el-form-item prop="name" label="发布者" label-width="120">
+                        <el-input style="width:200px" placeholder="请输入发布者" v-model="form.name"></el-input>
                     </el-form-item>
                     <el-form-item label="时间" label-width="120">
                         <el-date-picker
                                 v-model="form.date"
                                 type="datetimerange"
+                                format="yyyy-MM-dd"
                                 start-placeholder="开始日期"
                                 end-placeholder="结束日期"
                         >
                         </el-date-picker>
                     </el-form-item>
                     <el-form-item>
-                        <el-button @click="search" type="primary">查询</el-button>
-                        <el-button>重置</el-button>
+                        <el-button @click="getList(1)" type="primary">查询</el-button>
+                        <el-button @click="resetForm('form')">重置</el-button>
                     </el-form-item>
                 </el-form>
             </el-card>
@@ -47,20 +48,40 @@
             </el-form>
             <template>
                 <el-table :data="tableData" :height="height" border style="width: 100%">
-                    <el-table-column prop="ID" label="ID" width="60"></el-table-column>
-                    <el-table-column prop="nickName" label="类型"></el-table-column>
-                    <el-table-column prop="phone" label="标题"></el-table-column>
-                    <el-table-column prop="level" label="推送用户" width="50"></el-table-column>
-                    <el-table-column prop="address" label="推送区域"></el-table-column>
-                    <el-table-column prop="lastLoginTime" label="推送时间"></el-table-column>
-                    <el-table-column prop="dayLogin" label="发布者" width="80"></el-table-column>
-                    <el-table-column prop="status" label="状态"></el-table-column>
+                    <el-table-column prop="id" label="ID" width="60"></el-table-column>
+                    <el-table-column prop="n_type" label="类型" width="80">
+                        <template slot-scope="scope">
+                            <template v-if="scope.row.n_type==1">公告</template>
+                            <template v-if="scope.row.n_type==2">通知</template>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="title" label="标题"></el-table-column>
+                    <el-table-column prop="push_way" label="推送用户"></el-table-column>
+                    <el-table-column label="推送区域">
+                        <template slot-scope="scope">
+                            <template v-if="scope.row.push_country==1">全国</template>
+                            <template v-if="scope.row.push_country==2">国外</template>
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="推送时间">
+                        <template slot-scope="scope">
+                            <template>{{scope.row.order_time|formatDate}}</template>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="name" label="发布者" width="80"></el-table-column>
+                    <el-table-column prop="status" label="状态">
+                        <template slot-scope="scope">
+                            <template v-if="scope.row.status==1">待推送</template>
+                            <template v-if="scope.row.status==2">已推送</template>
+                            <template v-if="scope.row.status==3">取消推送</template>
+                        </template>
+                    </el-table-column>
                     <el-table-column label="操作">
                         <template slot-scope="scope">
                             <el-button type="primary" size="small" @click="detailItem(scope.$index,scope.row)">查看详情</el-button>
-                            <el-button type="warning" size="small" @click="resendItem(scope.$index,scope.row.id)">再次推送</el-button>
-                            <el-button type="success" size="small" @click="cancelItem(scope.$index,scope.row.id)">取消推送</el-button>
-                            <el-button type="danger" size="small" @click="delItem(scope.$index,scope.row.id)">删除</el-button>
+                            <el-button type="warning" size="small" @click="resendItem(scope.$index,scope.row.id)" v-if="scope.row.status==2">再次推送</el-button>
+                            <el-button type="success" size="small" @click="cancelItem(scope.$index,scope.row.id)" v-if="scope.row.status==1">取消推送</el-button>
+                            <el-button type="danger" size="small" @click="delItem(scope.$index,scope.row.id)" v-if="scope.row.status==3">删除</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -86,6 +107,8 @@
     import icon from '../../common/ico.vue';
     import deleteToast from "../../common/DeleteToast";
     import * as api from '../../../api/api';
+    import moment from 'moment'
+    import {getList} from "../../../api/api";
 
     export default {
         components: {
@@ -97,16 +120,15 @@
                 tableData:[],
                 page:{
                     currentPage:1,
-                    totalPage:20
+                    totalPage:0
                 },
                 height:'',
                 formLabelWidth:'100px',
                 form:{
-                    id:'',
-                    nickName:'',
-                    code:'',
-                    idCard:'',
-                    phone:''
+                    status:'',
+                    name:'',
+                    date:'',
+                    nType:'1'
                 },
                 exportForm:{
                     level:'',
@@ -114,8 +136,8 @@
                 selected:'',
                 nav:['服务管理','公告'],
                 isShowDelToast: false,
-                delId: 66,
-                delUrl:'http://api',
+                delId: '',
+                delUrl:'',
             }
         },
         created(){
@@ -129,25 +151,42 @@
                 that.checked=[false,false];
                 that.checked[num]=true;
               if(num==0){//公告
-                    that.nav=['服务管理','公告']
+                    that.nav=['服务管理','公告'];
+                    that.form.nType=1;
               } else{//通知
-                  that.nav=['服务管理','通知']
+                  that.nav=['服务管理','通知'];
+                  that.form.nType=2;
               }
+              that.getList(that.page.currentPage)
             },
             //获取列表
-            getList(val){
-              let that=this;
-              let data={
-                  page:val
-              };
-              this.$axios
-                  .post(api.getManageList,data)
-                  .then(res=>{
-                      that.tableData=res.data.data.list;
-                  })
-                  .catch(err=>{
-                      console.log(err)
-                  })
+            getList(val) {
+                let that = this;
+                let data = {
+                    page: val,
+                    status:that.form.status,
+                    name:that.form.name,
+                    nType:that.form.nType,
+                    beginTime:that.form.date?moment(that.form.date[0]).format('YYYY-MM-DD'):'',
+                    endTime:that.form.date?moment(that.form.date[1]).format('YYYY-MM-DD'):'',
+                };
+                that.tableLoading = true;
+                that.$axios
+                    .post(api.getNoticeList, data)
+                    .then(res => {
+                        if (res.data.code == 200) {
+                            that.tableLoading=false;
+                            that.tableData=res.data.data.data;
+                            that.page.totalPage = res.data.data.resultCount;
+                        } else {
+                            that.$message.warning(res.data.msg);
+                            that.tableLoading=false;
+                        }
+                    })
+                    .catch(err => {
+                        that.tableLoading = false;
+                        console.log(err)
+                    })
             },
             //分页
             handleSizeChange(val) {
@@ -160,7 +199,8 @@
             },
             //详情
             detailItem(index,row){
-                this.$router.push({path:'/memberDetail',query:{id:row.id}})
+                localStorage.setItem('addNoticeInform',row.id);
+                this.$router.push({path:'/addNoticeInform',query:{id:row.id}})
             },
             //再次推送
             resendItem(){
@@ -183,10 +223,10 @@
             addInf(){
                 this.$router.push('/addNoticeInform')
             },
-            //查询
-            search(){
-
-            }
+            //重置表单
+            resetForm(formName) {
+                this.$refs[formName].resetFields();
+            },
         }
     }
 </script>

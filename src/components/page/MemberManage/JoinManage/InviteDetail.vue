@@ -1,10 +1,10 @@
 <template>
     <div>
         <v-breadcrumb :nav="['会员管理','经销商加盟管理','邀请详情']"></v-breadcrumb>
-        <div class="container">
+        <div class="container" v-loading="loading">
             <div class="basic-inf-area line">
                 <div class="item-row">
-                    邀请层级：{{detail.ID}}
+                    邀请层级：{{detail.id}}
                 </div>
                 <div class="item-row">
                     授权品牌：
@@ -38,19 +38,23 @@
                 </div>
                 <div class="item-row">
                     授权时间：
-                    2018-02-12 12:22:22 至 2018-02-12 12:22:22
+                    {{detail.startTime|formatDate}} 至 {{detail.endTime|formatDate}}
                 </div>
-                <div class="item-row">
+                <div class="item-row" v-if="detail.invalidType==1">
                     邀请失效期：
-                    2018-02-12 12:22:22
+                    {{detail.invalidTime|formatDate}}
+                </div>
+                <div class="item-row" v-else>
+                    邀请链接打开次数：
+                    {{detail.clickTimes|formatDate}}
                 </div>
                 <div class="item-row">
                     邀请管理员：
-                    张三
+                    {{detail.name}}
                 </div>
                 <div class="item-row">
                     邀请时间：
-                    2018-02-12 12:22:22
+                    {{detail.create_time|formatDate}}
                 </div>
 
             </div>
@@ -59,59 +63,17 @@
                     邀请成功：
                 </div>
                 <div>
-                    <div class="succ-item">
+                    <div class="succ-item" v-for="item in detail.success">
                         <div class="left">
-                            <img src="../../../../assets/images/logo.png" alt="">
+                            <img :src="item.pic?item.pic:'src/assets/images/logo.png'" alt="">
                         </div>
                         <div class="center">
-                            <div>张三</div>
-                            <div>体验VIP</div>
+                            <div>{{item.name}}</div>
+                            <div>{{item.level}}</div>
                         </div>
                         <div class="right">
-                            <div>联系方式：12345678911</div>
-                            <div class="color-blue">用户详情 》</div>
-                        </div>
-                        <div class="clearfix"></div>
-                    </div>
-                    <div class="succ-item">
-                        <div class="left">
-                            <img src="../../../../assets/images/logo.png" alt="">
-                        </div>
-                        <div class="center">
-                            <div>张三</div>
-                            <div>体验VIP</div>
-                        </div>
-                        <div class="right">
-                            <div>联系方式：12345678911</div>
-                            <div class="color-blue">用户详情 》</div>
-                        </div>
-                        <div class="clearfix"></div>
-                    </div>
-                    <div class="succ-item">
-                        <div class="left">
-                            <img src="../../../../assets/images/logo.png" alt="">
-                        </div>
-                        <div class="center">
-                            <div>张三</div>
-                            <div>体验VIP</div>
-                        </div>
-                        <div class="right">
-                            <div>联系方式：12345678911</div>
-                            <div class="color-blue">用户详情 》</div>
-                        </div>
-                        <div class="clearfix"></div>
-                    </div>
-                    <div class="succ-item">
-                        <div class="left">
-                            <img src="../../../../assets/images/logo.png" alt="">
-                        </div>
-                        <div class="center">
-                            <div>张三</div>
-                            <div>体验VIP</div>
-                        </div>
-                        <div class="right">
-                            <div>联系方式：12345678911</div>
-                            <div class="color-blue">用户详情 》</div>
+                            <div>联系方式：{{item.phone}}</div>
+                            <div class="color-blue" @click="toUserDetail(item)">用户详情 》</div>
                         </div>
                         <div class="clearfix"></div>
                     </div>
@@ -135,49 +97,49 @@
         },
         data: function () {
             return {
-                detail: {
-                    ID: '122',
-                    openid: '2121',
-                    nickName: '32434',
-                    idCard: '429006199405133623',
-                    phone: '13826581142',
-                    number: '1234'
-                },
-                dynamicTags: ['标签一', '标签二', '标签三'],
-                inputVisible: false,
-                inputValue: '',
+                detail: {},
+                id:'',
+                loading:false,
             }
         },
         created() {
+            this.id =
+                this.$route.query.id ||
+                JSON.parse(sessionStorage.getItem("inviteDetail").id);
             this.getDetail()
         },
         methods: {
+            //获取详情
             getDetail() {
-                let id = this.$route.query.id;
-            },
-            handleClose(tag) {
-                this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
-            },
-
-            showInput() {
-                this.inputVisible = true;
-                this.$nextTick(_ => {
-                    this.$refs.saveTagInput.$refs.input.focus();
-                });
-            },
-
-            handleInputConfirm() {
-                let inputValue = this.inputValue;
-                if (inputValue) {
-                    this.dynamicTags.push(inputValue);
-                }
-                this.inputVisible = false;
-                this.inputValue = '';
+                let that=this;
+                let data={
+                    id:that.id
+                };
+                that.$axios
+                    .post(api.findInviteInfo, data)
+                    .then(res => {
+                        if (res.data.code == 200) {
+                            that.loading=false;
+                            that.detail=res.data.data;
+                        } else {
+                            that.$message.warning(res.data.msg);
+                            that.loading=false;
+                        }
+                    })
+                    .catch(err => {
+                        that.loading = false;
+                        console.log(err)
+                    })
             },
             //返回列表
             backToList() {
                 this.$router.push('/joinManage')
             },
+            //跳到用户详情页面
+            toUserDetail(item){
+                localStorage.setItem('memberDetail',item.id);
+                this.$router.push({path:'/memberDetail',query:{id:item.id}})
+            }
         }
     }
 </script>
