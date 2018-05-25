@@ -6,7 +6,7 @@ MODULE_NAME=${2}
 echo 'get params 1:' $PROJECT_NAME 'get params 2:' $MODULE_NAME
 
 echo 'create workspace start'
-ROOTPATH=/usr/local/jure_project/$PROJECT_NAME/
+ROOTPATH=/usr/local/jure_project/$PROJECT_NAME/$MODULE_NAME
 echo $ROOTPATH
 BACKUPSPATH=/usr/local/jure_project/backups/$PROJECT_NAME/$MODULE_NAME
 echo $BACKUPSPATH
@@ -34,5 +34,5 @@ fi
 rm -rf $ROOTPATH/*
 
 echo 'start ' $MODULE_NAME ' server'
-cp -rf ../$MODULE_NAME/ $ROOTPATH/
+cp -rf ../$MODULE_NAME/* $ROOTPATH/
 echo $MODULE_NAME Start Success!
