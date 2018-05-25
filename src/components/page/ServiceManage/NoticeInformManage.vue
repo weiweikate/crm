@@ -79,9 +79,9 @@
                     <el-table-column label="操作">
                         <template slot-scope="scope">
                             <el-button type="primary" size="small" @click="detailItem(scope.$index,scope.row)">查看详情</el-button>
-                            <el-button type="warning" size="small" @click="resendItem(scope.$index,scope.row.id)" v-if="scope.row.status==2">再次推送</el-button>
-                            <el-button type="success" size="small" @click="cancelItem(scope.$index,scope.row.id)" v-if="scope.row.status==1">取消推送</el-button>
-                            <el-button type="danger" size="small" @click="delItem(scope.$index,scope.row.id)" v-if="scope.row.status==3">删除</el-button>
+                            <el-button type="warning" size="small" @click="upStatusItem(scope.row.id,2)" v-if="scope.row.status==2">再次推送</el-button>
+                            <el-button type="success" size="small" @click="upStatusItem(scope.row.id,3)" v-if="scope.row.status==1">取消推送</el-button>
+                            <el-button type="danger" size="small" @click="upStatusItem(scope.row.id,4)" v-if="scope.row.status==3">删除</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -145,6 +145,11 @@
             this.height=winHeight;
             this.getList(this.page.currentPage)
         },
+        activated(){
+            let winHeight=window.screen.availHeight-520;
+            this.height=winHeight;
+            this.getList(this.page.currentPage)
+        },
         methods: {
             change(num){
                 let that=this;
@@ -202,13 +207,25 @@
                 localStorage.setItem('addNoticeInform',row.id);
                 this.$router.push({path:'/addNoticeInform',query:{id:row.id}})
             },
-            //再次推送
-            resendItem(){
-
-            },
-            //取消推送
-            cancelItem(){
-
+            //再次推送,取消推送
+            upStatusItem(id,status){
+                let that = this;
+                let data = {
+                    id: id,
+                    status:status,
+                };
+                that.$axios
+                    .post(api.updateNoticeStatus, data)
+                    .then(res => {
+                        if (res.data.code == 200) {
+                            that.getList(that.page.currentPage)
+                        } else {
+                            that.$message.warning(res.data.msg);
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
             },
             //删除
             delItem(index,id){
