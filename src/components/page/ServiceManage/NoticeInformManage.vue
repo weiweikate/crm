@@ -204,7 +204,7 @@
             },
             //详情
             detailItem(index,row){
-                localStorage.setItem('addNoticeInform',row.id);
+                localStorage.setItem('noticeInformDetail',row.id);
                 this.$router.push({path:'/addNoticeInform',query:{id:row.id}})
             },
             //再次推送,取消推送

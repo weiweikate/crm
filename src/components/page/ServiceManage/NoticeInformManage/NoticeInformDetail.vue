@@ -1,0 +1,817 @@
+<template>
+    <div>
+        <v-breadcrumb :nav="['服务管理','公告/通知','发布公告/通知']"></v-breadcrumb>
+        <div class="container">
+            <div class="inf-box">
+                <div style="margin: -30px 0 20px 80px">
+                    <div class="tab-item" :class="checked[0]?'checked':''" @click="change(0)">公告</div>
+                    <div class="tab-item" :class="checked[1]?'checked':''" @click="change(1)" style="margin-left: -5px">
+                        通知
+                    </div>
+                </div>
+                <el-form :model="form" ref="form" v-loading="loading">
+                    <el-form-item prop="title" v-if="checked[0]">
+                        <span class="label"><span class="required">*</span>公告标题</span>
+                        <el-input placeholder="请输入公告标题" v-model="title"></el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <span class="label" v-if="checked[0]"><span class="required">*</span>公告详情</span>
+                        <span class="label" v-else><span class="required">*</span>通知详情</span>
+                        <template>
+                            <div style="display: inline-block">
+                                <!-- quill-editor插件标签 分别绑定各个事件-->
+                                <quill-editor v-model="form.content" ref="myQuillEditor" :options="editorOption"
+                                              @change="onEditorChange($event)"></quill-editor>
+                                <!-- 文件上传input 将它隐藏-->
+                                <el-upload :action="qnLocation" :before-upload='beforeUpload' :data="uploadData"
+                                           :on-success='upScuccess' ref="upload" style="display:none">
+                                    <el-button size="small" type="primary" id="imgInput" element-loading-text="插入中,请稍候">
+                                        点击上传
+                                    </el-button>
+                                </el-upload>
+                            </div>
+                        </template>
+                    </el-form-item>
+
+                    <el-form-item label="推送方式" style="position: relative">
+                        <el-radio-group v-model="form.pushType">
+                            <el-radio label="1" value="1">即时推送</el-radio>
+                            <el-radio label="2" value="2">定时推送</el-radio>
+                        </el-radio-group>
+                        <el-date-picker
+                                v-model="date"
+                                type="datetime"
+                                format="yyyy-MM-dd HH:mm:ss"
+                                placeholder="选择日期时间">
+                        </el-date-picker>
+                    </el-form-item>
+                    <el-form-item label="推送人群">
+                        <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">
+                            全部用户
+                        </el-checkbox>
+                        <div style="margin: 15px 0;"></div>
+                        <el-checkbox-group v-model="checkedUsers" @change="handleCheckedUsersChange">
+                            <el-checkbox v-for="(item,index) in users" :label="index" :key="index">{{item.name}}
+                            </el-checkbox>
+                        </el-checkbox-group>
+                    </el-form-item>
+                    <el-form-item label="推送区域" class="region-area">
+                        <el-radio-group v-model="form.pushCountry">
+                            <el-radio label="1" value="1">全国</el-radio>
+                            <el-radio label="2" value="2">国外</el-radio>
+                        </el-radio-group>
+                        <el-cascader
+                                :options="options"
+                                v-model="selectedOptions"
+                                change-on-select
+                                @change="handleChange">
+                        </el-cascader>
+                    </el-form-item>
+                    <el-form-item>
+                        <span class="label">发布者</span>
+                        {{username}}
+                    </el-form-item>
+                    <div class="submit-btn">
+                        <el-button type="primary" @click="submitForm('form')">确认保存</el-button>
+                        <el-button>取消</el-button>
+                    </div>
+                </el-form>
+            </div>
+        </div>
+    </div>
+
+</template>
+<script>
+    import icon from "../../../common/ico";
+    import vBreadcrumb from '../../../common/Breadcrumb.vue';
+    import Quill from 'quill';
+    import * as api from '../../../../api/api';
+    import moment from 'moment'
+
+    export default {
+        components: {
+            vBreadcrumb, icon
+        },
+        data() {
+            return {
+                checked: [true, false],
+                title: '',//   标题
+                form: {
+                    nType:'1',//   1:公告   2：通知
+                    content:'',//   内容
+                    pushType:'1',//   1：即时推送  2：定时推送
+                    pushWay:'',//   推送人群
+                    pushCountry:'',//   1：全国 2：国外 3：定省
+                    provinceId:'',//   省
+                    cityId:'',//   市
+                    areaId:'',//   区
+                    createAdmin:'',//   发布人
+                    original_img:'',
+                    small_img:''
+                },
+                imageUrl:'',
+                date:'',
+                loading: false,
+                checkAll: false,
+                checkedUsers: [],
+                users: [],
+                isIndeterminate: false,
+                options: [{
+                    value: 'zhinan',
+                    label: '指南',
+                    children: [{
+                        value: 'shejiyuanze',
+                        label: '设计原则',
+                        children: [{
+                            value: 'yizhi',
+                            label: '一致'
+                        }, {
+                            value: 'fankui',
+                            label: '反馈'
+                        }, {
+                            value: 'xiaolv',
+                            label: '效率'
+                        }, {
+                            value: 'kekong',
+                            label: '可控'
+                        }]
+                    }, {
+                        value: 'daohang',
+                        label: '导航',
+                        children: [{
+                            value: 'cexiangdaohang',
+                            label: '侧向导航'
+                        }, {
+                            value: 'dingbudaohang',
+                            label: '顶部导航'
+                        }]
+                    }]
+                }, {
+                    value: 'zujian',
+                    label: '组件',
+                    children: [{
+                        value: 'basic',
+                        label: 'Basic',
+                        children: [{
+                            value: 'layout',
+                            label: 'Layout 布局'
+                        }, {
+                            value: 'color',
+                            label: 'Color 色彩'
+                        }, {
+                            value: 'typography',
+                            label: 'Typography 字体'
+                        }, {
+                            value: 'icon',
+                            label: 'Icon 图标'
+                        }, {
+                            value: 'button',
+                            label: 'Button 按钮'
+                        }]
+                    }, {
+                        value: 'form',
+                        label: 'Form',
+                        children: [{
+                            value: 'radio',
+                            label: 'Radio 单选框'
+                        }, {
+                            value: 'checkbox',
+                            label: 'Checkbox 多选框'
+                        }, {
+                            value: 'input',
+                            label: 'Input 输入框'
+                        }, {
+                            value: 'input-number',
+                            label: 'InputNumber 计数器'
+                        }, {
+                            value: 'select',
+                            label: 'Select 选择器'
+                        }, {
+                            value: 'cascader',
+                            label: 'Cascader 级联选择器'
+                        }, {
+                            value: 'switch',
+                            label: 'Switch 开关'
+                        }, {
+                            value: 'slider',
+                            label: 'Slider 滑块'
+                        }, {
+                            value: 'time-picker',
+                            label: 'TimePicker 时间选择器'
+                        }, {
+                            value: 'date-picker',
+                            label: 'DatePicker 日期选择器'
+                        }, {
+                            value: 'datetime-picker',
+                            label: 'DateTimePicker 日期时间选择器'
+                        }, {
+                            value: 'upload',
+                            label: 'Upload 上传'
+                        }, {
+                            value: 'rate',
+                            label: 'Rate 评分'
+                        }, {
+                            value: 'form',
+                            label: 'Form 表单'
+                        }]
+                    }, {
+                        value: 'data',
+                        label: 'Data',
+                        children: [{
+                            value: 'table',
+                            label: 'Table 表格'
+                        }, {
+                            value: 'tag',
+                            label: 'Tag 标签'
+                        }, {
+                            value: 'progress',
+                            label: 'Progress 进度条'
+                        }, {
+                            value: 'tree',
+                            label: 'Tree 树形控件'
+                        }, {
+                            value: 'pagination',
+                            label: 'Pagination 分页'
+                        }, {
+                            value: 'badge',
+                            label: 'Badge 标记'
+                        }]
+                    }, {
+                        value: 'notice',
+                        label: 'Notice',
+                        children: [{
+                            value: 'alert',
+                            label: 'Alert 警告'
+                        }, {
+                            value: 'loading',
+                            label: 'Loading 加载'
+                        }, {
+                            value: 'message',
+                            label: 'Message 消息提示'
+                        }, {
+                            value: 'message-box',
+                            label: 'MessageBox 弹框'
+                        }, {
+                            value: 'notification',
+                            label: 'Notification 通知'
+                        }]
+                    }, {
+                        value: 'navigation',
+                        label: 'Navigation',
+                        children: [{
+                            value: 'menu',
+                            label: 'NavMenu 导航菜单'
+                        }, {
+                            value: 'tabs',
+                            label: 'Tabs 标签页'
+                        }, {
+                            value: 'breadcrumb',
+                            label: 'Breadcrumb 面包屑'
+                        }, {
+                            value: 'dropdown',
+                            label: 'Dropdown 下拉菜单'
+                        }, {
+                            value: 'steps',
+                            label: 'Steps 步骤条'
+                        }]
+                    }, {
+                        value: 'others',
+                        label: 'Others',
+                        children: [{
+                            value: 'dialog',
+                            label: 'Dialog 对话框'
+                        }, {
+                            value: 'tooltip',
+                            label: 'Tooltip 文字提示'
+                        }, {
+                            value: 'popover',
+                            label: 'Popover 弹出框'
+                        }, {
+                            value: 'card',
+                            label: 'Card 卡片'
+                        }, {
+                            value: 'carousel',
+                            label: 'Carousel 走马灯'
+                        }, {
+                            value: 'collapse',
+                            label: 'Collapse 折叠面板'
+                        }]
+                    }]
+                }, {
+                    value: 'ziyuan',
+                    label: '资源',
+                    children: [{
+                        value: 'axure',
+                        label: 'Axure Components'
+                    }, {
+                        value: 'sketch',
+                        label: 'Sketch Templates'
+                    }, {
+                        value: 'jiaohu',
+                        label: '组件交互文档'
+                    }]
+                }],
+                selectedOptions: [],
+                content: '', // 文章内容
+                editorOption: {
+                    placeholder: '请输入内容',
+                    modules: {
+                        // 配置富文本
+                        toolbar: [
+                            ["bold", "italic", "underline", "strike"],
+                            ["blockquote", "code-block"],
+                            [{header: 1}, {header: 2}],
+                            [{direction: "rtl"}],
+                            [{size: ["small", false, "large", "huge"]}],
+                            [{header: [1, 2, 3, 4, 5, 6, false]}],
+                            [{color: []}, {background: []}],
+                            [{font: []}],
+                            [{align: []}],
+                            ["clean"],
+                            ["link", "image"]
+                        ]
+                    }
+                },
+                addRange: [],
+                uploadData: {},
+                photoUrl: '', // 上传图片地址
+                uploadType: '', // 上传的文件类型（图片、视频）
+                id: '',
+                username: '',
+                userId: '',
+                pLoading: false,
+                cLoading: false,
+                aLoading: false,
+                province: "",
+                city: "",
+                area: "",
+                provinceArr: [],
+                cityArr: [],
+                areaArr: [],
+                region: []
+            };
+        },
+        computed: {
+            qnLocation() {
+                return location.protocol === "http:"
+                    ? "/commonAPI/ossClient/aliyunOSSUploadImage"
+                    : "/commonAPI/ossClient/aliyunOSSUploadImage";
+            }
+        },
+        // 页面加载后执行 为编辑器的图片图标和视频图标绑定点击事件
+        mounted() {
+            // 为图片ICON绑定事件 getModule 为编辑器的内部属性
+            this.$refs.myQuillEditor.quill
+                .getModule("toolbar")
+                .addHandler("image", this.imgHandler);
+        },
+        created() {
+            this.$refs = {
+                myQuillEditor: HTMLInputElement,
+                imgInput: HTMLInputElement
+            };
+            this.id =
+                this.$route.query.id ||
+                JSON.parse(sessionStorage.getItem("addNoticeInform").id);
+            if(this.id){
+                this.getDetail();
+            }
+            this.getLevelList();
+            this.username = localStorage.getItem("ms_username");
+            this.userId = localStorage.getItem("ms_userID");
+            this.form.createAdmin = localStorage.getItem("ms_userID");
+        },
+        // activated(){
+        //     this.$refs['form'].resetFields();
+        // },
+        methods: {
+            //获取用户层级列表
+            getLevelList() {
+                let that = this;
+                let data = {};
+                that.$axios
+                    .post(api.getDealerLevelList, data)
+                    .then(res => {
+                        if (res.data.code == 200) {
+                            that.users = res.data.data;
+                        } else {
+                            that.$message.warning(res.data.msg);
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    })
+            },
+            //获取详情
+            getDetail() {
+                let that = this;
+                let data = {
+                    id: that.id
+                };
+                that.loading = true;
+                that.$axios
+                    .post(api.getNoticeDetailById, data)
+                    .then(res => {
+                        if (res.data.code == 200) {
+                            that.form = res.data.data;
+                            that.title=res.data.data.title;
+                            that.username=res.data.data.name;
+                            if(res.data.data.n_type==1){
+                                that.checked=[true,false]
+                            }else{
+                                that.checked=[false,true]
+                            }
+                            that.form.pushWay=res.data.data.push_way.toString();
+                            that.form.pushType=res.data.data.push_type.toString();
+                            that.form.pushCountry=res.data.data.push_country.toString();
+                            that.date=res.data.data.order_time?moment(res.data.data.order_time).format('YYYY-MM-DD HH:mm:ss'):'';
+                            that.loading = false;
+                        } else {
+                            that.loading = false;
+                            that.$message.warning(res.data.msg);
+                        }
+                    })
+                    .catch(err => {
+                        that.loading = false
+                    })
+            },
+            beforeUpload(file) {
+                return this.qnUpload(file);
+            },
+            // 图片上传前获得数据token数据
+            qnUpload(file) {
+                this.fullscreenLoading = true;
+                const suffix = file.name.split(".");
+                const ext = suffix.splice(suffix.length - 1, 1)[0];
+                console.log(this.uploadType);
+                if (this.uploadType === "image") {
+                    this.$message.warning('正在上传');
+                    return this.$axios("/commonAPI/ossClient/aliyunOSSUploadImage").then(res => {
+                        this.uploadData = {
+                            key: `image/${suffix.join(".")}_${new Date().getTime()}.${ext}`,
+                            token: res.data
+                        };
+                    });
+                }
+            },
+
+            // 图片上传成功回调 插入到编辑器中
+            upScuccess(e, file, fileList) {
+                this.fullscreenLoading = false;
+                let vm = this;
+                let url = "";
+                if (this.uploadType === "image") {
+                    // 获得文件上传后的URL地址
+                    url = e.data.imageUrl;
+                    this.form.original_img = e.data.imageUrl;
+                    this.form.small_img = e.data.imageThumbUrl;
+                    console.log(this.form.original_img)
+                }
+                if (url != null && url.length > 0) {
+                    // 将文件上传后的URL地址插入到编辑器文本中
+                    let value = url;
+                    // this.$refs.myTextEditor.quillEditor.getSelection();
+                    // 获取光标位置对象，里面有两个属性，一个是index 还有 一个length，这里要用range.index，即当前光标之前的内容长度，然后再利用 insertEmbed(length, 'image', imageUrl)，插入图片即可。
+                    vm.addRange = vm.$refs.myQuillEditor.quill.getSelection();
+                    value = value.indexOf("http") !== -1 ? value : "http:" + value;
+                    vm.$refs.myQuillEditor.quill.insertEmbed(
+                        vm.addRange !== null ? vm.addRange.index : 0,
+                        vm.uploadType,
+                        value,
+                        Quill.sources.USER
+                    ); // 调用编辑器的 insertEmbed 方法，插入URL
+                    this.$message.success('插入成功');
+                } else {
+                    this.$message.error(`${vm.uploadType}插入失败`);
+                }
+                this.$refs["upload"].clearFiles(); // 插入成功后清除input的内容
+            },
+
+            // 点击图片ICON触发事件
+            imgHandler(state) {
+                this.addRange = this.$refs.myQuillEditor.quill.getSelection();
+                if (state) {
+                    let fileInput = document.getElementById("imgInput");
+                    fileInput.click(); // 加一个触发事件
+                }
+                this.uploadType = "image";
+            },
+            // 每次输入都会调用这个方法
+            onEditorChange({editor, html, text}) {
+                console.log("editor change!", html);
+                this.form.content = html;
+            },
+
+            handleChange() {
+                console.log(value);
+                this.getProvinceList()
+            },
+            //人群选择
+            handleCheckAllChange(val) {
+                let that=this;
+                that.checkedUsers = val ? that.users : [];
+                that.isIndeterminate = false;
+                if(val){
+                    let result = 0;
+                    for(let i=0;i<that.users.length;i++){
+                        result+=Math.pow(2,i)
+                    }
+                    that.form.pushWay=result;
+                }else{
+                    that.form.pushWay=''
+                }
+            },
+            handleCheckedUsersChange(value) {
+                let checkedCount = value.length;
+                let result = 0;
+                for (let i in value) {
+                    result += Math.pow(2, value[i])
+                }
+                this.form.pushWay=result;
+                this.checkAll = checkedCount === this.users.length;
+                this.isIndeterminate = checkedCount > 0 && checkedCount < this.users.length;
+            },
+
+            change(num) {
+                let that = this;
+                that.checked = [false, false];
+                that.checked[num] = true;
+                that.form.nType=num+1;
+                if(num==1){
+                    that.title=''
+                }
+            },
+            // 提交表单
+            submitForm() {
+                let that=this;
+                let params=that.form;
+                if(that.form.nType==1){
+                    params.title=that.title;
+                }
+                if(that.form.pushType==2){
+                    params.orderTime=that.date?moment(that.date).format('YYYY-MM-DD HH:mm:ss'):'';
+                }
+                that.btnLoading=true;
+                that.$axios
+                    .post(api.addNotice,params)
+                    .then(res=>{
+                        if(res.data.code==200){
+                            that.btnLoading=false;
+                            that.$message.success(res.data.msg);
+                            setTimeout(function () {
+                                that.$router.push('/noticeInformManage')
+                            },1000)
+                        }else{
+                            that.btnLoading = false;
+                            that.$message.warning(res.data.msg);
+                        }
+                    })
+                    .catch(err=>{
+                        that.btnLoading=false
+                    })
+            },
+            //   获取省份列表
+            getProvinceList() {
+                this.pLoading = true;
+                this.$axios
+                    .post(api.getProvinced, {})
+                    .then(res => {
+                        this.provinceArr = [];
+                        res.data.data.forEach((v, k) => {
+                            this.provinceArr.push({ label: v.name, value: v.zipcode });
+                            this.pLoading = false;
+                        });
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+            },
+            // 获取城市列表
+            getCity(val) {
+                this.cLoading = true;
+                this.$axios
+                    .post(api.getCity, { fatherZipcode: this.province })
+                    .then(res => {
+                        if (res.data.data.length != 0 && val == false) {
+                            this.city = res.data.data[0].zipcode;
+                        }else if(val == true){
+                            this.city = this.regionMsg[1];
+                        } else {
+                            this.city = "";
+                        }
+                        this.cityArr = [];
+                        res.data.data.forEach((v, k) => {
+                            this.cityArr.push({ label: v.name, value: v.zipcode });
+                            this.cLoading = false;
+                        });
+                        this.province.children=this.cityArr;
+                        if(val == true){
+                            this.getArea(true);
+                            return;
+                        }
+                        this.getArea(false);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+            },
+            // 获取区
+            getArea(val) {
+                this.aLoading = true;
+                let data = {};
+                if (this.city == "") {
+                    data.fatherZipcode = this.province;
+                } else {
+                    data.fatherZipcode = this.city;
+                }
+                this.$axios
+                    .post(api.getArea, data)
+                    .then(res => {
+                        if (res.data.data.length != 0 && val == false) {
+                            this.area = res.data.data[0].zipcode;
+                        }else if(val == true){
+                            this.area = this.regionMsg[2];
+                        } else {
+                            this.area = "";
+                        }
+                        this.areaArr = [];
+                        res.data.data.forEach((v, k) => {
+                            this.areaArr.push({ label: v.name, value: v.zipcode });
+                            this.aLoading = false;
+                        });
+                        this.province.children.children=this.areaArr;
+                        this.region = [];
+                        this.region.push(this.province);
+                        this.region.push(this.city);
+                        this.region.push(this.area);
+                        // this.$emit("regionMsg", this.region);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+            },
+            // 获取省市区
+            getAllRegion() {
+                this.region = [];
+                this.region.push(this.province);
+                this.region.push(this.city);
+                this.region.push(this.area);
+                this.$emit("regionMsg", this.region);
+            }
+        }
+    };
+</script>
+<style lang="less">
+    .inf-box {
+        .tab-item {
+            width: 116px;
+            height: 50px;
+            line-height: 50px;
+            border-radius: 0 0 5px 5px;
+            text-align: center;
+            color: #fff;
+            background: #dddddd;
+            display: inline-block;
+            cursor: pointer;
+        }
+        .checked {
+            background: #ff6868;
+        }
+        .label {
+            width: 100px;
+            text-align: right;
+            display: inline-block;
+            margin-right: 10px;
+            vertical-align: top;
+        }
+        .el-input {
+            width: 350px
+        }
+        .el-input__inner {
+            width: 350px
+        }
+        .classify-area {
+            .el-input {
+                width: 200px
+            }
+            .el-input__inner {
+                width: 200px
+            }
+        }
+        .required {
+            color: #ff1e30;
+            margin-right: 5px;
+        }
+        .el-form-item__label {
+            width: 112px;
+        }
+        .opr-area {
+            float: left;
+            width: 150px;
+            text-align: center;
+            margin-left: -10px;
+        }
+        .opr-area .el-button {
+            margin-top: 30px
+        }
+        .opr-area .el-button:nth-child(2) {
+            margin-left: 0
+        }
+        .check-area {
+            float: left;
+            width: 191px;
+            font-size: 12px;
+            color: #999;
+            border: 1px solid #dfdfdf;
+            margin-right: 10px;
+            border-radius: 5px;
+        }
+        .clearfix {
+            clear: both;
+            content: ''
+        }
+        .title {
+            background: #eee;
+            height: 28px;
+            line-height: 28px;
+            text-align: center;
+            border-bottom: 1px solid #dfdfdf;
+        }
+        ul {
+            line-height: 25px;
+            height: 120px;
+            overflow-y: auto;
+            overflow-x: hidden
+        }
+        ul li {
+            list-style: none;
+            padding-left: 10px;
+            cursor: pointer
+        }
+        ul li.selected {
+            background: #409EFF;
+            color: #fff
+        }
+
+        .select-area {
+            width: 500px;
+            max-height: 150px;
+            overflow-x: hidden;
+            overflow-y: auto;
+            border: 1px solid #eee;
+            border-radius: 10px;
+        }
+        .select-area .el-checkbox {
+            margin: 0 10px 0
+        }
+        .select-area .el-checkbox-group {
+            font-size: 12px;
+            line-height: 10px
+        }
+        .submit-btn {
+            padding: 0 50px 20px 100px
+        }
+        .el-checkbox-group {
+            margin-left: 112px;
+        }
+        .el-radio {
+            display: block;
+            margin-left: 0;
+            line-height: 32px;
+        }
+        .el-date-editor {
+            position: absolute;
+            top: 32px;
+            left: 210px;
+            .el-input__inner {
+                width: 200px;
+            }
+        }
+        .el-date-editor.el-input {
+            width: 200px
+        }
+        .region-area {
+            position: relative;
+            .el-checkbox {
+                display: block;
+                margin-left: 0;
+            }
+        }
+        .el-cascader {
+            position: absolute;
+            top: 0;
+            left: 180px;
+            .el-input {
+                width: 230px;
+            }
+            .el-input__inner {
+                width: 230px;
+            }
+        }
+        .quill-editor {
+            width: 800px;
+        }
+    }
+</style>
+
+

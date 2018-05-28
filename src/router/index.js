@@ -139,6 +139,12 @@ export default new Router({
                     meta: { title: '发布通知/公告' }
                 },
                 {
+                    name:'noticeInformDetail',
+                    path: '/noticeInformDetail',
+                    component: resolve => require(['../components/page/ServiceManage/NoticeInformManage/NoticeInformDetail.vue'], resolve),
+                    meta: { title: '通知/公告详情' }
+                },
+                {
                     name:'feedBack',
                     path: '/feedBack',
                     component: resolve => require(['../components/page/ServiceManage/FeedBack.vue'], resolve),
