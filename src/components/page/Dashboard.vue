@@ -110,10 +110,17 @@ export default {
   data() {
     return {
       isShowActAccPwd: false,
-      isShowActAccCode:true
+      isShowActAccCode:false
     };
   },
+  created(){
+      console.log(localStorage.getItem('ms_hadFirstLogin'));
+      if(localStorage.getItem('ms_hadFirstLogin') == 1){
+          this.isShowActAccCode = true;
+      }
+  },
   methods: {
+    //  激活账号弹窗
     isShowCode(msg) {
         this.isShowActAccCode = msg;
         this.isShowActAccPwd = !msg;

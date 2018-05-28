@@ -2,21 +2,27 @@
     <div>
         <breadcrumb :nav='breadcrumb'></breadcrumb>
         <el-card>
-            <el-button type='primary' @click="isShowAddChan = true">添加渠道</el-button>
+            <el-button type='primary' @click="addChan">添加渠道</el-button>
             <el-table v-loading="tableLoading" class="w-table" stripe :data="tableData" :height="height" border style="width: 100%">
-                <el-table-column prop="ID" label="ID" width="180" align="center"></el-table-column>
+                <el-table-column prop="id" label="ID" width="180" align="center"></el-table-column>
                 <el-table-column prop="name" label="品类" align="center"></el-table-column>
                 <el-table-column prop="status" label="渠道参与者" align="center"></el-table-column>
-                <el-table-column prop="name" label="状态" align="center"></el-table-column>
+                <el-table-column prop="status" label="状态" align="center">
+                  <template slot-scope="scope">
+                    <template v-if="scope.row.status == 1">开启</template>
+                    <template v-if="scope.row.status == 2">关闭</template>
+                    <template v-if="scope.row.status == 3">删除</template>
+                  </template> 
+                </el-table-column>
                 <el-table-column label="操作" align="center">
                     <template slot-scope="scope">
                         <el-button type="primary" @click="secondChannel(scope.row)">二级渠道</el-button>
-                        <el-button type="warning" @click='edit(scope.row)'>编辑</el-button>
+                        <el-button type="warning" @click='editChan(scope.row)'>编辑</el-button>
                         <el-button type="danger" @click="deleteMsg(scope.row)">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
-            <div class="block">
+            <!-- <div class="block">
                 <el-pagination
                     background
                     @size-change="handleSizeChange"
@@ -25,11 +31,11 @@
                     layout="total, prev, pager, next, jumper"
                     :total="page.totalPage">
                 </el-pagination>
-            </div>
+            </div> -->
         </el-card>
         <add-channel @status='closeAddChan' v-if="isShowAddChan"></add-channel>
-        <edit-channel @status='closeEditChan' v-if="isShowEditChan"></edit-channel>
-        <delete-toast :id='delId' :url='delUrl' @msg='deleteToast' v-if="isShowDelToast"></delete-toast>
+        <edit-channel @status='closeEditChan' :row='row' v-if="isShowEditChan"></edit-channel>
+        <delete-toast :id='delId' :url='delUrl' status='3' @msg='deleteToast' v-if="isShowDelToast"></delete-toast>
     </div>
 </template>
 <script>
@@ -52,6 +58,7 @@ export default {
       isShowEditChan: false,
       isShowDelToast: false,
       tableLoading: false,
+      row:'',
       delId: 66,
       delUrl:'http://api',
       tableData: [{ ID: 123 }],
@@ -65,21 +72,24 @@ export default {
   created() {
     let winHeight = window.screen.availHeight - 360;
     this.height = winHeight;
-    this.getList(this.page.currentPage);
+  },
+  activated(){
+    this.getList();
   },
   methods: {
     //获取列表
-    getList(val) {
-      let that = this;
-      let data = {
-        page: val
-      };
+    getList() {
       this.tableLoading = true;
       this.$axios
-        .post(api.getProductList, data)
+        .post(api.permitChannelGetList, {fatherid:0})
         .then(res => {
-          that.tableData = res.data.data.list;
-          that.tableLoading = false;
+          this.tableLoading = false;
+          if(res.data.code == 200){
+            this.tableData = [];
+            this.tableData = res.data.data;
+          }else{
+            this.$message.warning(res.data.msg);
+          }   
         })
         .catch(err => {
           console.log(err);
@@ -95,32 +105,41 @@ export default {
       this.getList(val);
     },
 
-    // 编辑信息
-    edit(row) {
-      this.isShowEditChan = true;
-    },
-
     // 删除信息
     deleteMsg(row) {
-      this.delId = '999';
+      this.delId = row.id;
+      this.delUrl = api.updatePermitChannel;
       this.isShowDelToast = true;
     },
 
     // 进入二级渠道
     secondChannel(row){
-      this.$router.push({path:'secondChannel',query:row})
+      sessionStorage.setItem('secondChannel',JSON.stringify({id:row.id,fatherName:row.name}));
+      this.$router.push({name:'secondChannel',params:{id: row.id,fatherName:row.name}})
     },
 
+    // 添加渠道
+    addChan(){
+      this.isShowAddChan = true;
+    },
     // 关闭添加弹窗
     closeAddChan(msg) {
+      this.getList();
       this.isShowAddChan = msg;
+    },
+    // 编辑渠道
+    editChan(row){
+      this.row = row;
+      this.isShowEditChan = true;
     },
     // 关闭编辑弹窗
     closeEditChan(msg) {
+      this.getList();
       this.isShowEditChan = msg;
     },
     // 删除弹窗
     deleteToast(msg) {
+      this.getList();
       this.isShowDelToast = msg;
     }
   }

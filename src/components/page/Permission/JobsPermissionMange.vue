@@ -4,9 +4,9 @@
         <el-card>
             <el-button type='primary' @click="addRole">添加角色</el-button>
             <el-table v-loading="tableLoading" class="w-table" stripe :data="tableData" :height="height" border style="width: 100%">
-                <el-table-column prop="id" label="id" width="180" align="center"></el-table-column>
-                <el-table-column prop="name" label="角色名称" align="center"></el-table-column>
-                <el-table-column prop="status" label="部门" align="center"></el-table-column>
+                <el-table-column prop="id" label="ID" width="180" align="center"></el-table-column>
+                <el-table-column prop="rname" label="角色名称" align="center"></el-table-column>
+                <el-table-column prop="dname" label="部门" align="center"></el-table-column>
                 <el-table-column label="操作" align="center">
                     <template slot-scope="scope">
                         <el-button type="warning" @click='editRole(scope.row)'>编辑</el-button>
@@ -54,6 +54,8 @@ export default {
   created() {
     let winHeight = window.screen.availHeight - 360;
     this.height = winHeight;
+  },
+  activated(){
     this.getList(this.page.currentPage);
   },
   methods: {
@@ -65,10 +67,16 @@ export default {
       };
       this.tableLoading = true;
       this.$axios
-        .post(api.getProductList, data)
+        .post(api.queryRolePageList, data)
         .then(res => {
           that.tableLoading = false;
-          this.tableData = res.data.data.list;
+          if(res.data.code == 200){
+            this.tableData = [];
+            this.tableData = res.data.data.data;
+            this.page.totalPage = res.data.data.resultCount;
+          }else{
+            this.$message.warning(res.data.msg);
+          }
         })
         .catch(err => {
           console.log(err);
@@ -91,17 +99,18 @@ export default {
 
     // 编辑角色
     editRole(row){
-        console.log(row.id)
         sessionStorage.setItem('editJobsPermission',row.id);
         this.$router.push({name:'editJobsPermission',params:{userId:row.id}});
     },
 
     // 删除模板
     deleteRole(row) {
-      this.delId = 666;
+      this.delId = row.id;
+      this.delUrl = api.deleteRole;
       this.isShowDelToast = true;
     },
     deleteToast(msg) {
+      this.getList(this.page.currentPage);
       this.isShowDelToast = msg;
     }
   }

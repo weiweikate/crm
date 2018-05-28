@@ -21,7 +21,8 @@ export default {
     },
     url: {
       require: true
-    }
+    },
+    status:{}
   },
   components: {
     icon
@@ -38,13 +39,13 @@ export default {
         let that = this;
         that.btnLoading = true;
         let url = that.url;
-        let data = {id:that.id};
+        let data = {id:that.id,status:that.status};
         this.$axios
           .post(url, data)
           .then(res => {
             that.btnLoading = false;
             if(res.data.code == 200){
-              this.$message.success(res.data.msg);
+              this.$message.success('删除成功');
               this.$emit("msg", false);
             }else{
               this.$message.warning(res.data.msg);

@@ -108,7 +108,6 @@ export default {
             that.tableData = [];
             that.tableData = res.data.data.data;
             that.page.totalPage = res.data.data.resultCount;
-            that.$message.success(res.data.msg);
           }else{
             that.$message.warning(res.data.msg);
           }

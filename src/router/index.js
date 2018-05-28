@@ -224,6 +224,12 @@ export default new Router({
                     component: resolve => require(['../components/page/Permission/EditMangerMsg.vue'], resolve),
                     meta: { title: '管理员基础信息修改' }
                 },
+                {
+                    name:'editor',
+                    path: '/editor',
+                    component: resolve => require(['../components/page/editor.vue'], resolve),
+                    meta: { title: 'editor' }
+                },
             ]
         },
         {

@@ -28,7 +28,7 @@
                     <span class="btn-bell-badge" v-if="message"></span>
                 </div>
                 <!-- 用户头像 -->
-                <div class="user-avator"><img src="static/img/img.jpg"></div>
+                <div class="user-avator"><img :src="face"></div>
                 <!-- 用户名下拉菜单 -->
                 <el-dropdown class="user-name" trigger="click" @command="handleCommand">
                     <span class="el-dropdown-link">
@@ -46,6 +46,7 @@
 <script>
 import bus from "../common/bus";
 import vTags from "./Tags.vue";
+import * as api from '../../api/api.js';
 export default {
   components: {
     vTags
@@ -55,6 +56,7 @@ export default {
       isShowTitle: true,
       collapse: false,
       fullscreen: false,
+      face: "",
       name: "linxin",
       message: 2
     };
@@ -65,6 +67,21 @@ export default {
       return username ? username : this.name;
     }
   },
+  created() {
+    this.id = localStorage.getItem("ms_userID");
+    this.$axios
+      .post(api.findAdminUserbyId, { id: this.id })
+      .then(res => {
+        if (res.data.code == 200) {
+          this.face = res.data.data.face;
+        } else {
+          this.$message.warning(res.data.msg);
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  },
   methods: {
     // 用户名下拉菜单选择事件
     handleCommand(command) {
@@ -74,7 +91,10 @@ export default {
         this.$router.push("/login");
       } else if (command == "editMangerMsg") {
         sessionStorage.setItem("editMangerMsg", "admin");
-        this.$router.push({name:'editMangerMsg',params:{editMangerMsg:'admin'}});
+        this.$router.push({
+          name: "editMangerMsg",
+          params: { editMangerMsg: "admin" }
+        });
       }
     },
     // 侧边栏折叠

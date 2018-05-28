@@ -8,9 +8,9 @@
                         <el-input v-model="form.name" placeholder="请输入渠道名称" size="medium"></el-input>
                     </el-form-item>
                     <el-form-item label="是否启用">
-                        <el-select v-model="form.isUse">
+                        <el-select v-model="form.status">
                             <el-option value="1" label="是"></el-option>
-                            <el-option value="0" label="否"></el-option>
+                            <el-option value="2" label="否"></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item class="submit-btn">
@@ -24,6 +24,7 @@
 </template>
 <script>
 import icon from "../../../common/ico";
+import * as api from '../../../../api/api.js';
 export default {
   components: {
     icon
@@ -32,7 +33,7 @@ export default {
     return {
       form: {
         name:'',
-        isUse:'1'
+        status:'1'
       }
     };
   },
@@ -43,7 +44,27 @@ export default {
     },
     // 提交表单
     submitForm(form){
-        this.closeToask();
+        if(this.form.name == ''){
+            this.$message.warning('请输入渠道名称！');
+            return;
+        }
+        let data = {};
+        data.name = this.form.name;
+        data.status = this.form.status;
+        data.fatherid = '0';
+        this.$axios
+        .post(api.addPermitChannel, data)
+        .then(res => {
+          if(res.data.code == 200){
+            this.$message.success(res.data.msg);
+            this.closeToask();
+          }else{
+            this.$message.warning(res.data.msg);
+          }   
+        })
+        .catch(err => {
+          console.log(err);
+        });
     }
   }
 };

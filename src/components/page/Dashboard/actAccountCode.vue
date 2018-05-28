@@ -24,6 +24,7 @@
 </template>
 <script>
 import icon from "../../common/ico";
+import * as api from '../../../api/api.js';
 export default {
   components: {
     icon
@@ -46,20 +47,53 @@ export default {
   },
   methods: {
     submitForm(form) {
-      this.$emit("status", false);
+      let data = {};
+      data.phone = this.form.phone;
+      data.code = this.form.code;
+      this.$axios.post(api.loginUpdateCheckCode,data)
+      .then(res=>{
+        if(res.data.code == 200){
+          localStorage.setItem("ms_phone", this.form.phone);
+          this.$emit("status", false);
+        }else{
+          this.$message.warning(res.data.msg);
+        }
+      })
+      .catch(err=>{
+        console.log(err);
+      })
     },
     // 获取验证码
     getCode(){
-        let that = this;
-        this.code = false;
-        this.codeTime = 5;
-        let timer = setInterval(function(){
-            that.codeTime--;
-            if(that.codeTime <=0){
-                that.code = true;
-                clearInterval(timer);
-            }
-        },1000)
+      if(this.form.phone == ''){
+        this.$message.warning('请输入手机号');
+        return;
+      }
+      let that = this;
+      this.code = false;
+      this.codeTime = 60;
+      let timer = setInterval(function(){
+          that.codeTime--;
+          if(that.codeTime <=0){
+              that.code = true;
+              clearInterval(timer);
+          }
+      },1000)
+      let data = {};
+      data.phone = this.form.phone;
+      console.log(data)
+      this.$axios.post(api.sendUpdatePwdCode,data)
+      .then(res=>{
+        if(res.data.code == 200){
+          this.$message.success('已发送验证码');
+          alert(res.data.data);
+        }else{
+          this.$message.warning(res.data.msg);
+        }
+      })
+      .catch(err=>{
+        console.log(err);
+      })
     },
   }
 };

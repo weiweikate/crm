@@ -12,7 +12,7 @@
                         <el-input class="add-mange-inp" v-model="form.phone"></el-input>
                     </el-form-item>
                     <div class="avatar">
-                        <img v-if="form.imageUrl" :src="form.imageUrl">
+                        <img v-if="form.face" :src="form.face">
                         <img v-else src="../../../assets/images/logo.png" alt="">
                         <el-upload
                                 :action="uploadImg"
@@ -32,7 +32,7 @@
                     </el-form-item>
                     <el-form-item prop="jobId" label="所在岗位">
                         <el-select v-model="form.jobId" placeholder="请选择">
-                            <el-option v-for="item in department" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                            <el-option v-for="item in jobList" :key="item.value" :label="item.label" :value="item.value"></el-option>
                         </el-select>
                     </el-form-item>
                     <el-form-item prop="superior" label="直接上级">
@@ -77,43 +77,33 @@ export default {
     return {
       nav: ["权限管理", "创建账号"],
       checkAllUser: [false,false,false,false,false,false,false,false,false,false],
-      checkedUser: [["三级菜单", "三级菜单2", "三级菜单1"],[],[],[],[],[],[],[],[],[],],
+      checkedUser: [["1", "2", "3"],[],[],[],[],[],[],[],[],[],],
       uploadImg:'',
       userManList: [],
-      department: [
-        {
-          label: "技术部",
-          value: 1
-        },
-        {
-          label: "财务部",
-          value: 2
-        },
-        {
-          label: "人事部",
-          value: 3
-        }
-      ],
+      department: [],
+      jobList:[],
       form: {
         username: "",
         phone: "",
         departmentId: [],
         jobId: "",
         superior: "",
-        // imageUrl: ""
+        face: ""
       },
       rules:{
         username:[{ required: true, message: '请输入姓名', trigger: 'blur' }],
         phone:[{ required: true, message: '请输入手机号', trigger: 'blur' }],
         departmentId:[{ required: true, message: '请输入所属部门', trigger: 'blur' }],
         jobId:[{ required: true, message: '请输入所在岗位', trigger: 'blur' }],
-        superior:[{ required: true, message: '请输入直接上级', trigger: 'blur' }],
+        superior:[{required: true, message: '请输入直接上级ID', trigger: 'blur' },],
       }
     };
   },
-  created() {
+  activated(){
     this.uploadImg = api.addImg;
     this.getRoleList();
+    this.getDepartmentList();
+    this.getJobList();
   },
   methods: {
     //提交表单
@@ -127,6 +117,7 @@ export default {
       })
       data = this.form;
       data.role = role.join(',');
+      console.log(data);
       this.$refs[formName].validate((valid) => {
           if (valid) {
             this.$axios
@@ -156,7 +147,7 @@ export default {
     // 上传图片
     uploadAvatar(res) {
       if(res.code == 200){
-        this.form.imageUrl = res.data.imageUrl;
+        this.form.face = res.data.imageUrl;
       }else{
         this.$message.warning(res.msg);
       }
@@ -191,6 +182,43 @@ export default {
         .post(api.getRoleList, data)
         .then(res => {
           this.userManList = res.data.data;
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+
+    // 获取部门列表
+    getDepartmentList(){
+      this.department = [];
+      this.$axios
+        .post(api.queryDepartmentList, {})
+        .then(res => {
+          if(res.data.code == 200){
+            res.data.data.forEach((v,k)=>{
+              this.department.push({label:v.name,value:v.id});
+            })
+          }else{
+            this.$message.warning(res.data.msg);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    // 获取岗位列表
+    getJobList(){
+      this.jobList = [];
+      this.$axios
+        .post(api.queryJobList, {})
+        .then(res => {
+          if(res.data.code == 200){
+            res.data.data.forEach((v,k)=>{
+              this.jobList.push({label:v.name,value:v.id});
+            })
+          }else{
+            this.$message.warning(res.data.msg);
+          }
         })
         .catch(err => {
           console.log(err);

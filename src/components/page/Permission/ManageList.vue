@@ -37,10 +37,10 @@
                   <el-button size="mini" type="primary" @click="editManger(scope.row)">编辑</el-button>
                   <el-button v-if='scope.row.status == 1' size="mini" type="warning" @click="resetPwd(scope.row)">密码重置</el-button>
                   <el-button size="mini" type="warning" @click="showLog(scope.row)">查看日志</el-button>
-                  <el-button v-if='scope.row.status == 0' size="mini" type="danger"  >账号删除</el-button>
+                  <el-button v-if='scope.row.status == 0' @click="deleteUser(scope.row)" size="mini" type="danger"  >账号删除</el-button>
                   <template>
-                    <el-button v-if='scope.row.status == 1' size="mini" type="danger" @click='accountMange(false)' >账号关闭</el-button>
-                    <el-button v-if='scope.row.status == 0' size="mini" type="danger" @click='accountMange(true)' >账号开启</el-button>
+                    <el-button :loading="closeBtn" v-if='scope.row.status == 1' size="mini" type="danger" @click='accountMange(scope.row,0)' >账号关闭</el-button>
+                    <el-button :loading="closeBtn" v-if='scope.row.status == 0' size="mini" type="danger" @click='accountMange(scope.row,1)' >账号开启</el-button>
                   </template>
                 </template>
               </el-table-column>
@@ -67,26 +67,32 @@
               <el-button type="primary" @click="confirmReset('pwdForm')">确 定</el-button>
             </span>
         </el-dialog>
+        <delete-toast :id='delId' :url='delUrl' @msg='deleteToast' v-if="isShowDelToast"></delete-toast>
     </div>
 </template>
 <script>
 import breadcrumb from "../../common/Breadcrumb";
 import * as api from "../../../api/api.js";
+import deleteToast from "../../common/DeleteToast";
 export default {
   components: {
-    breadcrumb
+    breadcrumb,deleteToast
   },
   data() {
     return {
       nav: ["权限管理", "管理员账号管理"],
-      accountCtr:false,
       isShowResetPwd:false,
+      isShowDelToast:false,
+      closeBtn:false,
+      delId:-1,
+      delUrl:'api',
       form: {
-        // id: "",
         name: "",
         phone: ""
       },
       pwdForm:{
+        id:'',
+        phone:'',
         password:'',
       },
       tableLoading: false,
@@ -151,7 +157,8 @@ export default {
 
     // 编辑管理员
     editManger(row){
-      this.$router.push('/editManger');
+      sessionStorage.setItem('editManger',row.id);
+      this.$router.push({name:'editManger',query:{id:row.id}});
     },
 
     // 查看操作日志
@@ -163,12 +170,24 @@ export default {
     // 密码重置
     resetPwd(row){
       this.pwdForm = {};
+      this.pwdForm.id = row.id;
       this.isShowResetPwd = true;
     },
     confirmReset(formName){
       this.$refs[formName].validate((valid) => {
           if (valid) {
-            this.isShowResetPwd = false;
+            this.$axios.post(api.resetPassword,this.pwdForm)
+            .then(res=>{
+              if(res.data.code == 200){
+                this.$message.success(res.data.msg);
+                this.isShowResetPwd = false;
+              }else{
+                this.$message.warning(res.data.msg);
+              }
+            })
+            .catch(err=>{
+              console.log(err)
+            })
           } else {
             console.log('error submit!!');
             return false;
@@ -176,9 +195,37 @@ export default {
         });
     },
 
+    // 删除用户
+    deleteUser(row){
+      this.delId = row.id;
+      this.delUrl = api.deleteAdminUser;
+      this.isShowDelToast = true;
+    },
+    deleteToast(msg) {
+      this.isShowDelToast = msg;
+      this.getList(this.page.currentPage);
+    },
+
     // 账号开启/关闭
-    accountMange(status){
-        this.accountCtr = status;
+    accountMange(row,status){
+      let data = {};
+      data.id = row.id;
+      data.status = status;
+      this.closeBtn = true;
+      this.$axios.post(api.updateAdminUserStatus,data)
+      .then(res=>{
+        this.closeBtn = false;
+        if(res.data.code == 200){
+          this.$message.success(res.data.msg);
+          row.status = status;
+        }else{
+          this.$message.warning(res.data.msg);
+        }
+      })
+      .catch(err=>{
+        this.closeBtn = false;
+        console.log(err);
+      })
     },
   }
 };

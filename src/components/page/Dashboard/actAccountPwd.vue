@@ -22,6 +22,7 @@
 </template>
 <script>
 import icon from "../../common/ico";
+import * as api from '../../../api/api.js';
 export default {
   components: {
     icon
@@ -34,7 +35,11 @@ export default {
       },
       rules: {
         password: [
-          { required: true, message: "请输入6到16位数字加英文设置密码", trigger: "blur" }
+          {
+            required: true,
+            message: "请输入6到16位数字加英文设置密码",
+            trigger: "blur"
+          }
         ],
         repeatPwd: [
           { required: true, message: "请再次登陆密码", trigger: "blur" }
@@ -42,10 +47,37 @@ export default {
       }
     };
   },
-  methods:{
-      submitForm(form){
-          this.$emit('status',false);
-      }
+  methods: {
+    submitForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          if (this.form.password != this.form.repeatPwd) {
+            this.$message.warning("两次密码输入不一致");
+            return;
+          }
+          let data = {};
+          data.phone = localStorage.getItem('ms_phone');
+          data.password = this.form.repeatPwd;
+          this.$axios
+            .post(api.loginUpdatePassword, data)
+            .then(res => {
+                console.log(res.data);
+              if (res.data.code == 200) {
+                  localStorage.setItem("ms_hadFirstLogin", 0);
+                  this.$emit('status',false);
+              } else {
+                this.$message.warning(res.data.msg);
+              }
+            })
+            .catch(err => {
+              console.log(err);
+            });
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+    }
   }
 };
 </script>
@@ -74,35 +106,35 @@ export default {
       text-align: center;
       line-height: 56px;
       .title-icon {
-          color: #33b4ff;
-          font-size: 22px;
+        color: #33b4ff;
+        font-size: 22px;
       }
     }
     .mask-content {
-        position: relative;
-        width: 100%;
-        height: 326px;
-        overflow: hidden;
-        .inp {
-            margin:40px 0 0 75px;
-            width: 380px;
-            .inp-ico{
-                font-size: 20px;
-                margin-top: 15px;
-            }
+      position: relative;
+      width: 100%;
+      height: 326px;
+      overflow: hidden;
+      .inp {
+        margin: 40px 0 0 75px;
+        width: 380px;
+        .inp-ico {
+          font-size: 20px;
+          margin-top: 15px;
         }
-        .confirm-btn{
-            position: absolute;
-            left: 75px;
-            bottom: 50px;
-            width: 380px;
-            height: 50px;
-            background-color: #ff6868;
-            border-radius: 8px;
-            border-color: #ff6868;
-            color: #fff;
-            font-size: 18px;
-        }
+      }
+      .confirm-btn {
+        position: absolute;
+        left: 75px;
+        bottom: 50px;
+        width: 380px;
+        height: 50px;
+        background-color: #ff6868;
+        border-radius: 8px;
+        border-color: #ff6868;
+        color: #fff;
+        font-size: 18px;
+      }
     }
   }
 }

@@ -5,15 +5,15 @@
             <div class="box">
                 <div class="detail-msg">
                     <span>基础信息</span>
-                    <p>姓名：张三</p>
-                    <p>手机号：17601056863</p>
+                    <p>姓名：{{name}}</p>
+                    <p>手机号：{{telephone}}</p>
                     <span>部门信息</span>
-                    <p>所属部门：运营部</p>
-                    <p>所在岗位：运营经理</p>
-                    <p>直接上级：运营总监</p>
+                    <p>所属部门：{{deptmentName}}</p>
+                    <p>所在岗位：{{jobName}}</p>
+                    <p>直接上级：{{immediateSuperior}}</p>
                     <span>权限信息</span>
-                    <p>默认权限：运营经理职权</p>
-                    <div class="avatar"></div>
+                    <p>默认权限：<el-tag style="margin-right:5px" v-for="(v,k) in privilege" :key="k">{{v}}</el-tag></p>
+                    <div class="avatar"><img :src="face" alt=""></div>
                     <el-button type="primary" class='edit-btn' @click='editPwd'>登陆密码修改</el-button>
                 </div>
             </div>
@@ -42,7 +42,8 @@
                         </el-input>
                     </el-form-item>
                 </el-form>
-                <el-button type="primary" class="code-btn">获取验证码</el-button>
+                <el-button @click="getCode" class="code-btn" type="primary" v-if="code">获取验证码</el-button>
+                <el-button class="code-btn" type="primary" v-else>{{codeTime}}s</el-button>
             </div>
             <span slot="footer" class="dialog-footer">
                 <el-button type="primary" @click="confirmEditPwd('form')">确 定</el-button>
@@ -54,6 +55,7 @@
 <script>
 import breadcrumb from "../../common/Breadcrumb";
 import icon from "../../common/ico";
+import * as api from '../../../api/api.js';
 export default {
   components: {
     breadcrumb,
@@ -63,6 +65,15 @@ export default {
     return {
       nav: ["权限管理", "管理员基础信息修改"],
       isShowEditPwd: false,
+      code:true,
+      name:'',
+      telephone:'',
+      deptmentName:'',
+      jobName:'',
+      immediateSuperior:'',
+      privilege:[],
+      face:'',
+      id:'',
       form: {
         phone: "",
         code:'',
@@ -77,10 +88,27 @@ export default {
     };
   },
   activated() {
-    let userId =
-      this.$route.params.editMangerMsg ||
-      sessionStorage.getItem("editMangerMsg");
-    console.log(userId);
+    this.id = localStorage.getItem('ms_userID');
+    this.$axios.post(api.findAdminUserbyId,{id:this.id})
+    .then(res=>{
+        if(res.data.code == 200){
+            this.name = res.data.data.name;
+            this.telephone = res.data.data.telephone;
+            this.deptmentName = res.data.data.deptmentName;
+            this.jobName = res.data.data.jobName;
+            this.immediateSuperior = res.data.data.immediateSuperior;
+            this.face = res.data.data.face;
+            this.privilege = [];
+            res.data.data.adminUserPrivilegeList.forEach((v,k)=>{
+                this.privilege.push(v.privilege_id);
+            })
+        }else{
+            this.$message.warning(res.data.msg);
+        }
+    })
+    .catch(err=>{
+        console.log(err)
+    })
   },
   methods:{
     //   修改密码
@@ -91,13 +119,64 @@ export default {
       confirmEditPwd(formName){
           this.$refs[formName].validate((valid) => {
           if (valid) {
+              if(this.form.password != this.form.repeatPwd){
+                  this.$message.warning('两次密码输入不一致');
+                  return;
+              }
+              let data = {};
+              data.id = this.id;
+              data.phone = this.form.phone;
+              data.password = this.form.password;
+              data.code = this.form.code;
+              this.$axios.post(api.updateAdminUserPassword,data)
+              .then(res=>{
+                  if(res.data.code == 200){
+                      this.$message.success(res.data.msg);
+                  }else{
+                      this.$message.warning(res.data.msg);
+                  }
+              })
+              .catch(err=>{
+                  console.log(res.data)
+              })
             this.isShowEditPwd = false;
           } else {
             console.log('error submit!!');
             return false;
           }
         });
+      },
+    //   获取验证码
+     getCode(){
+      if(this.form.phone == ''){
+        this.$message.warning('请输入手机号');
+        return;
       }
+      let that = this;
+      this.code = false;
+      this.codeTime = 60;
+      let timer = setInterval(function(){
+          that.codeTime--;
+          if(that.codeTime <=0){
+              that.code = true;
+              clearInterval(timer);
+          }
+      },1000)
+      let data = {};
+      data.phone = this.form.phone;
+      this.$axios.post(api.sendUpdatePwdCode,data)
+      .then(res=>{
+        if(res.data.code == 200){
+          this.$message.success('已发送验证码');
+          alert(res.data.data);
+        }else{
+          this.$message.warning(res.data.msg);
+        }
+      })
+      .catch(err=>{
+        console.log(err);
+      })
+    },
   }
 };
 </script>
@@ -111,7 +190,7 @@ export default {
     .detail-msg {
       position: relative;
       width: 760px;
-      height: 380px;
+      height: auto;
       padding: 0px 45px;
       box-sizing: border-box;
       border: 1px solid #ccc;
@@ -133,6 +212,10 @@ export default {
         height: 100px;
         border: 2px solid #dfdfdf;
         border-radius: 10px;
+        overflow: hidden;
+        img {
+            width: 100%;
+        }
       }
       .edit-btn {
         position: absolute;
