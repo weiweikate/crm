@@ -93,6 +93,12 @@ let handleCityIndex = function (regionoption,v1, v2, v3) {
     }
     return cityIndArr;
 }
+
+// 权限判断
+let permissionControl = function (arr) {  
+    
+}
+
 module.exports.encryptData = encryptData;
 module.exports.cleanData = cleanData;
 module.exports.handleCity = handleCity;

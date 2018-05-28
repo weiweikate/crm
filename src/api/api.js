@@ -52,6 +52,8 @@ export const getManageList='/mock/5aeac1c6c186102e067af3f3/test/getManageList';
     export const rootsEditCodeTplList = '/admin/securityCodeTemplate/updateById';
     // 删除防伪码模板
     export const rootsDelCodeTplList = '/admin/securityCodeTemplate/deleteById';
+    // 根据id失效防伪码模板
+    export const loseById = '/admin/securityCodeTemplate/loseById';
 
 // 权限管理
     // 查询部门列表
@@ -86,6 +88,14 @@ export const getManageList='/mock/5aeac1c6c186102e067af3f3/test/getManageList';
     export const updateRole = '/admin/role/updateRole';
     // 删除岗位
     export const deleteRole = '/admin/role/deleteRole';
+    // 查询权限三级模块列表
+    export const queryPrivilegeList = '/admin/privilege/queryPrivilegeList';
+    // 添加权限
+    export const addPrivilege = '/admin/privilege/addPrivilege';
+    // 获取一级模块列表
+    export const queryTopMenuList = '/admin/privilege/queryTopMenuList';
+    // 新增功能模块
+    export const addFunctionModule = '/admin/privilege/addFunctionModule';
 
 // 品牌产品管理
     // 获取一二级类目列表

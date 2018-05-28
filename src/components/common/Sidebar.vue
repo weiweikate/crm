@@ -79,6 +79,10 @@ export default {
             {
               index: "rootsCodeTpl",
               title: "防伪码模板"
+            },
+            {
+              index: "rootsCodeParams",
+              title: "防伪码参数设置"
             }
           ]
         },

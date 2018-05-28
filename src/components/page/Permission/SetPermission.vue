@@ -5,25 +5,19 @@
             <el-button type='primary' @click="addModule">新增功能模块</el-button>
             <el-table :span-method='mergeRow' v-loading="tableLoading" class="w-table" :data="tableData" :height="height" border style="width: 100%">
                 <el-table-column prop="id" label="ID" width="180" align="center"></el-table-column>
-                <el-table-column prop="name" label="模块" align="center"></el-table-column>
-                <el-table-column prop="name" label="模块" align="center"></el-table-column>
-                <el-table-column prop="smallBoxCodeNum" label="权限" align="center"></el-table-column>
+                <el-table-column prop="title" label="一级模块" align="center"></el-table-column>
+                <el-table-column prop="children" label="二级模块" align="center"></el-table-column>
+                <el-table-column prop="three" label="权限" align="center">
+                  <template slot-scope="scope">
+                    <el-tag v-for="(v,k) in scope.row.three" :key="k">{{v.title}}</el-tag>
+                  </template>
+                </el-table-column>
                 <el-table-column label="操作" align="center">
                     <template slot-scope="scope">
                         <el-button type="primary" @click='addPermission(scope.row)'>添加权限</el-button>
                     </template>
                 </el-table-column>
             </el-table>
-            <div class="block">
-                <el-pagination
-                    background
-                    @size-change="handleSizeChange"
-                    @current-change="handleCurrentChange"
-                    :current-page="page.currentPage"
-                    layout="total, prev, pager, next, jumper"
-                    :total="page.totalPage">
-                </el-pagination>
-            </div>
         </el-card>
         <el-dialog title="添加功能模块" width='30%' :visible.sync="isShowaddToask">
             <el-form ref="addModuleForm" :rules="rules" :model="addModuleForm">
@@ -40,7 +34,7 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item v-if="addModuleForm.mdLevel != 1" prop="first" label="一级模块">
+                <el-form-item v-if="addModuleForm.mdLevel != '1'" prop="first" label="一级模块">
                     <el-select v-model="addModuleForm.first" placeholder="请选择">
                         <el-option
                         v-for="item in first"
@@ -98,33 +92,12 @@ export default {
           label: "二级"
         }
       ],
-      first: [{ value: "aa", label: "aa" }],
+      first: [],
       tableData: [],
-      aData: [
-        {
-          id: 1,
-          name: "会员管理",
-          second: ["1-1", "1-2", "1-3","1-4"]
-        },
-        {
-          id: 2,
-          name: "品牌产品管理",
-          second: ["2-1", "2-2"]
-        },
-        {
-          id: 3,
-          name: "溯源管理",
-          second: ["3-1", "3-2", "3-3"]
-        },
-        {
-          id: 4,
-          name: "杨小猛",
-          second: ["3-1", "3-2", "3-3"]
-        }
-      ],
+      aData: [],
       addModuleForm: {
         name: "",
-        mdLevel: "",
+        mdLevel: "1",
         first: ""
       },
       addPermissionForm: {
@@ -152,32 +125,52 @@ export default {
   created() {
     let winHeight = window.screen.availHeight - 360;
     this.height = winHeight;
-    // this.getList(this.page.currentPage);
-    this.spanData = [];
-    this.tableData = [];
-    let t = 0;
-    this.aData.forEach((v, k) => {
-      this.spanData.push({ startIndex: t, num: v.second.length });
-      t += v.second.length;
-    });
-    this.aData.forEach((v,k)=>{
-      v.second.forEach((val,ind)=>{
-        this.tableData.push({id:v.id,name:v.name,children:val});
-      })
-    })
+  },
+  activated() {
+    this.getList();
+    this.getFirstList();
   },
   methods: {
     //获取列表
-    getList(val) {
+    getList() {
       let that = this;
-      let data = {
-        page: val
-      };
       this.tableLoading = true;
       this.$axios
-        .post(api.getProductList, data)
+        .post(api.queryPrivilegeList, {})
         .then(res => {
           that.tableLoading = false;
+          this.aData = res.data.data;
+          this.spanData = [];
+          this.tableData = [];
+          let t = 0;
+          this.aData.forEach((v, k) => {
+            if(v.value.length == 0){
+              this.spanData.push({ startIndex: t, num: 1 });
+              t += 1;
+            }else{
+              this.spanData.push({ startIndex: t, num: v.value.length });
+              t += v.value.length;
+            }
+          });
+          this.aData.forEach((v, k) => {
+            if(v.value.length == 0){
+              this.tableData.push({
+                id: k + 1,
+                title: v.title,
+                children: '',
+                three: []
+              })
+            }
+            v.value.forEach((val, ind) => {
+              this.tableData.push({
+                id: k + 1,
+                title: v.title,
+                children: val.title,
+                fatherId: val.id,
+                three: val.value
+              });
+            });
+          });
         })
         .catch(err => {
           console.log(err);
@@ -195,26 +188,88 @@ export default {
 
     // 新增功能模块
     addModule() {
-      this.addModuleForm = {};
+      this.addModuleForm = {mdLevel: "1"};
       this.isShowaddToask = true;
     },
     confirmAddModule() {
-      console.log(this.addModuleForm);
+      if(this.addModuleForm.name == undefined){
+        this.$message.warning('请输入模块名称');
+        return;
+      }
+      if(this.addModuleForm.mdLevel == '2' && this.addModuleForm.first == undefined || ''){
+        this.$message.warning('请选择一级模块名称');
+        return;
+      }
+      let data = {};
+      data.name = this.addModuleForm.name;
+      if(this.addModuleForm.mdLevel == '2'){
+        data.parentId = this.addModuleForm.first;
+      }else{
+        data.parentId = 0;
+      }
+      this.$axios.post(api.addFunctionModule,data)
+      .then(res=>{
+        if(res.data.code == 200){
+          this.$message.success(res.data.data);
+          this.getList();
+          this.isShowaddToask = false;
+        }else{
+          this.$message.error(res.data.msg);
+        }
+      })
+      .catch(err=>{
+        console.log(err);
+      })
       this.isShowaddToask = false;
+    },
+
+    // 获取一级模块列表
+    getFirstList() {
+      this.$axios
+        .post(api.queryTopMenuList, {})
+        .then(res => {
+          if (res.data.code == 200) {
+            this.first = [];
+            res.data.data.forEach((v, k) => {
+              this.first.push({ label: v.name, value: v.id });
+            });
+          }else{
+            this.$message.error(res.data.msg);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
     },
 
     // 添加权限
     addPermission(row) {
-      console.log(row);
-      // this.addPermissionForm = {};
-      // this.addPermissionForm.id = row.name;
-      // this.addPermissionForm.belongModule = "666";
-      // this.isShowPermission = true;
+      this.addPermissionForm = {};
+      this.addPermissionForm.parentId = row.fatherId;
+      this.addPermissionForm.belongModule = row.children;
+      this.isShowPermission = true;
     },
     confirmAddPer(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          console.log(this.addPermissionForm);
+          let data = {};
+          data.parentId = this.addPermissionForm.parentId;
+          data.name = this.addPermissionForm.perName;
+          data.url = this.addPermissionForm.url;
+          this.$axios
+            .post(api.addPrivilege, data)
+            .then(res => {
+              if (res.data.code == 200) {
+                this.$message.success(res.data.data);
+                this.getList();
+                this.isShowaddToask = false;
+              } else {
+                this.$message.error(res.data.msg);
+              }
+            })
+            .catch(err => {
+              console.log(err);
+            });
           this.isShowPermission = false;
         } else {
           console.log("error submit!!");
@@ -226,19 +281,18 @@ export default {
     // 合并行(第几行开始合并，合并几行)
     mergeRow({ row, column, rowIndex, columnIndex }) {
       if (columnIndex === 0 || columnIndex === 1) {
-        for(let i =0;i<this.spanData.length;i++){
-          if(rowIndex === this.spanData[i].startIndex){
+        for (let i = 0; i < this.spanData.length; i++) {
+          if (rowIndex === this.spanData[i].startIndex) {
             return {
-              rowspan:this.spanData[i].num,
-              colspan:1
-            }
+              rowspan: this.spanData[i].num,
+              colspan: 1
+            };
           }
-          
         }
         return {
-          rowspan:0,
-          colspan:0
-        }
+          rowspan: 0,
+          colspan: 0
+        };
       }
     }
   }

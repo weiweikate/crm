@@ -39,8 +39,17 @@
                   <el-button size="mini" type="warning" @click="showLog(scope.row)">查看日志</el-button>
                   <el-button v-if='scope.row.status == 0' @click="deleteUser(scope.row)" size="mini" type="danger"  >账号删除</el-button>
                   <template>
-                    <el-button :loading="closeBtn" v-if='scope.row.status == 1' size="mini" type="danger" @click='accountMange(scope.row,0)' >账号关闭</el-button>
-                    <el-button :loading="closeBtn" v-if='scope.row.status == 0' size="mini" type="danger" @click='accountMange(scope.row,1)' >账号开启</el-button>
+                    <el-popover placement="top" width="160" v-model="scope.row.visible">
+                      <p v-if='scope.row.status == 1'>确定关闭账号？</p>
+                      <p v-if='scope.row.status == 0'>确定开启账号？</p>
+                      <div style="text-align: right; margin: 0">
+                        <el-button size="mini" type="text" @click="scope.row.visible = false">取消</el-button>
+                        <el-button slot="reference" :loading="closeBtn" v-if='scope.row.status == 1' size="mini" type="primary" @click='accountMange(scope.row,0)' >确定</el-button>
+                        <el-button slot="reference" :loading="closeBtn" v-if='scope.row.status == 0' size="mini" type="primary" @click='accountMange(scope.row,1)' >确定</el-button>
+                      </div>
+                      <el-button slot="reference" :loading="closeBtn" v-if='scope.row.status == 1' size="mini" type="danger" >账号关闭</el-button>
+                      <el-button slot="reference" :loading="closeBtn" v-if='scope.row.status == 0' size="mini" type="danger">账号开启</el-button>
+                    </el-popover>
                   </template>
                 </template>
               </el-table-column>
@@ -63,8 +72,8 @@
               </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
-              <el-button @click="isShowResetPwd = false">取 消</el-button>
               <el-button type="primary" @click="confirmReset('pwdForm')">确 定</el-button>
+              <el-button @click="isShowResetPwd = false">取 消</el-button>
             </span>
         </el-dialog>
         <delete-toast :id='delId' :url='delUrl' @msg='deleteToast' v-if="isShowDelToast"></delete-toast>
@@ -112,6 +121,8 @@ export default {
   created() {
     let winHeight = window.screen.availHeight - 500;
     this.height = winHeight;
+  },
+  activated(){
     this.getList(this.page.currentPage);
   },
   methods: {
@@ -127,7 +138,10 @@ export default {
         .post(api.getMangerList, data)
         .then(res => {
           that.tableData = [];
-          that.tableData = res.data.data.data;
+          res.data.data.data.forEach((v,k)=>{
+            v.visible = false;
+            that.tableData.push(v);
+          })
           that.page.totalPage = res.data.data.resultCount;
           that.tableLoading = false;
         })
@@ -179,7 +193,7 @@ export default {
             this.$axios.post(api.resetPassword,this.pwdForm)
             .then(res=>{
               if(res.data.code == 200){
-                this.$message.success(res.data.msg);
+                this.$message.success(res.data.data);
                 this.isShowResetPwd = false;
               }else{
                 this.$message.warning(res.data.msg);
@@ -216,8 +230,9 @@ export default {
       .then(res=>{
         this.closeBtn = false;
         if(res.data.code == 200){
-          this.$message.success(res.data.msg);
+          this.$message.success(res.data.data);
           row.status = status;
+          row.visible = false;
         }else{
           this.$message.warning(res.data.msg);
         }

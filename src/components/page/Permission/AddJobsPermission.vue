@@ -15,55 +15,18 @@
                     </el-form-item>
                     <hr width='90%' size='1' color='#ccc' class='add-box-sep'>
                     <span class="add-box-title">权限设置</span>
-                    <el-collapse accordion>
+                    <el-collapse accordion v-for="(v,k) in userManList" :key="k">
                         <el-collapse-item>
                             <template slot="title">
-                                <el-checkbox class="collapse-tit" :indeterminate="isIndeterminateUser" v-model="checkAllUser" @change="handleCheckAllChangeUser">会员管理</el-checkbox>
+                                <el-checkbox class="collapse-tit" v-model="checkAllUser[k]" @change="handleCheckAllChangeUser(checkAllUser[k],k)">{{v.title}}</el-checkbox>
                             </template>
-                            <el-checkbox-group v-model="checkedUser" @change="handleCheckedUserChange">     
-                                <div class="collapse-title">经销商</div>      
-                                <div style="overflow:hidden;margin-bottom:10px">
-                                    <div class="collapse-item">
-                                        <el-checkbox v-for="v in userManList" :label="v.label" :key="v.label">{{v.label}}</el-checkbox>
-                                    </div>
-                                </div> 
-                                <div style="overflow:hidden;margin-bottom:10px">
-                                    <div class="collapse-title">经销商邀请</div>
-                                    <div class="collapse-item">
-                                        <el-checkbox v-for="v in userManList" :label="v.label" :key="v.label">{{v.label}}</el-checkbox>
-                                    </div>
-                                </div>
-                                <div style="overflow:hidden;margin-bottom:10px">
-                                    <div class="collapse-title">经销商会员管理</div>
-                                    <div class="collapse-item">
-                                        <el-checkbox v-for="v in userManList" :label="v.label" :key="v.label">{{v.label}}</el-checkbox>
-                                    </div>
-                                </div>
-                            </el-checkbox-group>
-                        </el-collapse-item>
-                    </el-collapse>
-                    <el-collapse accordion>
-                        <el-collapse-item>
-                            <template slot="title">
-                                <el-checkbox class="collapse-tit" :indeterminate="isIndeterminateUser" v-model="checkAllUser" @change="handleCheckAllChangeUser">会员管理</el-checkbox>
-                            </template>
-                            <el-checkbox-group v-model="checkedUser" @change="handleCheckedUserChange">     
-                                <div class="collapse-title">经销商</div>      
-                                <div style="overflow:hidden;margin-bottom:10px">
-                                    <div class="collapse-item">
-                                        <el-checkbox v-for="v in userManList" :label="v.label" :key="v.label">{{v.label}}</el-checkbox>
-                                    </div>
-                                </div> 
-                                <div style="overflow:hidden;margin-bottom:10px">
-                                    <div class="collapse-title">经销商邀请</div>
-                                    <div class="collapse-item">
-                                        <el-checkbox v-for="v in userManList" :label="v.label" :key="v.label">{{v.label}}</el-checkbox>
-                                    </div>
-                                </div>
-                                <div style="overflow:hidden;margin-bottom:10px">
-                                    <div class="collapse-title">经销商会员管理</div>
-                                    <div class="collapse-item">
-                                        <el-checkbox v-for="v in userManList" :label="v.label" :key="v.label">{{v.label}}</el-checkbox>
+                            <el-checkbox-group v-model="checkedUser[k]" @change="handleCheckedUserChange(checkedUser[k],k)">     
+                                <div v-for="(item,index) in v.value" :key="index">
+                                    <div class="collapse-title">{{item.title}}</div>      
+                                    <div style="overflow:hidden;margin-bottom:10px;">
+                                        <div class="collapse-item">
+                                            <el-checkbox v-for="(v1,k1) in item.value" :label="v1.id" :key="k1">{{v1.title}}</el-checkbox>
+                                        </div>
                                     </div>
                                 </div>
                             </el-checkbox-group>
@@ -88,14 +51,10 @@ export default {
   data() {
     return {
       nav: ["权限管理", "岗位权限管理", "添加岗位"],
-      checkAllUser: false,
+      checkAllUser: [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],
       isIndeterminateUser: false,
-      checkedUser: [],
-      userManList: [
-        { group: "经销商", label: "实习省代" },
-        { group: "经销商邀请", label: "体验VIP" },
-        { group: "经销商会员管理", label: "省代" }
-      ],
+      checkedUser: [[],[],[],[],[],[],[],[],[],[],],
+      userManList: [],
       department: [],
       form: {
         department: [],
@@ -121,13 +80,20 @@ export default {
       this.$refs[formName].validate(valid => {
         if (valid) {
           let data = {};
+          let role = [];
+          this.checkedUser.forEach((v,k)=>{
+            v.forEach((val)=>{
+              role.push(val);
+            })
+          })
+          data.role = role.join(',');
           data.name = this.form.name;
           data.department = this.form.department.join(",");
           this.$axios
             .post(api.addRole, data)
             .then(res => {
               if(res.data.code == 200){
-                  this.$message.success(res.data.msg);
+                  this.$message.success(res.data.data);
                   this.$router.push('/jobsPermissionMange');
               }else{
                   this.$message.warning(res.data.msg);
@@ -149,19 +115,25 @@ export default {
     },
 
     // 全选用户管理
-    handleCheckAllChangeUser(val) {
+    handleCheckAllChangeUser(val,k) {
       let tmp = [];
-      this.userManList.forEach(function(v) {
-        tmp.push(v.label);
+      this.userManList[k].value.forEach(function(v) {
+        v.value.forEach(function (val) {  
+          tmp.push(val.id);
+        })
       });
-      this.checkedUser = val ? tmp : [];
-      this.isIndeterminateUser = false;
+      this.checkedUser[k] = val ? tmp : [];
     },
-    handleCheckedUserChange(value) {
+    handleCheckedUserChange(value,k) {
+      let itemTmp = [];
       let checkedCount = value.length;
-      this.checkAllUser = checkedCount === this.userManList.length;
-      this.isIndeterminateUser =
-        checkedCount > 0 && checkedCount < this.userManList.length;
+      this.userManList[k].value.forEach(function(v) {
+        v.value.forEach(function (val) {  
+          itemTmp.push(val.value);
+        })
+      });
+      this.checkAllUser[k] = checkedCount == itemTmp.length;
+      this.$set(this.checkAllUser, k, this.checkAllUser[k]);
     },
 
     // 获取权限列表
@@ -230,11 +202,12 @@ export default {
     }
   }
   .collapse-tit .el-checkbox__label {
-    font-size: 14px;
+    font-size: 18px;
   }
   .collapse-item {
     float: left;
     width: 90%;
+    height: 45px;
     border: 1px solid #ccc;
     border-radius: 5px;
     line-height: 38px;

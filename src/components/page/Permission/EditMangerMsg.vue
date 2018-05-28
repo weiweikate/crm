@@ -100,7 +100,7 @@ export default {
             this.face = res.data.data.face;
             this.privilege = [];
             res.data.data.adminUserPrivilegeList.forEach((v,k)=>{
-                this.privilege.push(v.privilege_id);
+                this.privilege.push(v.name);
             })
         }else{
             this.$message.warning(res.data.msg);

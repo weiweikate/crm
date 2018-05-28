@@ -6,13 +6,18 @@
             <el-table v-loading="tableLoading" class="w-table" stripe :data="tableData" :height="height" border style="width: 100%">
                 <el-table-column prop="id" label="编号" width="180" align="center"></el-table-column>
                 <el-table-column prop="templateName" label="模板名称" align="center"></el-table-column>
-                <!-- <el-table-column prop="bigBoxCodeNum" label="大箱码" align="center"></el-table-column> -->
-                <el-table-column prop="smallBoxCodeNum" label="小箱码" align="center"></el-table-column>
+                <el-table-column prop="smallBoxCodeNum" label="箱码" align="center"></el-table-column>
                 <el-table-column prop="packagingCodeNum" label="包装码" align="center"></el-table-column>
+                <el-table-column prop="productCount" label="已生成" align="center"></el-table-column>
                 <el-table-column label="操作" align="center">
                     <template slot-scope="scope">
-                        <el-button type="warning" @click='editCodeTpl(scope.row)'>编辑</el-button>
-                        <el-button type="danger" @click="deleteTpl(scope.row)">删除</el-button>
+                        <template v-if="scope.row.productCount == 0">
+                          <el-button type="warning" @click='editCodeTpl(scope.row)'>编辑</el-button>
+                          <el-button type="danger" @click="deleteTpl(scope.row)">删除</el-button>
+                        </template>
+                        <template v-if="scope.row.productCount > 0">
+                          <el-button type="warning" @click="failureTpl(scope.row)">失效</el-button>
+                        </template>
                     </template>
                 </el-table-column>
             </el-table>
@@ -146,7 +151,6 @@ export default {
             this.tableData = [];
             this.tableData = res.data.data.data;
             this.page.totalPage = res.data.data.resultCount;
-            this.$message.success(res.data.msg);
           } else {
             this.$message.error(res.data.msg);
           }
@@ -256,6 +260,23 @@ export default {
           return false;
         }
       });
+    },
+
+    // 失效防伪码模板
+    failureTpl(row){
+      this.$axios.post(api.loseById,{id:row.id})
+      .then(res=>{
+        console.log(res.data)
+        if(res.data.code == 200){
+          this.$message.success('修改成功!');
+          this.getList(this.page.currentPage)
+        }else{
+          this.$message.warning(res.data.msg);
+        }
+      })
+      .catch(err=>{
+        console.log(err)
+      })
     },
 
     // 删除模板

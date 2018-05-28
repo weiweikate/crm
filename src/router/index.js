@@ -169,6 +169,12 @@ export default new Router({
                     component: resolve => require(['../components/page/RootsMange/RootsCodeTpl.vue'], resolve),
                     meta: { title: '防伪码模板' }
                 },
+                {
+                    name:'rootsCodeParams',
+                    path: '/rootsCodeParams',
+                    component: resolve => require(['../components/page/RootsMange/RootsCodeParams.vue'], resolve),
+                    meta: { title: '防伪码参数设置' }
+                },
                 // 权限管理
                 {
                     name:'manageList',

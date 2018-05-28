@@ -50,7 +50,7 @@
                                     <div class="collapse-title">{{item.title}}</div>      
                                     <div style="overflow:hidden;margin-bottom:10px">
                                         <div class="collapse-item">
-                                            <el-checkbox v-for="(v1,k1) in item.value" :label="v1.title" :key="k1">{{v1.title}}</el-checkbox>
+                                            <el-checkbox v-for="(v1,k1) in item.value" :label="v1.id" :key="k1">{{v1.title}}</el-checkbox>
                                         </div>
                                     </div>
                                 </div>
@@ -76,8 +76,9 @@ export default {
   data() {
     return {
       nav: ["权限管理", "修改管理员信息"],
-      checkAllUser: [false,false,false,false,false,false,false,false,false,false],
-      checkedUser: [["1", "2", "3"],[],[],[],[],[],[],[],[],[],],
+      checkAllUser: [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],
+      checkedUser: [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
+      getUserPriList:[],
       uploadImg:'',
       userManList: [],
       department: [],
@@ -110,14 +111,19 @@ export default {
     .post(api.findAdminUserbyId, {id:this.id})
     .then(res => {
         if(res.data.code == 200){
-            this.form.username = res.data.data.name;
-            this.form.phone = res.data.data.telephone;
-            this.form.jobId = res.data.data.jobId;
-            this.form.departmentId = res.data.data.deptmentId;
-            this.form.superior = res.data.data.immediateSuperior;
-            this.form.face = res.data.data.face;
+          this.getUserPriList = [];
+          this.form.username = res.data.data.name;
+          this.form.phone = res.data.data.telephone;
+          this.form.jobId = res.data.data.jobId;
+          this.form.departmentId = res.data.data.deptmentId;
+          this.form.superior = res.data.data.immediateSuperior;
+          this.form.face = res.data.data.face;
+          res.data.data.adminUserPrivilegeList.forEach((v,k)=>{
+            this.getUserPriList.push(v.privilege_id);
+          })
+          this.assemblyData();
         }else{
-            this.$message.warning(res.data.msg);
+          this.$message.warning(res.data.msg);
         }
     })
     .catch(err => {
@@ -143,7 +149,8 @@ export default {
             .post(api.updateAdminUser, data)
             .then(res => {
               if(res.data.code == 200){
-                this.$message.success(res.data.msg);
+                this.$message.success(res.data.data);
+                this.$router.push('/manageList');
               }else{
                 this.$message.warning(res.data.msg);
               }
@@ -162,6 +169,24 @@ export default {
       this.$refs[formName].resetFields();
     },
 
+    // 组装权限列表数据
+    assemblyData(){
+      let that = this;
+      this.checkedUser = [];
+      for(let i=0;i<this.userManList.length+1;i++){
+        this.checkedUser.push([]);
+      }
+      this.userManList.forEach((v1,k1)=>{
+        v1.value.forEach((v2,k2)=>{
+          v2.value.forEach((v3,k3)=>{
+            if(that.getUserPriList.indexOf(v3.id) != -1){
+              that.checkedUser[k1].push(v3.id);
+            }
+          })
+        })
+      })
+    },
+
     // 上传图片
     uploadAvatar(res) {
       if(res.code == 200){
@@ -176,7 +201,7 @@ export default {
       let tmp = [];
       this.userManList[k].value.forEach(function(v) {
         v.value.forEach(function (val) {  
-          tmp.push(val.value);
+          tmp.push(val.id);
         })
       });
       this.checkedUser[k] = val ? tmp : [];
@@ -266,9 +291,9 @@ export default {
     .el-collapse {
       width: 90%;
       border: 1px solid #ccc;
-      padding: 10px;
+      padding: 3px;
       box-sizing: border-box;
-      border-radius: 10px;
+      border-radius: 5px;
       margin-bottom: 10px;
       .el-collapse-item__header,
       .el-collapse-item__wrap {
@@ -284,6 +309,7 @@ export default {
     .collapse-item {
       float: left;
       width: 90%;
+      height: 45px;
       border: 1px solid #ccc;
       border-radius: 10px;
       line-height: 38px;

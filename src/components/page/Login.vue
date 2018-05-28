@@ -11,7 +11,7 @@
                             </el-input>
                         </el-form-item>
                         <el-form-item prop="password" style="margin-top:-40px">
-                            <el-input class="login-inp" size="large" placeholder="请输入登陆密码" v-model="form1.password">
+                            <el-input class="login-inp" type="password" size="large" placeholder="请输入登陆密码" v-model="form1.password">
                                 <icon slot="prefix" class="login-ico" ico="icon-3denglumima"></icon>
                             </el-input>
                         </el-form-item>
@@ -58,15 +58,15 @@ export default {
       code: true,
       codeTime: 5,
       form1: {
-        phone: "17612341234",
-        password: "123456789"
+        phone: "",
+        password: ""
       },
       form2: {
-        phone: "17612341234",
-        code: "123456789"
+        phone: "",
+        code: ""
       },
       rules: {
-        username: [
+        phone: [
           { required: true, message: "请输入登陆手机号", trigger: "blur" }
         ],
         password: [
@@ -89,24 +89,24 @@ export default {
             url = api.loginByCode;
           }
           this.$axios
-            .post(url, data)
-            .then(res => {
-              if (res.data.code == 200) {
-                this.$message.success("登陆成功！");
-                localStorage.setItem("ms_username", res.data.data.name);
-                localStorage.setItem("ms_userID", res.data.data.id);
-                localStorage.setItem(
-                  "ms_hadFirstLogin",
-                  res.data.data.hadFirstLogin
-                );
-                this.$router.push("/dashboard");
-              } else {
-                this.$message.warning(res.data.msg);
-              }
-            })
-            .catch(err => {
-              console.log(err);
-            });
+          .post(url, data)
+          .then(res => {
+            if (res.data.code == 200) {
+              this.$message.success("登陆成功！");
+              localStorage.setItem("ms_username", res.data.data.name);
+              localStorage.setItem("ms_userID", res.data.data.id);
+              localStorage.setItem(
+                "ms_hadFirstLogin",
+                res.data.data.hadFirstLogin
+              );
+              this.$router.push("/dashboard");
+            } else {
+              this.$message.warning(res.data.msg);
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          });
         } else {
           console.log("error submit!!");
           return false;
@@ -134,7 +134,24 @@ export default {
      // tab切换
     tabClick(params) {
       console.log(params);
-    }
+    },
+
+    // 获取所有权限列表
+    getAllPermissionList(){
+      this.$axios.post(api.getRoleList,{})
+      .then(res=>{
+        if(res.data.code == 200){
+          console.log(res.data)
+          return true;
+        }else{
+          this.$message.warning(res.data.msg);
+          return false;
+        }
+      })
+      .catch(err=>{
+        console.log(err)
+      })
+    },
   }
 };
 </script>

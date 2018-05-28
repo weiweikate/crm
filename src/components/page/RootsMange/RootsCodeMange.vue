@@ -180,7 +180,7 @@ export default {
       this.$axios
         .post(api.rootsGetCodeTplList, data)
         .then(res => {
-          that.tableData = res.data.data.list;
+          that.tableData = res.data.data.data;
           that.tableLoading = false;
         })
         .catch(err => {

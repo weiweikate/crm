@@ -48,9 +48,9 @@
                             <el-checkbox-group v-model="checkedUser[k]" @change="handleCheckedUserChange(checkedUser[k],k)">     
                                 <div v-for="(item,index) in v.value" :key="index">
                                     <div class="collapse-title">{{item.title}}</div>      
-                                    <div style="overflow:hidden;margin-bottom:10px">
+                                    <div style="overflow:hidden;margin-bottom:10px;">
                                         <div class="collapse-item">
-                                            <el-checkbox v-for="(v1,k1) in item.value" :label="v1.title" :key="k1">{{v1.title}}</el-checkbox>
+                                            <el-checkbox v-for="(v1,k1) in item.value" :label="v1.id" :key="k1">{{v1.title}}</el-checkbox>
                                         </div>
                                     </div>
                                 </div>
@@ -76,8 +76,8 @@ export default {
   data() {
     return {
       nav: ["权限管理", "创建账号"],
-      checkAllUser: [false,false,false,false,false,false,false,false,false,false],
-      checkedUser: [["1", "2", "3"],[],[],[],[],[],[],[],[],[],],
+      checkAllUser: [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],
+      checkedUser: [[],[],[],[],[],[],[],[],[],[],],
       uploadImg:'',
       userManList: [],
       department: [],
@@ -117,7 +117,6 @@ export default {
       })
       data = this.form;
       data.role = role.join(',');
-      console.log(data);
       this.$refs[formName].validate((valid) => {
           if (valid) {
             this.$axios
@@ -158,7 +157,7 @@ export default {
       let tmp = [];
       this.userManList[k].value.forEach(function(v) {
         v.value.forEach(function (val) {  
-          tmp.push(val.value);
+          tmp.push(val.id);
         })
       });
       this.checkedUser[k] = val ? tmp : [];
@@ -248,9 +247,9 @@ export default {
     .el-collapse {
       width: 90%;
       border: 1px solid #ccc;
-      padding: 10px;
+      padding: 3px;
       box-sizing: border-box;
-      border-radius: 10px;
+      border-radius: 5px;
       margin-bottom: 10px;
       .el-collapse-item__header,
       .el-collapse-item__wrap {
@@ -266,6 +265,7 @@ export default {
     .collapse-item {
       float: left;
       width: 90%;
+      height: 45px;
       border: 1px solid #ccc;
       border-radius: 10px;
       line-height: 38px;
