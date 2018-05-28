@@ -40,14 +40,14 @@
                     <div class="detail-item">
                         处理人：{{username}}
                     </div>
-                    <div style="margin-top: 30px">
+                    <div style="margin-top: 30px" v-if="detail.status==1">
                         <el-button type="primary" v-loading="btnLoading" @click="update">确认回复</el-button>
                         <el-button type="success" v-loading="btnLoading" @click="update">修改问题类型</el-button>
                         <el-button>取消</el-button>
                     </div>
                 </div>
                 <div v-for="(item,index) in list">
-                    <div class="feed-item" @click="expandItem(index)">
+                    <div class="feed-item" @click="expandItem(item)">
                         <div class="item" style="width: 15%">反馈人：{{item.nickname}}</div>
                         <div class="item" style="width: 18%">反馈问题类型：
                         <template>
@@ -68,49 +68,49 @@
                         <div class="item" style="width: 10%">处理人员：{{item.adminName}}</div>
                         <div class="item" style="width: 4%"><i :class="item.checked?'el-icon-caret-bottom':'el-icon-caret-top'"></i></div>
                     </div>
-                    <div class="detail-area" v-show="item.checked">
-                        <div class="detail-item">
-                            反馈人：{{item.nickname}}
-                        </div>
-                        <div class="detail-item">
-                            联系电话：{{item.phone}}
-                        </div>
-                        <div class="detail-item">
-                            用户层级：{{item.name}}
-                        </div>
-                        <div class="detail-item">
-                            所在区域：{{item.address}}
-                        </div>
-                        <div class="detail-item">
-                            反馈问题类型：
-                            <el-select placeholder="请选择" v-model="item.type_key">
-                                <el-option label="账户问题" value="1"></el-option>
-                                <el-option label="营销问题" value="2"></el-option>
-                                <el-option label="购买流程" value="3"></el-option>
-                                <el-option label="推广机制" value="4"></el-option>
-                            </el-select>
-                        </div>
-                        <div class="detail-title">问题描述：</div>
-                        <div>
-                            <el-input type="textarea" disabled v-model="item.content"></el-input>
-                        </div>
-                        <div class="detail-title">图片：</div>
-                        <div>
-                            <img :src="item.original_img?item.original_img:'/src/assets/images/logo.png'" alt="">
-                        </div>
-                        <div class="detail-title">回复：</div>
-                        <div>
-                            <el-input type="textarea" v-model="item.reply_content"></el-input>
-                        </div>
-                        <div class="detail-item">
-                            处理人：{{item.adminName}}
-                        </div>
-                        <!--<div style="margin-top: 30px">-->
-                            <!--<el-button type="primary" v-loading="btnLoading" @click="update">确认回复</el-button>-->
-                            <!--<el-button type="success" v-loading="btnLoading" @click="update">修改问题类型</el-button>-->
-                            <!--<el-button>取消</el-button>-->
+                    <!--<div class="detail-area" v-show="item.checked">-->
+                        <!--<div class="detail-item">-->
+                            <!--反馈人：{{item.nickname}}-->
                         <!--</div>-->
-                    </div>
+                        <!--<div class="detail-item">-->
+                            <!--联系电话：{{item.phone}}-->
+                        <!--</div>-->
+                        <!--<div class="detail-item">-->
+                            <!--用户层级：{{item.name}}-->
+                        <!--</div>-->
+                        <!--<div class="detail-item">-->
+                            <!--所在区域：{{item.address}}-->
+                        <!--</div>-->
+                        <!--<div class="detail-item">-->
+                            <!--反馈问题类型：-->
+                            <!--<el-select placeholder="请选择" v-model="item.type_key">-->
+                                <!--<el-option label="账户问题" value="1"></el-option>-->
+                                <!--<el-option label="营销问题" value="2"></el-option>-->
+                                <!--<el-option label="购买流程" value="3"></el-option>-->
+                                <!--<el-option label="推广机制" value="4"></el-option>-->
+                            <!--</el-select>-->
+                        <!--</div>-->
+                        <!--<div class="detail-title">问题描述：</div>-->
+                        <!--<div>-->
+                            <!--<el-input type="textarea" disabled v-model="item.content"></el-input>-->
+                        <!--</div>-->
+                        <!--<div class="detail-title">图片：</div>-->
+                        <!--<div>-->
+                            <!--<img :src="item.original_img?item.original_img:'/src/assets/images/logo.png'" alt="">-->
+                        <!--</div>-->
+                        <!--<div class="detail-title">回复：</div>-->
+                        <!--<div>-->
+                            <!--<el-input type="textarea" v-model="item.reply_content"></el-input>-->
+                        <!--</div>-->
+                        <!--<div class="detail-item">-->
+                            <!--处理人：{{item.adminName}}-->
+                        <!--</div>-->
+                        <!--&lt;!&ndash;<div style="margin-top: 30px">&ndash;&gt;-->
+                            <!--&lt;!&ndash;<el-button type="primary" v-loading="btnLoading" @click="update">确认回复</el-button>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<el-button type="success" v-loading="btnLoading" @click="update">修改问题类型</el-button>&ndash;&gt;-->
+                            <!--&lt;!&ndash;<el-button>取消</el-button>&ndash;&gt;-->
+                        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+                    <!--</div>-->
                 </div>
             </div>
         </div>
@@ -186,8 +186,11 @@
                   })
             },
             //展开
-            expandItem(index) {
-                this.list[index].checked = !this.list[index].checked
+            expandItem(item) {
+                // this.list[index].checked = !this.list[index].checked
+                // let id=item.id;
+                this.id=item.id;
+                this.getDetail()
             },
 
             //修改

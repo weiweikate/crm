@@ -139,7 +139,7 @@
             let winHeight = window.screen.availHeight - 520;
             this.height = winHeight;
             this.getList(this.page.currentPage);
-            // this.getLevelList()
+            this.getLevelList()
         },
         methods: {
             //获取列表

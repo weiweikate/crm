@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-breadcrumb :nav="['会员管理','经销商会员管理']"></v-breadcrumb>
+        <v-breadcrumb :nav="['会员管理','经销商会员管理','下级代理']"></v-breadcrumb>
         <el-card style="margin:10px 0 20px">
             <el-form ref="form" :inline="true" :model="form">
                 <el-form-item prop="id" label="用户ID" label-width="120">
@@ -42,7 +42,8 @@
                 <el-form-item prop="levelId" label="用户层级" label-width="120">
                     <el-select v-model="exportForm.levelId" placeholder="全部层级">
                         <el-option label="全部层级" value=""></el-option>
-                        <el-option :label="item.name" :value="item.level" v-for="(item,index) in levelList" :key="index"></el-option>
+                        <el-option :label="item.name" :value="item.level" v-for="(item,index) in levelList"
+                                   :key="index"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item>
@@ -101,10 +102,10 @@
 </template>
 
 <script>
-    import vBreadcrumb from '../../common/Breadcrumb.vue';
-    import icon from '../../common/ico.vue';
-    import region from '../../common/Region';
-    import * as api from '../../../api/api';
+    import vBreadcrumb from '../../../common/Breadcrumb.vue';
+    import icon from '../../../common/ico.vue';
+    import region from '../../../common/Region';
+    import * as api from '../../../../api/api';
 
     export default {
         components: {
@@ -113,7 +114,7 @@
         data() {
             return {
                 tableData: [],
-                tableLoading:false,
+                tableLoading: false,
                 page: {
                     currentPage: 1,
                     totalPage: 20
@@ -126,7 +127,7 @@
                     code: '',
                     idCard: '',
                     phone: '',
-                    dType:'',
+                    dType: '',
                 },
                 exportForm: {
                     levelId: '',
@@ -139,12 +140,14 @@
         created() {
             let winHeight = window.screen.availHeight - 520;
             this.height = winHeight;
+            this.form.upDealerid = JSON.parse(sessionStorage.getItem("memberId"));
             this.getList(this.page.currentPage);
             this.getLevelList()
         },
         activated() {
             let winHeight = window.screen.availHeight - 520;
             this.height = winHeight;
+            this.form.upDealerid = JSON.parse(sessionStorage.getItem("memberId"));
             this.getList(this.page.currentPage);
             this.getLevelList()
         },
@@ -153,16 +156,16 @@
             getList(val) {
                 let that = this;
                 let data = that.form;
-                data.page=val;
-                data.levelId=that.exportForm.levelId;
-                let addrss=that.address;
-                if(addrss && addrss[0]){
-                    data.provinceId=addrss[0];
-                    if(addrss[1]){
-                        data.cityId=addrss[1];
+                data.page = val;
+                data.levelId = that.exportForm.levelId;
+                let addrss = that.address;
+                if (addrss && addrss[0]) {
+                    data.provinceId = addrss[0];
+                    if (addrss[1]) {
+                        data.cityId = addrss[1];
                     }
-                    if(addrss[2]){
-                        data.areaId=addrss[2];
+                    if (addrss[2]) {
+                        data.areaId = addrss[2];
                     }
                 }
 
@@ -219,17 +222,17 @@
             },
             //关闭
             closeItem(index, id) {
-                let that=this;
-                let data={
-                    id:id
+                let that = this;
+                let data = {
+                    id: id
                 };
                 that.$axios
                     .post(api.stopDealerById, data)
                     .then(res => {
                         that.btnLoading = false;
-                        if(res.data.code == 200){
+                        if (res.data.code == 200) {
                             that.getList(that.page.currentPage)
-                        }else{
+                        } else {
                             that.$message.warning(res.data.msg);
                         }
                     })

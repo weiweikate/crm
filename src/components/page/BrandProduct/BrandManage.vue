@@ -127,12 +127,12 @@
             // 添加品牌
             addBrand() {
                 // sessionStorage.setItem('addBrand', '1');
-                this.$router.push({path: '/addOrUpBrand'})
+                this.$router.push({path: '/addBrand'})
             },
             //编辑
             editItem(index, id) {
                 sessionStorage.setItem('brandId', id);
-                this.$router.push({path: '/addOrUpBrand', query: {brandId: id}})
+                this.$router.push({path: '/editBrand', query: {brandId: id}})
             },
 
             //跳到品牌页面

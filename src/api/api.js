@@ -157,6 +157,21 @@ export const getManageList='/mock/5aeac1c6c186102e067af3f3/test/getManageList';
     //查看用户邀请详情
     export const findInviteInfo='/admin/invite/findInviteInfo';
 
+    // 经销商会员管理
+        //会员列表
+        export const getDealerPageList='/admin/dealer/queryDealerPageList';
+        //会员详情
+        export const findDealerById='/admin/dealer/findDealerById';
+        //修改授权信息
+        export const updateDealerPermitById='/admin/dealer/updateDealerPermitById';
+        //根据id修改经销商信息
+        export const updateDealerById='/admin/dealer/updateDealerById';
+        //用户的树状结构
+        export const findDealerTreeById='/admin/dealer/findDealerTreeById';
+        //关闭用户
+        export const stopDealerById='/admin/dealer/stopDealerById';
+
+
 // 公告通知
 // 公告列表
 export const getNoticeList='/admin/notice/queryNoticeList';

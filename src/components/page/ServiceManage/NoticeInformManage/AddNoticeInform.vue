@@ -51,7 +51,7 @@
                         </el-checkbox>
                         <div style="margin: 15px 0;"></div>
                         <el-checkbox-group v-model="checkedUsers" @change="handleCheckedUsersChange">
-                            <el-checkbox v-for="(item,index) in users" :label="index" :key="index">{{item.name}}
+                            <el-checkbox v-for="(item,index) in users" :label="item" :key="index">{{item.name}}
                             </el-checkbox>
                         </el-checkbox-group>
                     </el-form-item>
@@ -60,12 +60,9 @@
                             <el-radio label="1" value="1">全国</el-radio>
                             <el-radio label="2" value="2">国外</el-radio>
                         </el-radio-group>
-                        <el-cascader
-                                :options="options"
-                                v-model="selectedOptions"
-                                change-on-select
-                                @change="handleChange">
-                        </el-cascader>
+                        <div class="el-cascader">
+                            <region @regionMsg='getRegion' :regionMsg='address'></region>
+                        </div>
                     </el-form-item>
                     <el-form-item>
                         <span class="label">发布者</span>
@@ -86,232 +83,34 @@
     import vBreadcrumb from '../../../common/Breadcrumb.vue';
     import Quill from 'quill';
     import * as api from '../../../../api/api';
+    import region from '../../../common/Region';
     import moment from 'moment'
 
     export default {
         components: {
-            vBreadcrumb, icon
+            vBreadcrumb, icon, region
         },
         data() {
             return {
                 checked: [true, false],
                 title: '',//   标题
                 form: {
-                    nType:'1',//   1:公告   2：通知
-                    content:'',//   内容
-                    pushType:'1',//   1：即时推送  2：定时推送
-                    pushWay:'',//   推送人群
-                    pushCountry:'',//   1：全国 2：国外 3：定省
-                    provinceId:'',//   省
-                    cityId:'',//   市
-                    areaId:'',//   区
-                    createAdmin:'',//   发布人
-                    original_img:'',
-                    small_img:''
+                    nType: '1',//   1:公告   2：通知
+                    content: '',//   内容
+                    pushType: '1',//   1：即时推送  2：定时推送
+                    pushWay: '',//   推送人群
+                    pushCountry: '',//   1：全国 2：国外 3：定省
+                    createAdmin: '',//   发布人
+                    original_img: '',
+                    small_img: ''
                 },
-                imageUrl:'',
-                date:'',
+                imageUrl: '',
+                date: '',
                 loading: false,
                 checkAll: false,
                 checkedUsers: [],
                 users: [],
                 isIndeterminate: false,
-                options: [{
-                    value: 'zhinan',
-                    label: '指南',
-                    children: [{
-                        value: 'shejiyuanze',
-                        label: '设计原则',
-                        children: [{
-                            value: 'yizhi',
-                            label: '一致'
-                        }, {
-                            value: 'fankui',
-                            label: '反馈'
-                        }, {
-                            value: 'xiaolv',
-                            label: '效率'
-                        }, {
-                            value: 'kekong',
-                            label: '可控'
-                        }]
-                    }, {
-                        value: 'daohang',
-                        label: '导航',
-                        children: [{
-                            value: 'cexiangdaohang',
-                            label: '侧向导航'
-                        }, {
-                            value: 'dingbudaohang',
-                            label: '顶部导航'
-                        }]
-                    }]
-                }, {
-                    value: 'zujian',
-                    label: '组件',
-                    children: [{
-                        value: 'basic',
-                        label: 'Basic',
-                        children: [{
-                            value: 'layout',
-                            label: 'Layout 布局'
-                        }, {
-                            value: 'color',
-                            label: 'Color 色彩'
-                        }, {
-                            value: 'typography',
-                            label: 'Typography 字体'
-                        }, {
-                            value: 'icon',
-                            label: 'Icon 图标'
-                        }, {
-                            value: 'button',
-                            label: 'Button 按钮'
-                        }]
-                    }, {
-                        value: 'form',
-                        label: 'Form',
-                        children: [{
-                            value: 'radio',
-                            label: 'Radio 单选框'
-                        }, {
-                            value: 'checkbox',
-                            label: 'Checkbox 多选框'
-                        }, {
-                            value: 'input',
-                            label: 'Input 输入框'
-                        }, {
-                            value: 'input-number',
-                            label: 'InputNumber 计数器'
-                        }, {
-                            value: 'select',
-                            label: 'Select 选择器'
-                        }, {
-                            value: 'cascader',
-                            label: 'Cascader 级联选择器'
-                        }, {
-                            value: 'switch',
-                            label: 'Switch 开关'
-                        }, {
-                            value: 'slider',
-                            label: 'Slider 滑块'
-                        }, {
-                            value: 'time-picker',
-                            label: 'TimePicker 时间选择器'
-                        }, {
-                            value: 'date-picker',
-                            label: 'DatePicker 日期选择器'
-                        }, {
-                            value: 'datetime-picker',
-                            label: 'DateTimePicker 日期时间选择器'
-                        }, {
-                            value: 'upload',
-                            label: 'Upload 上传'
-                        }, {
-                            value: 'rate',
-                            label: 'Rate 评分'
-                        }, {
-                            value: 'form',
-                            label: 'Form 表单'
-                        }]
-                    }, {
-                        value: 'data',
-                        label: 'Data',
-                        children: [{
-                            value: 'table',
-                            label: 'Table 表格'
-                        }, {
-                            value: 'tag',
-                            label: 'Tag 标签'
-                        }, {
-                            value: 'progress',
-                            label: 'Progress 进度条'
-                        }, {
-                            value: 'tree',
-                            label: 'Tree 树形控件'
-                        }, {
-                            value: 'pagination',
-                            label: 'Pagination 分页'
-                        }, {
-                            value: 'badge',
-                            label: 'Badge 标记'
-                        }]
-                    }, {
-                        value: 'notice',
-                        label: 'Notice',
-                        children: [{
-                            value: 'alert',
-                            label: 'Alert 警告'
-                        }, {
-                            value: 'loading',
-                            label: 'Loading 加载'
-                        }, {
-                            value: 'message',
-                            label: 'Message 消息提示'
-                        }, {
-                            value: 'message-box',
-                            label: 'MessageBox 弹框'
-                        }, {
-                            value: 'notification',
-                            label: 'Notification 通知'
-                        }]
-                    }, {
-                        value: 'navigation',
-                        label: 'Navigation',
-                        children: [{
-                            value: 'menu',
-                            label: 'NavMenu 导航菜单'
-                        }, {
-                            value: 'tabs',
-                            label: 'Tabs 标签页'
-                        }, {
-                            value: 'breadcrumb',
-                            label: 'Breadcrumb 面包屑'
-                        }, {
-                            value: 'dropdown',
-                            label: 'Dropdown 下拉菜单'
-                        }, {
-                            value: 'steps',
-                            label: 'Steps 步骤条'
-                        }]
-                    }, {
-                        value: 'others',
-                        label: 'Others',
-                        children: [{
-                            value: 'dialog',
-                            label: 'Dialog 对话框'
-                        }, {
-                            value: 'tooltip',
-                            label: 'Tooltip 文字提示'
-                        }, {
-                            value: 'popover',
-                            label: 'Popover 弹出框'
-                        }, {
-                            value: 'card',
-                            label: 'Card 卡片'
-                        }, {
-                            value: 'carousel',
-                            label: 'Carousel 走马灯'
-                        }, {
-                            value: 'collapse',
-                            label: 'Collapse 折叠面板'
-                        }]
-                    }]
-                }, {
-                    value: 'ziyuan',
-                    label: '资源',
-                    children: [{
-                        value: 'axure',
-                        label: 'Axure Components'
-                    }, {
-                        value: 'sketch',
-                        label: 'Sketch Templates'
-                    }, {
-                        value: 'jiaohu',
-                        label: '组件交互文档'
-                    }]
-                }],
-                selectedOptions: [],
                 content: '', // 文章内容
                 editorOption: {
                     placeholder: '请输入内容',
@@ -348,28 +147,17 @@
                 provinceArr: [],
                 cityArr: [],
                 areaArr: [],
-                region: []
+                region: [],
+                address: ''
             };
         },
-        computed: {
-            qnLocation() {
-                return location.protocol === "http:"
-                    ? "/commonAPI/ossClient/aliyunOSSUploadImage"
-                    : "/commonAPI/ossClient/aliyunOSSUploadImage";
-            }
-        },
-        // 页面加载后执行 为编辑器的图片图标和视频图标绑定点击事件
-        mounted() {
-            // 为图片ICON绑定事件 getModule 为编辑器的内部属性
-            this.$refs.myQuillEditor.quill
-                .getModule("toolbar")
-                .addHandler("image", this.imgHandler);
-        },
-        created() {
+        created(){
             this.$refs = {
                 myQuillEditor: HTMLInputElement,
                 imgInput: HTMLInputElement
             };
+        },
+        activated() {
             this.getLevelList();
             this.username = localStorage.getItem("ms_username");
             this.userId = localStorage.getItem("ms_userID");
@@ -379,6 +167,11 @@
         //     this.$refs['form'].resetFields();
         // },
         methods: {
+            // 获取省市区
+            getRegion(msg) {
+                this.address = msg;
+                console.log(msg)
+            },
             //获取用户层级列表
             getLevelList() {
                 let that = this;
@@ -396,39 +189,7 @@
                         console.log(err);
                     })
             },
-            //获取详情
-            getDetail() {
-                let that = this;
-                let data = {
-                    id: that.id
-                };
-                that.loading = true;
-                that.$axios
-                    .post(api.getNoticeDetailById, data)
-                    .then(res => {
-                        if (res.data.code == 200) {
-                            that.form = res.data.data;
-                            that.title=res.data.data.title;
-                            that.username=res.data.data.name;
-                            if(res.data.data.n_type==1){
-                                that.checked=[true,false]
-                            }else{
-                                that.checked=[false,true]
-                            }
-                            that.form.pushWay=res.data.data.push_way.toString();
-                            that.form.pushType=res.data.data.push_type.toString();
-                            that.form.pushCountry=res.data.data.push_country.toString();
-                            that.date=res.data.data.order_time?moment(res.data.data.order_time).format('YYYY-MM-DD HH:mm:ss'):'';
-                            that.loading = false;
-                        } else {
-                            that.loading = false;
-                            that.$message.warning(res.data.msg);
-                        }
-                    })
-                    .catch(err => {
-                        that.loading = false
-                    })
-            },
+
             beforeUpload(file) {
                 return this.qnUpload(file);
             },
@@ -496,163 +257,107 @@
                 this.form.content = html;
             },
 
-            handleChange() {
-                console.log(value);
-                this.getProvinceList()
-            },
-            //人群选择
+            //推送人群选择
             handleCheckAllChange(val) {
-                let that=this;
+                let that = this;
                 that.checkedUsers = val ? that.users : [];
                 that.isIndeterminate = false;
-                if(val){
+                if (val) {
                     let result = 0;
-                    for(let i=0;i<that.users.length;i++){
-                        result+=Math.pow(2,i)
+                    for (let i = 0; i < that.users.length; i++) {
+                        result += Math.pow(2, i)
                     }
-                    that.form.pushWay=result;
-                }else{
-                    that.form.pushWay=''
+                    that.form.pushWay = result;
+                } else {
+                    that.form.pushWay = ''
                 }
             },
             handleCheckedUsersChange(value) {
+                let that = this;
                 let checkedCount = value.length;
                 let result = 0;
-                for (let i in value) {
-                    result += Math.pow(2, value[i])
+                for (let i in that.users) {
+                    for(let j in value){
+                        if (that.users[i].id == value[j].id) {
+                            result += Math.pow(2, i)
+                        }
+                    }
                 }
-                this.form.pushWay=result;
-                this.checkAll = checkedCount === this.users.length;
-                this.isIndeterminate = checkedCount > 0 && checkedCount < this.users.length;
+                that.form.pushWay = result;
+                that.checkAll = checkedCount === that.users.length;
+                that.isIndeterminate = checkedCount > 0 && checkedCount < that.users.length;
             },
-
+            //选项卡切换
             change(num) {
                 let that = this;
                 that.checked = [false, false];
                 that.checked[num] = true;
-                that.form.nType=num+1;
-                if(num==1){
-                    that.title=''
+                that.form.nType = num + 1;
+                if (num == 1) {
+                    that.title = ''
                 }
             },
             // 提交表单
             submitForm() {
-                let that=this;
-                let params=that.form;
-                if(that.form.nType==1){
-                    params.title=that.title;
+                let that = this;
+                let params = that.form;
+                if (that.form.nType == 1) {
+                    params.title = that.title;
                 }
-                if(that.form.pushType==2){
-                    params.orderTime=that.date?moment(that.date).format('YYYY-MM-DD HH:mm:ss'):'';
+                if (that.form.pushType == 2) {
+                    params.orderTime = that.date ? moment(that.date).format('YYYY-MM-DD HH:mm:ss') : '';
                 }
-                that.btnLoading=true;
+                if(that.pushCountry!=1&&that.pushCountry!=2){
+                    that.form.pushCountry=3;
+                    if(that.address){
+                        params.provinceId=that.address[0];
+                        if(that.address[1]){
+                            params.cityId=that.address[1];
+                        }else{
+                            params.cityId=''
+                        }
+                        if(that.address[2]){
+                            params.areaId=that.address[2];
+                        }else{
+                            params.areaId=''
+                        }
+                    }
+                }
+                that.btnLoading = true;
                 that.$axios
-                    .post(api.addNotice,params)
-                    .then(res=>{
-                        if(res.data.code==200){
-                            that.btnLoading=false;
+                    .post(api.addNotice, params)
+                    .then(res => {
+                        if (res.data.code == 200) {
+                            that.btnLoading = false;
                             that.$message.success(res.data.msg);
                             setTimeout(function () {
                                 that.$router.push('/noticeInformManage')
-                            },1000)
-                        }else{
+                            }, 1000)
+                        } else {
                             that.btnLoading = false;
                             that.$message.warning(res.data.msg);
                         }
                     })
-                    .catch(err=>{
-                        that.btnLoading=false
-                    })
-            },
-            //   获取省份列表
-            getProvinceList() {
-                this.pLoading = true;
-                this.$axios
-                    .post(api.getProvinced, {})
-                    .then(res => {
-                        this.provinceArr = [];
-                        res.data.data.forEach((v, k) => {
-                            this.provinceArr.push({ label: v.name, value: v.zipcode });
-                            this.pLoading = false;
-                        });
-                    })
                     .catch(err => {
-                        console.log(err);
-                    });
-            },
-            // 获取城市列表
-            getCity(val) {
-                this.cLoading = true;
-                this.$axios
-                    .post(api.getCity, { fatherZipcode: this.province })
-                    .then(res => {
-                        if (res.data.data.length != 0 && val == false) {
-                            this.city = res.data.data[0].zipcode;
-                        }else if(val == true){
-                            this.city = this.regionMsg[1];
-                        } else {
-                            this.city = "";
-                        }
-                        this.cityArr = [];
-                        res.data.data.forEach((v, k) => {
-                            this.cityArr.push({ label: v.name, value: v.zipcode });
-                            this.cLoading = false;
-                        });
-                        this.province.children=this.cityArr;
-                        if(val == true){
-                            this.getArea(true);
-                            return;
-                        }
-                        this.getArea(false);
+                        that.btnLoading = false
                     })
-                    .catch(err => {
-                        console.log(err);
-                    });
             },
-            // 获取区
-            getArea(val) {
-                this.aLoading = true;
-                let data = {};
-                if (this.city == "") {
-                    data.fatherZipcode = this.province;
-                } else {
-                    data.fatherZipcode = this.city;
-                }
-                this.$axios
-                    .post(api.getArea, data)
-                    .then(res => {
-                        if (res.data.data.length != 0 && val == false) {
-                            this.area = res.data.data[0].zipcode;
-                        }else if(val == true){
-                            this.area = this.regionMsg[2];
-                        } else {
-                            this.area = "";
-                        }
-                        this.areaArr = [];
-                        res.data.data.forEach((v, k) => {
-                            this.areaArr.push({ label: v.name, value: v.zipcode });
-                            this.aLoading = false;
-                        });
-                        this.province.children.children=this.areaArr;
-                        this.region = [];
-                        this.region.push(this.province);
-                        this.region.push(this.city);
-                        this.region.push(this.area);
-                        // this.$emit("regionMsg", this.region);
-                    })
-                    .catch(err => {
-                        console.log(err);
-                    });
-            },
-            // 获取省市区
-            getAllRegion() {
-                this.region = [];
-                this.region.push(this.province);
-                this.region.push(this.city);
-                this.region.push(this.area);
-                this.$emit("regionMsg", this.region);
+
+        },
+        computed: {
+            qnLocation() {
+                return location.protocol === "http:"
+                    ? "/commonAPI/ossClient/aliyunOSSUploadImage"
+                    : "/commonAPI/ossClient/aliyunOSSUploadImage";
             }
-        }
+        },
+        // 页面加载后执行 为编辑器的图片图标和视频图标绑定点击事件
+        mounted() {
+            // 为图片ICON绑定事件 getModule 为编辑器的内部属性
+            this.$refs.myQuillEditor.quill
+                .getModule("toolbar")
+                .addHandler("image", this.imgHandler);
+        },
     };
 </script>
 <style lang="less">
@@ -793,13 +498,13 @@
         }
         .el-cascader {
             position: absolute;
-            top: 0;
+            top: -5px;
             left: 180px;
             .el-input {
-                width: 230px;
+                width: 150px;
             }
             .el-input__inner {
-                width: 230px;
+                width: 150px;
             }
         }
         .quill-editor {

@@ -3,57 +3,56 @@
         <div class="box">
             <div class="mask-title">基础信息编辑</div>
             <div class="mask-content">
-                <el-form :model="form">
+                <el-form>
                     <div class="left">
                         <div class="form-item">
                             <el-form-item label="用户ID">
-                                {{}}
+                                {{dealer.id}}
                             </el-form-item>
                             <el-form-item label="微信openid" class="special">
-                                {{}}
+                                {{dealer.openid}}
                             </el-form-item>
                         </div>
                         <div class="form-item">
                             <el-form-item label="昵称">
-                                <el-input v-model="form.name" placeholder="请输入昵称" size="medium"></el-input>
+                                <el-input v-model="dealer.nickname" placeholder="请输入昵称" size="medium"></el-input>
                             </el-form-item>
                             <el-form-item label="微信号">
-                                <el-input v-model="form.name" placeholder="请输入微信号" size="medium"></el-input>
+                                <el-input v-model="dealer.wecaht_id" placeholder="请输入微信号" size="medium"></el-input>
                             </el-form-item>
                         </div>
                         <div class="form-item">
                             <el-form-item label="姓名">
-                                <el-input v-model="form.name" placeholder="请输入用户姓名" size="medium"></el-input>
+                                <el-input v-model="dealer.realname" placeholder="请输入用户姓名" size="medium"></el-input>
                             </el-form-item>
                             <el-form-item label="手机号">
-                                <el-input v-model="form.name" placeholder="请输入手机号" size="medium"></el-input>
+                                <el-input v-model="dealer.phone" placeholder="请输入手机号" size="medium"></el-input>
                             </el-form-item>
                         </div>
                         <div class="form-item">
                             <el-form-item label="身份证号">
-                                <el-input v-model="form.name" placeholder="请输入身份证号码" size="medium"></el-input>
+                                <el-input v-model="dealer.idcard" placeholder="请输入身份证号码" size="medium"></el-input>
                             </el-form-item>
                         </div>
-                        <div class="form-item">
+                        <div class="form-item address-area">
                             <el-form-item label="地址信息">
-                                <el-input v-model="form.name" placeholder="详细地址..." size="medium"></el-input>
+                                <region @regionMsg='getRegion' :regionMsg='address'></region>
+                                <el-input class="lar-inp" v-model="dealer.address" placeholder="详细地址..." size="medium"></el-input>
                             </el-form-item>
                         </div>
                     </div>
                     <div class="right">
-                        <img v-if="form.imageUrl" :src="form.imageUrl">
+                        <img :src="dealer.head_img?dealer.head_img:'src/assets/images/logo.png'" alt="">
                         <!--<img v-else src="../../../../assets/images/logo.png" alt="">-->
                         <el-upload
-                                action="https://jsonplaceholder.typicode.com/posts/"
+                                action="/commonAPI/ossClient/aliyunOSSUploadImage"
                                 :show-file-list="false"
-                                :on-success="handleAvatarSuccess"
-                                :before-upload="beforeAvatarUpload">
+                                :on-success="handleAvatarSuccess">
                             <el-button type="primary">编辑头像</el-button>
                         </el-upload>
                         <div class="tip">请上传jpg，png格式</div>
                     </div>
                     <div class="clearfix"></div>
-
                     <el-form-item class="submit-btn">
                         <el-button type="primary" @click="submitForm('form')">确认修改</el-button>
                         <el-button @click="closeToask">取消</el-button>
@@ -65,40 +64,87 @@
 </template>
 <script>
     import icon from "../../../common/ico";
-
+    import region from '../../../common/Region';
+    import * as api from '../../../../api/api'
     export default {
         components: {
-            icon
+            icon,region
+        },
+        props:{
+            id: {
+                require: true
+            },
+            dealer: {
+                require: true
+            },
         },
         data() {
             return {
-                form: {
-                    name: "",
-                    isUse: "1",
-                    imageUrl: ''
-                }
+                address: '',
+                form:{}
             };
         },
+        created(){
+            let reginArr=[];
+            reginArr.push(this.dealer.province_id,this.dealer.city_id,this.dealer.area_id);
+            this.address=reginArr;
+        },
         methods: {
+            // 获取省市区
+            getRegion(msg) {
+                this.address = msg;
+            },
             //  取消弹窗
             closeToask() {
                 this.$emit("status", false);
             },
-            //上传头像
+            //上传图片
             handleAvatarSuccess(res, file) {
-                console.log(file.raw)
-                this.form.imageUrl = URL.createObjectURL(file.raw);
-            },
-            beforeAvatarUpload(file) {
-                const isJPG = (file.type === 'image/jpeg' || file.type === 'image/png');
-                if (!isJPG) {
-                    this.$message.error('上传头像图片只能是 JPG、PNG 格式!');
-                }
-                return isJPG;
+                this.dealer.head_img = res.data.imageUrl;
             },
             // 提交表单
             submitForm(form) {
-                this.closeToask();
+                let that=this;
+                let data={};
+                data.id=that.id;
+                data.address=that.dealer.address;
+                data.address=that.dealer.address;
+                data.headImg=that.dealer.head_img;
+                data.idcard=that.dealer.idcard;
+                data.nickname=that.dealer.nickname;
+                data.phone=that.dealer.phone;
+                data.realname=that.dealer.realname;
+                if(that.address){
+                    data.provinceId=that.address[0];
+                    if(that.address[1]){
+                        data.cityId=that.address[1];
+                    }else{
+                        data.cityId=''
+                    }
+                    if(that.address[2]){
+                        data.areaId=that.address[2];
+                    }else{
+                        data.areaId=''
+                    }
+                }
+                that.addrPreFix=that.address;
+                that.$axios
+                    .post(api.updateDealerById, data)
+                    .then(res => {
+                        that.btnLoading = false;
+                        if(res.data.code == 200){
+                            that.$message.success('修改成功');
+                            that.$emit("msg", false);
+                        }else{
+                            that.$message.warning(res.data.msg);
+                            that.$emit("msg", false);
+                        }
+                    })
+                    .catch(err => {
+                        that.tableLoading = false;
+                        that.$emit("msg", false);
+                    });
+                that.closeToask();
             }
         }
     };
@@ -204,6 +250,21 @@
         }
         .tip{font-size: 12px;color: #999}
         .submit-btn{width: 100%;text-align: right}
+        .address-area{
+            width: 100%;
+            .el-input__inner {
+                width: 150px
+            }
+            .lar-inp{
+                margin-top: 20px;
+                .el-input__inner {
+                    width: 460px
+                }
+            }
+            .el-form-item__content{
+                width: 500px;
+            }
+        }
     }
 </style>
 

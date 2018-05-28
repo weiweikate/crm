@@ -8,39 +8,39 @@
                         <h3>基础信息</h3>
                     </div>
                     <div class="item-row">
-                        <div class="item">用户ID：{{detail.ID}}(邀请码)</div>
-                        <div class="item">微信openid：{{detail.openid}}</div>
+                        <div class="item">用户ID：{{dealer.id}}({{dealer.code}})</div>
+                        <div class="item">微信openid：{{dealer.openid}}</div>
                     </div>
                     <div class="item-row">
-                        <div class="item">昵称：{{detail.nickName}}</div>
-                        <div class="item">身份证号：{{detail.idCard}}</div>
+                        <div class="item">昵称：{{dealer.nickname}}</div>
+                        <div class="item">身份证号：{{dealer.idcard}}</div>
                     </div>
                     <div class="item-row">
-                        <div class="item">手机号：{{detail.phone}}</div>
-                        <div class="item">系统版本：{{detail.idCard}}</div>
+                        <div class="item">手机号：{{dealer.phone}}</div>
+                        <div class="item">系统版本：{{dealer.system_version}}</div>
                     </div>
                     <div class="item-row">
-                        <div class="item">姓名：{{detail.phone}}</div>
-                        <div class="item">微信版权获取区域：{{detail.idCard}}</div>
+                        <div class="item">姓名：{{dealer.realname}}</div>
+                        <div class="item">微信版权获取区域：{{dealer.wechat_area}}</div>
                     </div>
                     <div class="item-row">
-                        <div class="item">微信号：{{detail.phone}}</div>
-                        <div class="item">最近登录时间：{{detail.idCard}}</div>
+                        <div class="item">微信号：{{dealer.wecaht_id}}</div>
+                        <div class="item">最近登录时间：{{dealer.last_login_time|formatDate}}</div>
                     </div>
                     <div class="item-row">
-                        <div class="item">注册时间：{{detail.phone}}</div>
-                        <div class="item">本日登录：{{detail.idCard}}</div>
+                        <div class="item">注册时间：{{dealer.reg_time|formatDate}}</div>
+                        <div class="item">本日登录：{{dealer.day_count}}</div>
                     </div>
                     <div class="item-row">
-                        <div class="item">手机型号：{{detail.phone}}</div>
-                        <div class="item">本月登录：{{detail.idCard}}</div>
+                        <div class="item">手机型号：{{dealer.device}}</div>
+                        <div class="item">本月登录：{{dealer.month_count}}</div>
                     </div>
                     <div class="item-row">
-                        <div class="item">微信版本：{{detail.phone}}</div>
-                        <div class="item">共登录次数：{{detail.idCard}}</div>
+                        <div class="item">微信版本：{{dealer.wecaht_version}}</div>
+                        <div class="item">共登录次数：{{dealer.all_count}}</div>
                     </div>
                     <div class="item-row">
-                        <div class="item">地址信息 ：{{detail.phone}}</div>
+                        <div class="item">地址信息 ：{{dealer.addrPreFix}}{{dealer.address}}</div>
                     </div>
                 </div>
                 <div class="center">
@@ -48,46 +48,34 @@
                 </div>
                 <div class="right">
                     <div>
-                        <img class="img" src="../../../../assets/images/logo.png" alt="">
+                        <img class="img" :src="dealer.head_img?dealer.head_img:'src/assets/images/logo.png'" alt="">
                     </div>
                     <div>
-                        <el-button type="primary" @click="toLowerAgent">下级代理({{detail.number}})</el-button>
+                        <el-button type="primary" @click="toLowerAgent">下级代理({{dealer.sub_level_num}})</el-button>
                     </div>
-                   <div>
-                       <el-button type="primary" @click="toMemberTree" style="margin-left: 0">查看会员树状图</el-button>
-                   </div>
+                    <div>
+                        <el-button type="primary" @click="toMemberTree" style="margin-left: 0">查看会员树状图</el-button>
+                    </div>
                     <!--<el-button type="primary" style="margin-left: 0">用户操作日志</el-button>-->
                 </div>
                 <div class="clearfix"></div>
             </div>
-            <div class="author-inf-area line">
+            <div class="author-inf-area">
                 <div class="left">
                     <div class="title">
                         <h3>授权信息</h3>
                     </div>
                     <div class="item-row">
-                        <div class="item">上级代理：{{detail.ID}}(邀请码)</div>
-                        <div class="item">授权层级：{{detail.openid}}</div>
-                    </div>
-                    <div class="item-row">
-                        <div class="item">授权码：{{detail.nickName}}</div>
-                        <div class="item">授权时间：{{detail.idCard}}</div>
-                    </div>
-                    <div class="item-row">
-                        <div class="item">授权品牌：
-                            <el-tag
-                                :key="tag"
-                                v-for="tag in dynamicTags"
-                                color="#fff"
-                                :disable-transitions="false">
-                            {{tag}}
-                        </el-tag></div>
-                    </div>
-                    <div class="item-row">
-                        <div class="item">授权品类：{{detail.phone}}</div>
-                    </div>
-                    <div class="item-row">
-                        <div class="item">授权渠道：{{detail.phone}}</div>
+                        <div class="item">上级代理：{{permit.realname}}({{permit.code}})</div>
+                        <div class="item">经销商类型：
+                            <span v-if="permit.d_type==1">网信经销商</span>
+                            <span v-if="permit.d_type==2">供货经销商</span>
+                            <span v-if="permit.d_type==3">网红经销商</span>
+                        </div>
+                        <div class="item-row">
+                            <div class="item">授权码：{{permit.code}}</div>
+                            <div class="item">授权层级：{{permit.level}}级</div>
+                        </div>
                     </div>
                 </div>
                 <div class="center">
@@ -95,27 +83,27 @@
                 </div>
                 <div class="clearfix"></div>
             </div>
-            <div class="promote-inf-area line">
+            <!--<div class="promote-inf-area line">
                 <div class="left">
                     <div class="title">
                         <h3>晋升记录</h3>
                     </div>
                     <div class="item-row">
                         <div class="item">
-                            <span>实习省代--省级代理</span>
+                            <span>实习省代&#45;&#45;省级代理</span>
                             <span style="margin-left: 20px">2018-05-12 12:32:31</span>
                         </div>
                     </div>
                     <div class="item-row">
                         <div class="item">
-                            <span>实习省代--省级代理</span>
+                            <span>实习省代&#45;&#45;省级代理</span>
                             <span style="margin-left: 20px">2018-05-12 12:32:31</span>
                         </div>
                     </div>
                 </div>
                 <div class="clearfix"></div>
-            </div>
-            <div class="others-inf-area line">
+            </div>-->
+            <!--<div class="others-inf-area line">
                 <div class="left">
                     <div class="title">
                         <h3>其他信息</h3>
@@ -131,45 +119,44 @@
                     </div>
                 </div>
                 <div class="clearfix"></div>
-            </div>
-            <div class="user-tag-area">
-                <div class="title">
-                    <h3>用户标签</h3>
-                </div>
-                <div class="tags-area">
-                    <el-tag
-                            :key="tag"
-                            v-for="tag in dynamicTags"
-                            closable
-                            color="#fff"
-                            :disable-transitions="false"
-                            @close="handleClose(tag)">
-                        {{tag}}
-                    </el-tag>
-                    <div style="margin-top: 20px">
-                        <el-input
-                                class="input-new-tag"
-                                v-if="inputVisible"
-                                v-model="inputValue"
-                                ref="saveTagInput"
-                                @keyup.enter.native="handleInputConfirm"
-                                @blur="handleInputConfirm"
-                                placeholder="请输入标签文字"
-                        >
-                        </el-input>
-                        <el-button type="primary" class="button-new-tag" @click="showInput">添加标签</el-button>
-                    </div>
-                </div>
-            </div>
-
+            </div>-->
+            <!--<div class="user-tag-area">-->
+                <!--<div class="title">-->
+                    <!--<h3>用户标签</h3>-->
+                <!--</div>-->
+                <!--<div class="tags-area">-->
+                    <!--<el-tag-->
+                            <!--:key="tag"-->
+                            <!--v-for="tag in dynamicTags"-->
+                            <!--closable-->
+                            <!--color="#fff"-->
+                            <!--:disable-transitions="false"-->
+                            <!--@close="handleClose(tag)">-->
+                        <!--{{tag}}-->
+                    <!--</el-tag>-->
+                    <!--<div style="margin-top: 20px">-->
+                        <!--<el-input-->
+                                <!--class="input-new-tag"-->
+                                <!--v-if="inputVisible"-->
+                                <!--v-model="inputValue"-->
+                                <!--ref="saveTagInput"-->
+                                <!--@keyup.enter.native="handleInputConfirm"-->
+                                <!--@blur="handleInputConfirm"-->
+                                <!--placeholder="请输入标签文字"-->
+                        <!--</el-input>-->
+                        <!--<el-button type="primary" class="button-new-tag" @click="showInput">添加标签</el-button>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
             <div style="margin:50px">
                 <el-button type="primary" @click="backToList">返回列表</el-button>
             </div>
         </div>
+
         <!--基础信息修改弹窗-->
-        <edit-basic @status='closeEditBasic' v-if="isShowEditBasic"></edit-basic>
+        <edit-basic @status='closeEditBasic' :dealer='dealer' :id="id" v-if="isShowEditBasic"></edit-basic>
         <!--授权信息修改弹窗-->
-        <edit-author @status='closeEditAuthor' v-if="isShowEditAuthor"></edit-author>
+        <edit-author @status='closeEditAuthor' :permit='permit' :id="id" v-if="isShowEditAuthor"></edit-author>
     </div>
 </template>
 
@@ -182,40 +169,52 @@
 
     export default {
         components: {
-            icon, vBreadcrumb,editBasic,editAuthor
+            icon, vBreadcrumb, editBasic, editAuthor
         },
         data: function () {
             return {
-                detail: {
-                    ID: '122',
-                    openid: '2121',
-                    nickName: '32434',
-                    idCard: '429006199405133623',
-                    phone: '13826581142',
-                    number: '1234'
-                },
+                dealer: {},
+                permit: {},
                 dynamicTags: ['标签一', '标签二', '标签三'],
                 inputVisible: false,
                 inputValue: '',
-                isShowEditBasic:false,
-                isShowEditAuthor:false,
-                formLabelWidth:'100px',
-                form:{
-                    ID: '122',
-                    openid: '2121',
-                    nickName: '32434',
-                    idCard: '429006199405133623',
-                    phone: '13826581142',
-                    number: '1234'
-                }
+                isShowEditBasic: false,
+                isShowEditAuthor: false,
+                formLabelWidth: '100px',
+                id:'',
+                loading:false
             }
         },
-        created() {
+        activated() {
+            this.id =
+                this.$route.query.id ||
+                JSON.parse(sessionStorage.getItem("memberDetail").id);
             this.getDetail()
         },
         methods: {
+            //获取详情
             getDetail() {
-                let id = this.$route.query.id;
+                let that = this;
+                let data = {
+                    id: that.id
+                };
+                that.loading=true;
+                that.$axios
+                    .post(api.findDealerById, data)
+                    .then(res => {
+                        if (res.data.code == 200) {
+                            that.loading = false;
+                            that.dealer = res.data.data.dealer;
+                            that.permit = res.data.data.permit;
+                        } else {
+                            that.$message.warning(res.data.msg);
+                            that.loading = false;
+                        }
+                    })
+                    .catch(err => {
+                        that.loading = false;
+                        console.log(err)
+                    })
             },
             handleClose(tag) {
                 this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
@@ -241,20 +240,24 @@
                 this.$router.push('/memberManage')
             },
             //跳到下级代理页面
-            toLowerAgent(){
-               this.$router.push({path:'/memberManage',query:{}})
+            toLowerAgent() {
+                let that=this;
+                sessionStorage.setItem('memberId',that.id);
+                that.$router.push({path: '/lowerMemberManage'})
             },
             //跳到会员树状图页面
-            toMemberTree(){
-               this.$router.push({path:'/memberTree',query:{}})
+            toMemberTree() {
+                let that=this;
+                sessionStorage.setItem('memberId',that.id);
+                this.$router.push({path: '/memberTree', query: {'memberId':that.id}})
             },
             //修改基础信息
-            updateBasicInf(){
-                this.isShowEditBasic=true;
+            updateBasicInf() {
+                this.isShowEditBasic = true;
             },
             //修改授权信息
-            updateAuthorInf(){
-                this.isShowEditAuthor=true;
+            updateAuthorInf() {
+                this.isShowEditAuthor = true;
             },
             // 关闭编辑弹窗
             closeEditBasic(msg) {
@@ -294,7 +297,11 @@
         height: auto;
         text-align: center;
     }
-    .title{margin-bottom: 10px}
+
+    .title {
+        margin-bottom: 10px
+    }
+
     .tags-area {
         margin-top: 10px
     }

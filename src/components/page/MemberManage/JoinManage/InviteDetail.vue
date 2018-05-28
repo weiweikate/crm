@@ -4,53 +4,59 @@
         <div class="container" v-loading="loading">
             <div class="basic-inf-area line">
                 <div class="item-row">
-                    邀请层级：{{detail.id}}
+                    邀请层级：{{detail.levelName}}
                 </div>
                 <div class="item-row">
-                    授权品牌：
-                    <el-tag
-                            :key="tag"
-                            v-for="tag in dynamicTags"
-                            color="#fff"
-                            :disable-transitions="false">
-                        {{tag}}
-                    </el-tag>
+                    类型：
+                    <span v-if="detail.invite_type==1">网信经销商</span>
+                    <span v-if="detail.invite_type==2">供货经销商</span>
+                    <span v-if="detail.invite_type==3">网红经销商</span>
                 </div>
-                <div class="item-row">
-                    授权品类：
-                    <el-tag
-                            :key="tag"
-                            v-for="tag in dynamicTags"
-                            color="#fff"
-                            :disable-transitions="false">
-                        {{tag}}
-                    </el-tag>
-                </div>
-                <div class="item-row">
-                    授权渠道：
-                    <el-tag
-                            :key="tag"
-                            v-for="tag in dynamicTags"
-                            color="#fff"
-                            :disable-transitions="false">
-                        {{tag}}
-                    </el-tag>
-                </div>
-                <div class="item-row">
-                    授权时间：
-                    {{detail.startTime|formatDate}} 至 {{detail.endTime|formatDate}}
-                </div>
+                <!--<div class="item-row">-->
+                    <!--授权品牌：-->
+                    <!--<el-tag-->
+                            <!--:key="tag"-->
+                            <!--v-for="tag in dynamicTags"-->
+                            <!--color="#fff"-->
+                            <!--:disable-transitions="false">-->
+                        <!--{{tag}}-->
+                    <!--</el-tag>-->
+                <!--</div>-->
+                <!--<div class="item-row">-->
+                    <!--授权品类：-->
+                    <!--<el-tag-->
+                            <!--:key="tag"-->
+                            <!--v-for="tag in dynamicTags"-->
+                            <!--color="#fff"-->
+                            <!--:disable-transitions="false">-->
+                        <!--{{tag}}-->
+                    <!--</el-tag>-->
+                <!--</div>-->
+                <!--<div class="item-row">-->
+                    <!--授权渠道：-->
+                    <!--<el-tag-->
+                            <!--:key="tag"-->
+                            <!--v-for="tag in dynamicTags"-->
+                            <!--color="#fff"-->
+                            <!--:disable-transitions="false">-->
+                        <!--{{tag}}-->
+                    <!--</el-tag>-->
+                <!--</div>-->
+                <!--<div class="item-row">-->
+                    <!--授权时间：-->
+                    <!--{{detail.startTime|formatDate}} 至 {{detail.endTime|formatDate}}-->
+                <!--</div>-->
                 <div class="item-row" v-if="detail.invalidType==1">
                     邀请失效期：
                     {{detail.invalidTime|formatDate}}
                 </div>
                 <div class="item-row" v-else>
                     邀请链接打开次数：
-                    {{detail.clickTimes|formatDate}}
+                    {{detail.click_times}}
                 </div>
                 <div class="item-row">
                     邀请管理员：
-                    {{detail.name}}
+                    {{detail.adminName}}
                 </div>
                 <div class="item-row">
                     邀请时间：
@@ -62,10 +68,10 @@
                 <div class="title">
                     邀请成功：
                 </div>
-                <div>
-                    <div class="succ-item" v-for="item in detail.success">
+                <div v-if="list.length>0">
+                    <div class="succ-item" v-for="item in list">
                         <div class="left">
-                            <img :src="item.pic?item.pic:'src/assets/images/logo.png'" alt="">
+                            <img :src="item.head_img?item.head_img:'src/assets/images/logo.png'" alt="">
                         </div>
                         <div class="center">
                             <div>{{item.name}}</div>
@@ -77,6 +83,9 @@
                         </div>
                         <div class="clearfix"></div>
                     </div>
+                </div>
+                <div v-else>
+                    暂无数据~
                 </div>
             </div>
             <div style="margin:50px">
@@ -100,9 +109,10 @@
                 detail: {},
                 id:'',
                 loading:false,
+                list:''
             }
         },
-        created() {
+        activated() {
             this.id =
                 this.$route.query.id ||
                 JSON.parse(sessionStorage.getItem("inviteDetail").id);
@@ -120,7 +130,9 @@
                     .then(res => {
                         if (res.data.code == 200) {
                             that.loading=false;
-                            that.detail=res.data.data;
+                            that.detail=res.data.data.invite;
+                            that.list=res.data.data.list;
+                            console.log(that.list)
                         } else {
                             that.$message.warning(res.data.msg);
                             that.loading=false;
