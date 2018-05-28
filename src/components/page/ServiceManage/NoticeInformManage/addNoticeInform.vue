@@ -370,12 +370,12 @@
                 myQuillEditor: HTMLInputElement,
                 imgInput: HTMLInputElement
             };
-            this.id =
-                this.$route.query.id ||
-                JSON.parse(sessionStorage.getItem("addNoticeInform").id);
-            if(this.id){
-                this.getDetail();
-            }
+            // this.id =
+            //     this.$route.query.id ||
+            //     JSON.parse(sessionStorage.getItem("addNoticeInform").id);
+            // if(this.id){
+            //     this.getDetail();
+            // }
             this.getLevelList();
             this.username = localStorage.getItem("ms_username");
             this.userId = localStorage.getItem("ms_userID");
