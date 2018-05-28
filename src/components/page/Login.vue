@@ -46,7 +46,6 @@
 </template>
 
 <script>
-<<<<<<< HEAD
 import * as api from "../../api/api.js";
 import icon from "../common/ico";
 export default {
@@ -56,8 +55,8 @@ export default {
   data() {
     return {
       loginType: "first",
-      code:true,
-      codeTime:5,
+      code: true,
+      codeTime: 5,
       form1: {
         phone: "17612341234",
         password: "123456789"
@@ -73,9 +72,7 @@ export default {
         password: [
           { required: true, message: "请输入登陆密码", trigger: "blur" }
         ],
-        code: [
-          { required: true, message: "请输入验证码", trigger: "blur" }
-        ]
+        code: [{ required: true, message: "请输入验证码", trigger: "blur" }]
       }
     };
   },
@@ -86,10 +83,10 @@ export default {
         if (valid) {
           let data = this[formName];
           let url;
-          if(formName == 'form1'){
-              url = api.loginByPwd;
-          }else{
-              url = api.loginByCode;
+          if (formName == "form1") {
+            url = api.loginByPwd;
+          } else {
+            url = api.loginByCode;
           }
           this.$axios
             .post(url, data)
@@ -98,7 +95,10 @@ export default {
                 this.$message.success("登陆成功！");
                 localStorage.setItem("ms_username", res.data.data.name);
                 localStorage.setItem("ms_userID", res.data.data.id);
-                localStorage.setItem("ms_hadFirstLogin", res.data.data.hadFirstLogin);
+                localStorage.setItem(
+                  "ms_hadFirstLogin",
+                  res.data.data.hadFirstLogin
+                );
                 this.$router.push("/dashboard");
               } else {
                 this.$message.warning(res.data.msg);
@@ -114,129 +114,31 @@ export default {
       });
     },
     // 获取验证码
-    getCode(){
-        let phoneNum = this.form2.phone;
-        if(phoneNum == ''){
-            this.$message.warning('请输入手机号!');
-            return;
+    getCode() {
+      let phoneNum = this.form2.phone;
+      if (phoneNum == "") {
+        this.$message.warning("请输入手机号!");
+        return;
+      }
+      let that = this;
+      this.code = false;
+      this.codeTime = 60;
+      let timer = setInterval(function() {
+        that.codeTime--;
+        if (that.codeTime <= 0) {
+          that.code = true;
+          clearInterval(timer);
         }
-        let that = this;
-        this.code = false;
-        this.codeTime = 60;
-        let timer = setInterval(function(){
-            that.codeTime--;
-            if(that.codeTime <=0){
-                that.code = true;
-                clearInterval(timer);
-=======
-    import * as api from "../../api/api.js";
-    import icon from "../common/ico";
-
-    export default {
-        components: {
-            icon
-        },
-        data() {
-            return {
-                loginType: "first",
-                code: true,
-                codeTime: 5,
-                form1: {
-                    phone: "13987456875",
-                    password: "123abc"
-                },
-                form2: {
-                    phone: "17612341234",
-                    code: "123456789"
-                },
-                rules: {
-                    username: [
-                        {required: true, message: "请输入登陆手机号", trigger: "blur"}
-                    ],
-                    password: [
-                        {required: true, message: "请输入登陆密码", trigger: "blur"}
-                    ],
-                    code: [
-                        {required: true, message: "请输入验证码", trigger: "blur"}
-                    ]
-                }
-            };
-        },
-        methods: {
-            // 提交表单
-            submitForm(formName) {
-                this.$refs[formName].validate(valid => {
-                    if (valid) {
-                        let data = this[formName];
-                        let url;
-                        if (formName == 'form1') {
-                            url = api.loginByPwd;
-                        } else {
-                            url = api.loginByCode;
-                        }
-                        this.$axios
-                            .post(url, data)
-                            .then(res => {
-                                console.log(res.data)
-                                if (res.data.code == 200) {
-                                    this.$message.success("登陆成功！");
-                                    localStorage.setItem("ms_username", '小猪佩奇');
-                                    localStorage.setItem("ms_userID", 111);
-                                    this.$router.push("/dashboard");
-                                } else {
-                                    this.$message.warning(res.data.msg);
-                                }
-                            })
-                            .catch(err => {
-                                console.log(err);
-                            });
-                    } else {
-                        console.log("error submit!!");
-                        return false;
-                    }
-                });
-            },
-            // 获取验证码
-            getCode() {
-                let phoneNum = this.form2.phone;
-                if (phoneNum == '') {
-                    this.$message.warning('请输入手机号!');
-                    return;
-                }
-                let that = this;
-                this.code = false;
-                this.codeTime = 60;
-                let timer = setInterval(function () {
-                    that.codeTime--;
-                    if (that.codeTime <= 0) {
-                        that.code = true;
-                        clearInterval(timer);
-                    }
-                }, 1000)
-                let data = {phone: this.form2.phone}
-                this.$axios
-                    .post(api.getCode, data)
-                    .then(res => {
-                        if (res.data.code == 200) {
-                            this.$message.success(res.data.msg);
-                            alert(res.data.data);
-                        } else {
-                            this.$message.warning(res.data.msg);
-                        }
-                    })
-                    .catch(err => {
-                        console.log(err);
-                    });
-            },
-            // tab切换
-            tabClick(params) {
-                console.log(params);
->>>>>>> dbecfc68267e8e37242de759a77c8aaac4f7bae7
-            }
-        }
-    };
+      }, 1000);
+    },
+     // tab切换
+    tabClick(params) {
+      console.log(params);
+    }
+  }
+};
 </script>
 
 <style lang='less'>
-    @import "../../assets/css/login/login.css";
+@import "../../assets/css/login/login.css";
 </style>

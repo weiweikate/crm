@@ -5,7 +5,7 @@ import utils from '../utils/index.js';
 import qs from 'qs';
   
 // axios.defaults.baseURL = 'https://www.easy-mock.com';
-// axios.defaults.baseURL = 'http://172.16.10.56:8101/';//开发
+// axios.defaults.baseURL = 'http://172.16.10.252:8101/';//开发
  
 
 axios.defaults.timeout = 20000;   

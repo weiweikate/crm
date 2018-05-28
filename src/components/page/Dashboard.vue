@@ -90,7 +90,6 @@
                 </el-card>
             </el-col>
         </el-row>
-        <router-link to="/editor">editor</router-link>
         <act-account-code @status='isShowCode' v-if="isShowActAccCode"></act-account-code>
         <act-account-pwd @status='isShowPwd' v-if="isShowActAccPwd"></act-account-pwd>
     </div>

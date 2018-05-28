@@ -9,41 +9,39 @@
                         通知
                     </div>
                 </div>
-                <el-form :model="form" v-loading="loading">
-                    <el-form-item v-if="checked[0]">
+                <el-form :model="form" ref="form" v-loading="loading">
+                    <el-form-item prop="title" v-if="checked[0]">
                         <span class="label"><span class="required">*</span>公告标题</span>
-                        <el-input placeholder="请输入公告标题" v-model="form.name"></el-input>
+                        <el-input placeholder="请输入公告标题" v-model="title"></el-input>
                     </el-form-item>
                     <el-form-item>
                         <span class="label" v-if="checked[0]"><span class="required">*</span>公告详情</span>
                         <span class="label" v-else><span class="required">*</span>通知详情</span>
                         <template>
-                            <div>
+                            <div style="display: inline-block">
                                 <!-- quill-editor插件标签 分别绑定各个事件-->
                                 <quill-editor v-model="form.content" ref="myQuillEditor" :options="editorOption"
-                                              @change="onEditorChange($event)">
-                                </quill-editor>
+                                              @change="onEditorChange($event)"></quill-editor>
                                 <!-- 文件上传input 将它隐藏-->
-                                <el-upload class="upload-demo" :action="qnLocation" :before-upload='beforeUpload'
-                                           :data="uploadData" :on-success='upScuccess'
-                                           ref="upload" style="display:none">
+                                <el-upload :action="qnLocation" :before-upload='beforeUpload' :data="uploadData"
+                                           :on-success='upScuccess' ref="upload" style="display:none">
                                     <el-button size="small" type="primary" id="imgInput" element-loading-text="插入中,请稍候">
                                         点击上传
                                     </el-button>
                                 </el-upload>
                             </div>
-
                         </template>
                     </el-form-item>
 
                     <el-form-item label="推送方式" style="position: relative">
-                        <el-radio-group v-model="form.status">
-                            <el-radio label="即时推送"></el-radio>
-                            <el-radio label="定时推送"></el-radio>
+                        <el-radio-group v-model="form.pushType">
+                            <el-radio label="1" value="1">即时推送</el-radio>
+                            <el-radio label="2" value="2">定时推送</el-radio>
                         </el-radio-group>
                         <el-date-picker
-                                v-model="form.date"
+                                v-model="date"
                                 type="datetime"
+                                format="yyyy-MM-dd HH:mm:ss"
                                 placeholder="选择日期时间">
                         </el-date-picker>
                     </el-form-item>
@@ -52,24 +50,26 @@
                             全部用户
                         </el-checkbox>
                         <div style="margin: 15px 0;"></div>
-                        <el-checkbox-group v-model="checkedCities" @change="handleCheckedCitiesChange">
-                            <el-checkbox v-for="city in cities" :label="city" :key="city">{{city}}</el-checkbox>
+                        <el-checkbox-group v-model="checkedUsers" @change="handleCheckedUsersChange">
+                            <el-checkbox v-for="(item,index) in users" :label="index" :key="index">{{item.name}}
+                            </el-checkbox>
                         </el-checkbox-group>
                     </el-form-item>
                     <el-form-item label="推送区域" class="region-area">
-                        <el-checkbox-group>
-                            <el-checkbox label="全国"></el-checkbox>
-                            <el-checkbox label="国外" v-if="checked[0]"></el-checkbox>
-                        </el-checkbox-group>
+                        <el-radio-group v-model="form.pushCountry">
+                            <el-radio label="1" value="1">全国</el-radio>
+                            <el-radio label="2" value="2">国外</el-radio>
+                        </el-radio-group>
                         <el-cascader
                                 :options="options"
                                 v-model="selectedOptions"
+                                change-on-select
                                 @change="handleChange">
                         </el-cascader>
                     </el-form-item>
                     <el-form-item>
                         <span class="label">发布者</span>
-                        客服小明
+                        {{username}}
                     </el-form-item>
                     <div class="submit-btn">
                         <el-button type="primary" @click="submitForm('form')">确认保存</el-button>
@@ -85,11 +85,9 @@
     import icon from "../../../common/ico";
     import vBreadcrumb from '../../../common/Breadcrumb.vue';
     import Quill from 'quill';
-    import * as api from '../../../../api/api'
+    import * as api from '../../../../api/api';
+    import moment from 'moment'
 
-    const STATICDOMAIN = 'http://otq0t8ph7.bkt.clouddn.com/' // 图片服务器的域名，展示时使用
-    const STATVIDEO = 'http://otq0t8ph7.bkt.clouddn.com/'
-    const cityOptions = ['上海', '北京', '广州', '深圳'];
     export default {
         components: {
             vBreadcrumb, icon
@@ -97,21 +95,27 @@
         data() {
             return {
                 checked: [true, false],
+                title: '',//   标题
                 form: {
-                    name: "",
-                    isUse: "1",
-                    imageUrl: '',
-                    brandKey: '',
-                    region: '',
-                    content:'',
-                    status: '即时推送',
-                    date: ''
+                    nType:'1',//   1:公告   2：通知
+                    content:'',//   内容
+                    pushType:'1',//   1：即时推送  2：定时推送
+                    pushWay:'',//   推送人群
+                    pushCountry:'',//   1：全国 2：国外 3：定省
+                    provinceId:'',//   省
+                    cityId:'',//   市
+                    areaId:'',//   区
+                    createAdmin:'',//   发布人
+                    original_img:'',
+                    small_img:''
                 },
-                loading:false,
+                imageUrl:'',
+                date:'',
+                loading: false,
                 checkAll: false,
-                checkedCities: ['上海', '北京'],
-                cities: cityOptions,
-                isIndeterminate: true,
+                checkedUsers: [],
+                users: [],
+                isIndeterminate: false,
                 options: [{
                     value: 'zhinan',
                     label: '指南',
@@ -311,19 +315,20 @@
                 content: '', // 文章内容
                 editorOption: {
                     placeholder: '请输入内容',
-                    modules: { // 配置富文本
+                    modules: {
+                        // 配置富文本
                         toolbar: [
-                            ['bold', 'italic', 'underline', 'strike'],
-                            ['blockquote', 'code-block'],
-                            [{'header': 1}, {'header': 2}],
-                            [{'direction': 'rtl'}],
-                            [{'size': ['small', false, 'large', 'huge']}],
-                            [{'header': [1, 2, 3, 4, 5, 6, false]}],
-                            [{'color': []}, {'background': []}],
-                            [{'font': []}],
-                            [{'align': []}],
-                            ['clean'],
-                            ['link', 'image', 'video']
+                            ["bold", "italic", "underline", "strike"],
+                            ["blockquote", "code-block"],
+                            [{header: 1}, {header: 2}],
+                            [{direction: "rtl"}],
+                            [{size: ["small", false, "large", "huge"]}],
+                            [{header: [1, 2, 3, 4, 5, 6, false]}],
+                            [{color: []}, {background: []}],
+                            [{font: []}],
+                            [{align: []}],
+                            ["clean"],
+                            ["link", "image"]
                         ]
                     }
                 },
@@ -331,160 +336,328 @@
                 uploadData: {},
                 photoUrl: '', // 上传图片地址
                 uploadType: '', // 上传的文件类型（图片、视频）
-                id:''
+                id: '',
+                username: '',
+                userId: '',
+                pLoading: false,
+                cLoading: false,
+                aLoading: false,
+                province: "",
+                city: "",
+                area: "",
+                provinceArr: [],
+                cityArr: [],
+                areaArr: [],
+                region: []
             };
         },
         computed: {
-// 上传七牛的actiond地址，http 和 https 不一样
             qnLocation() {
-                return location.protocol === 'http:' ? 'http://upload.qiniu.com' : 'https://up.qbox.me'
+                return location.protocol === "http:"
+                    ? "/commonAPI/ossClient/aliyunOSSUploadImage"
+                    : "/commonAPI/ossClient/aliyunOSSUploadImage";
             }
         },
         // 页面加载后执行 为编辑器的图片图标和视频图标绑定点击事件
         mounted() {
-// 为图片ICON绑定事件 getModule 为编辑器的内部属性
-            console.log(this.$refs.myQuillEditor.quill)
-            this.$refs.myQuillEditor.quill.getModule('toolbar').addHandler('image', this.imgHandler)
-            this.$refs.myQuillEditor.quill.getModule('toolbar').addHandler('video', this.videoHandler) // 为视频ICON绑定事件
+            // 为图片ICON绑定事件 getModule 为编辑器的内部属性
+            this.$refs.myQuillEditor.quill
+                .getModule("toolbar")
+                .addHandler("image", this.imgHandler);
         },
         created() {
             this.$refs = {
                 myQuillEditor: HTMLInputElement,
                 imgInput: HTMLInputElement
             };
-            this.id =
-                this.$route.query.id ||
-                JSON.parse(sessionStorage.getItem("addNoticeInform").id);
-            this.getDetail();
+            // this.id =
+            //     this.$route.query.id ||
+            //     JSON.parse(sessionStorage.getItem("addNoticeInform").id);
+            // if(this.id){
+            //     this.getDetail();
+            // }
+            this.getLevelList();
+            this.username = localStorage.getItem("ms_username");
+            this.userId = localStorage.getItem("ms_userID");
+            this.form.createAdmin = localStorage.getItem("ms_userID");
         },
+        // activated(){
+        //     this.$refs['form'].resetFields();
+        // },
         methods: {
-            //获取详情
-            getDetail(){
-                let that=this;
-                let data={
-                    id:that.id
-                };
-                that.loading=true;
+            //获取用户层级列表
+            getLevelList() {
+                let that = this;
+                let data = {};
                 that.$axios
-                    .post(api.getNoticeDetailById,data)
-                    .then(res=>{
-                        if(res.data.code==200){
-                            that.form=res.data.data;
-                            that.loading=false;
-                        }else{
-                            that.loading=false;
+                    .post(api.getDealerLevelList, data)
+                    .then(res => {
+                        if (res.data.code == 200) {
+                            that.users = res.data.data;
+                        } else {
                             that.$message.warning(res.data.msg);
                         }
                     })
-                    .catch(err=>{
-                        that.loading=false
+                    .catch(err => {
+                        console.log(err);
                     })
             },
-            // 图片上传之前调取的函数
-// 这个钩子还支持 promise
+            //获取详情
+            getDetail() {
+                let that = this;
+                let data = {
+                    id: that.id
+                };
+                that.loading = true;
+                that.$axios
+                    .post(api.getNoticeDetailById, data)
+                    .then(res => {
+                        if (res.data.code == 200) {
+                            that.form = res.data.data;
+                            that.title=res.data.data.title;
+                            that.username=res.data.data.name;
+                            if(res.data.data.n_type==1){
+                                that.checked=[true,false]
+                            }else{
+                                that.checked=[false,true]
+                            }
+                            that.form.pushWay=res.data.data.push_way.toString();
+                            that.form.pushType=res.data.data.push_type.toString();
+                            that.form.pushCountry=res.data.data.push_country.toString();
+                            that.date=res.data.data.order_time?moment(res.data.data.order_time).format('YYYY-MM-DD HH:mm:ss'):'';
+                            that.loading = false;
+                        } else {
+                            that.loading = false;
+                            that.$message.warning(res.data.msg);
+                        }
+                    })
+                    .catch(err => {
+                        that.loading = false
+                    })
+            },
             beforeUpload(file) {
-                return this.qnUpload(file)
+                return this.qnUpload(file);
             },
-// 图片上传前获得数据token数据
+            // 图片上传前获得数据token数据
             qnUpload(file) {
-                this.fullscreenLoading = true
-                const suffix = file.name.split('.')
-                const ext = suffix.splice(suffix.length - 1, 1)[0]
-                console.log(this.uploadType)
-                if (this.uploadType === 'image') { // 如果是点击插入图片
-// TODO 图片格式/大小限制
-                    alert('上传图片')
-                    return this.$axios('common/get_qiniu_token').then(res => {
+                this.fullscreenLoading = true;
+                const suffix = file.name.split(".");
+                const ext = suffix.splice(suffix.length - 1, 1)[0];
+                console.log(this.uploadType);
+                if (this.uploadType === "image") {
+                    this.$message.warning('正在上传');
+                    return this.$axios("/commonAPI/ossClient/aliyunOSSUploadImage").then(res => {
                         this.uploadData = {
-                            key: `image/${suffix.join('.')}_${new Date().getTime()}.${ext}`,
+                            key: `image/${suffix.join(".")}_${new Date().getTime()}.${ext}`,
                             token: res.data
-                        }
-                    })
-                } else if (this.uploadType === 'video') { // 如果是点击插入视频
-                    return this.$axios('common/get_qiniu_token').then(res => {
-                        this.uploadData = {
-                            key: `video/${suffix.join('.')}_${new Date().getTime()}.${ext}`,
-                            token: res
-                        }
-                    })
+                        };
+                    });
                 }
             },
 
-// 图片上传成功回调 插入到编辑器中
+            // 图片上传成功回调 插入到编辑器中
             upScuccess(e, file, fileList) {
-                console.log(e)
-                this.fullscreenLoading = false
-                let vm = this
-                let url = ''
-                if (this.uploadType === 'image') { // 获得文件上传后的URL地址
-                    url = STATICDOMAIN + e.key
-                } else if (this.uploadType === 'video') {
-                    url = STATVIDEO + e.key
+                this.fullscreenLoading = false;
+                let vm = this;
+                let url = "";
+                if (this.uploadType === "image") {
+                    // 获得文件上传后的URL地址
+                    url = e.data.imageUrl;
+                    this.form.original_img = e.data.imageUrl;
+                    this.form.small_img = e.data.imageThumbUrl;
+                    console.log(this.form.original_img)
                 }
-                if (url != null && url.length > 0) { // 将文件上传后的URL地址插入到编辑器文本中
-                    let value = url
-// API: https://segmentfault.com/q/1010000008951906
-// this.$refs.myTextEditor.quillEditor.getSelection();
-// 获取光标位置对象，里面有两个属性，一个是index 还有 一个length，这里要用range.index，即当前光标之前的内容长度，然后再利用 insertEmbed(length, 'image', imageUrl)，插入图片即可。
-                    vm.addRange = vm.$refs.myQuillEditor.quill.getSelection()
-                    value = value.indexOf('http') !== -1 ? value : 'http:' + value
-                    vm.$refs.myQuillEditor.quill.insertEmbed(vm.addRange !== null ? vm.addRange.index : 0, vm.uploadType, value, Quill.sources.USER) // 调用编辑器的 insertEmbed 方法，插入URL
+                if (url != null && url.length > 0) {
+                    // 将文件上传后的URL地址插入到编辑器文本中
+                    let value = url;
+                    // this.$refs.myTextEditor.quillEditor.getSelection();
+                    // 获取光标位置对象，里面有两个属性，一个是index 还有 一个length，这里要用range.index，即当前光标之前的内容长度，然后再利用 insertEmbed(length, 'image', imageUrl)，插入图片即可。
+                    vm.addRange = vm.$refs.myQuillEditor.quill.getSelection();
+                    value = value.indexOf("http") !== -1 ? value : "http:" + value;
+                    vm.$refs.myQuillEditor.quill.insertEmbed(
+                        vm.addRange !== null ? vm.addRange.index : 0,
+                        vm.uploadType,
+                        value,
+                        Quill.sources.USER
+                    ); // 调用编辑器的 insertEmbed 方法，插入URL
+                    this.$message.success('插入成功');
                 } else {
-                    this.$message.error(`${vm.uploadType}插入失败`)
+                    this.$message.error(`${vm.uploadType}插入失败`);
                 }
-                this.$refs['upload'].clearFiles() // 插入成功后清除input的内容
+                this.$refs["upload"].clearFiles(); // 插入成功后清除input的内容
             },
 
-// 点击图片ICON触发事件
+            // 点击图片ICON触发事件
             imgHandler(state) {
-                this.addRange = this.$refs.myQuillEditor.quill.getSelection()
+                this.addRange = this.$refs.myQuillEditor.quill.getSelection();
                 if (state) {
-                    let fileInput = document.getElementById('imgInput')
-                    fileInput.click() // 加一个触发事件
+                    let fileInput = document.getElementById("imgInput");
+                    fileInput.click(); // 加一个触发事件
                 }
-                this.uploadType = 'image'
+                this.uploadType = "image";
             },
+            // 每次输入都会调用这个方法
             onEditorChange({editor, html, text}) {
-                console.log('editor change!', html)
-                this.form.content = html
+                console.log("editor change!", html);
+                this.form.content = html;
             },
-// 点击视频ICON触发事件
-            videoHandler(state) {
-                this.addRange = this.$refs.myQuillEditor.quill.getSelection()
-                if (state) {
-                    let fileInput = document.getElementById('imgInput')
-                    fileInput.click() // 加一个触发事件
-                }
-                this.uploadType = 'video'
-            },
-            handleChange(value) {
+
+            handleChange() {
                 console.log(value);
+                this.getProvinceList()
             },
+            //人群选择
             handleCheckAllChange(val) {
-                this.checkedCities = val ? cityOptions : [];
-                this.isIndeterminate = false;
+                let that=this;
+                that.checkedUsers = val ? that.users : [];
+                that.isIndeterminate = false;
+                if(val){
+                    let result = 0;
+                    for(let i=0;i<that.users.length;i++){
+                        result+=Math.pow(2,i)
+                    }
+                    that.form.pushWay=result;
+                }else{
+                    that.form.pushWay=''
+                }
             },
-            handleCheckedCitiesChange(value) {
+            handleCheckedUsersChange(value) {
                 let checkedCount = value.length;
-                this.checkAll = checkedCount === this.cities.length;
-                this.isIndeterminate = checkedCount > 0 && checkedCount < this.cities.length;
+                let result = 0;
+                for (let i in value) {
+                    result += Math.pow(2, value[i])
+                }
+                this.form.pushWay=result;
+                this.checkAll = checkedCount === this.users.length;
+                this.isIndeterminate = checkedCount > 0 && checkedCount < this.users.length;
             },
+
             change(num) {
                 let that = this;
                 that.checked = [false, false];
                 that.checked[num] = true;
-
-            },
-            //上传图片
-            handleAvatarSuccess(res, file) {
-                this.form.imageUrl = URL.createObjectURL(file.raw);
-            },
-            beforeAvatarUpload(file) {
-
+                that.form.nType=num+1;
+                if(num==1){
+                    that.title=''
+                }
             },
             // 提交表单
-            submitForm(form) {
+            submitForm() {
+                let that=this;
+                let params=that.form;
+                if(that.form.nType==1){
+                    params.title=that.title;
+                }
+                if(that.form.pushType==2){
+                    params.orderTime=that.date?moment(that.date).format('YYYY-MM-DD HH:mm:ss'):'';
+                }
+                that.btnLoading=true;
+                that.$axios
+                    .post(api.addNotice,params)
+                    .then(res=>{
+                        if(res.data.code==200){
+                            that.btnLoading=false;
+                            that.$message.success(res.data.msg);
+                            setTimeout(function () {
+                                that.$router.push('/noticeInformManage')
+                            },1000)
+                        }else{
+                            that.btnLoading = false;
+                            that.$message.warning(res.data.msg);
+                        }
+                    })
+                    .catch(err=>{
+                        that.btnLoading=false
+                    })
             },
+            //   获取省份列表
+            getProvinceList() {
+                this.pLoading = true;
+                this.$axios
+                    .post(api.getProvinced, {})
+                    .then(res => {
+                        this.provinceArr = [];
+                        res.data.data.forEach((v, k) => {
+                            this.provinceArr.push({ label: v.name, value: v.zipcode });
+                            this.pLoading = false;
+                        });
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+            },
+            // 获取城市列表
+            getCity(val) {
+                this.cLoading = true;
+                this.$axios
+                    .post(api.getCity, { fatherZipcode: this.province })
+                    .then(res => {
+                        if (res.data.data.length != 0 && val == false) {
+                            this.city = res.data.data[0].zipcode;
+                        }else if(val == true){
+                            this.city = this.regionMsg[1];
+                        } else {
+                            this.city = "";
+                        }
+                        this.cityArr = [];
+                        res.data.data.forEach((v, k) => {
+                            this.cityArr.push({ label: v.name, value: v.zipcode });
+                            this.cLoading = false;
+                        });
+                        this.province.children=this.cityArr;
+                        if(val == true){
+                            this.getArea(true);
+                            return;
+                        }
+                        this.getArea(false);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+            },
+            // 获取区
+            getArea(val) {
+                this.aLoading = true;
+                let data = {};
+                if (this.city == "") {
+                    data.fatherZipcode = this.province;
+                } else {
+                    data.fatherZipcode = this.city;
+                }
+                this.$axios
+                    .post(api.getArea, data)
+                    .then(res => {
+                        if (res.data.data.length != 0 && val == false) {
+                            this.area = res.data.data[0].zipcode;
+                        }else if(val == true){
+                            this.area = this.regionMsg[2];
+                        } else {
+                            this.area = "";
+                        }
+                        this.areaArr = [];
+                        res.data.data.forEach((v, k) => {
+                            this.areaArr.push({ label: v.name, value: v.zipcode });
+                            this.aLoading = false;
+                        });
+                        this.province.children.children=this.areaArr;
+                        this.region = [];
+                        this.region.push(this.province);
+                        this.region.push(this.city);
+                        this.region.push(this.area);
+                        // this.$emit("regionMsg", this.region);
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+            },
+            // 获取省市区
+            getAllRegion() {
+                this.region = [];
+                this.region.push(this.province);
+                this.region.push(this.city);
+                this.region.push(this.area);
+                this.$emit("regionMsg", this.region);
+            }
         }
     };
 </script>
@@ -634,6 +807,9 @@
             .el-input__inner {
                 width: 230px;
             }
+        }
+        .quill-editor {
+            width: 800px;
         }
     }
 </style>

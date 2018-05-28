@@ -104,6 +104,8 @@ export const getManageList='/mock/5aeac1c6c186102e067af3f3/test/getManageList';
     export const addBrand='/admin/brand/addBrand';
     //获取产品分类列表
     export const getProductClassifyList='/admin/productCategory/queryProductCategoryPageList';
+    //修改品牌
+    export const updateBrand='/admin/brand/updateBrand';
     //删除品牌
     export const deleteBrand='/admin/brand/deleteBrand';
     //根据ID查找详情
@@ -130,3 +132,37 @@ export const getManageList='/mock/5aeac1c6c186102e067af3f3/test/getManageList';
     export const feedbackDetail='/admin/feedback/findFeedbackByid';
     //修改反馈详情
     export const updateFeedback='/admin/feedback/updateFeedback';
+
+    //经销商层级管理
+    // 查询经销商层级列表
+    export const getDealerLevelList='/admin/dealerLevel/getList';
+    // 添加经销商层级
+    export const addDealerLevel='/admin/dealerLevel/addDealerLevel';
+    // 修改经销商层级
+    export const updateDealerLevel='/admin/dealerLevel/updateDealerLevel';
+    // 根据id删除
+    export const deleteDealerLevelById='/admin/dealerLevel/deleteDealerLevelById';
+    //发起——邀请层级接口
+    export const getLevelListWithDealerCount='/admin/dealerLevel/getLevelListWithDealerCount';
+    //发起——授权渠道
+    export const getStatusONList='/admin/permitChannel/getStatusONList';
+    //发起——授权品牌
+    export const getList='/admin/brand/getList';
+    //发起——根据品牌获取品类
+    export const getProductCategoryList='/admin/productCategory/queryProductCategoryByBrandId';
+    //发起经销商接口
+    export const addInvite='/admin/invite/addInvite';
+    //经销商列表接口
+    export const getInvitePageList='/admin/invite/queryInvitePageList';
+    //查看用户邀请详情
+    export const findInviteInfo='/admin/invite/findInviteInfo';
+
+// 公告通知
+// 公告列表
+export const getNoticeList='/admin/notice/queryNoticeList';
+// 公告详情
+export const getNoticeDetailById='/admin/notice/findNoticeDetailById';
+//发布通知/公告
+export const addNotice='/admin/notice/addNotice';
+// 修改公告/通知状态
+export const updateNoticeStatus='/admin/notice/updateNoticeStatus';
