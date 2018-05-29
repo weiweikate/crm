@@ -287,6 +287,7 @@
             //重置表单
             resetForm(formName) {
                 this.$refs[formName].resetFields();
+                this.getList(this.page.currentPage)
             },
         }
     }
