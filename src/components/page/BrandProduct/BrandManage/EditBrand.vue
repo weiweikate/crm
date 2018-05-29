@@ -14,7 +14,7 @@
                         <!--<v-choosearea @productcIds="productcIds" @brandsId="brandsId" v-model="form.productcIds" :detailData="detailData"-->
                                       <!--:addOrUp="isUp?'update':''"></v-choosearea>-->
                         <v-choosearea @productcIds="productcIds" v-model="form.productcIds" :detailData="detailData"
-                                      :addOrUp="isUp?'update':''"></v-choosearea>
+                                      :addOrUp="'update'"></v-choosearea>
                         <div class="clearfix"></div>
                     </el-form-item>
                     <el-form-item prop="original_img" label="品牌logo">
@@ -92,12 +92,8 @@
         },
         activated() {
             let that = this;
-            that.id =
-                that.$route.query.brandId || sessionStorage.getItem('brandId');
-            if (that.id&&!that.isUp) {
-                that.getDetail();
-                that.isUp = true;
-            }
+            that.id = that.$route.query.brandId || sessionStorage.getItem('brandId');
+            that.getDetail();
         },
         methods: {
             //获取详情
@@ -143,9 +139,9 @@
             submitForm(form) {
                 let that = this;
                 that.btnLoading = true;
+                console.log(this.form.productcIds)
                 that.$refs[form].validate(valid => {
                     if (valid) {
-                        let url = '';
                         let data = {};
                         data.originalImg = this[form].original_img;
                         data.smallImg = this[form].small_img;
@@ -153,14 +149,9 @@
                         data.area=this[form].area;
                         data.status=this[form].status;
                         data.productcIds=this[form].productcIds;
-                        if (that.isUp) {//修改
-                            url = api.updateBrand;
-                            data.id = that.id;
-                        } else {
-                            url = api.addBrand;
-                        }
+                        data.id = that.id;
                         this.$axios
-                            .post(url, data)
+                            .post(api.updateBrand, data)
                             .then(res => {
                                 that.btnLoading = false;
                                 if (res.data.code == 200) {
@@ -176,7 +167,6 @@
                                 console.log(err);
                                 that.btnLoading = false;
                             });
-                        this.clearStorage();
                     } else {
                         console.log("error submit!!");
                         that.btnLoading = false;
@@ -187,13 +177,7 @@
             //取消
             cancel() {
                 this.$router.push('/brandManage');
-                this.clearStorage()
             },
-            //清空缓存
-            clearStorage(){
-                sessionStorage.setItem('addBrand','');
-                sessionStorage.setItem('brandId','');
-            }
         }
     };
 </script>

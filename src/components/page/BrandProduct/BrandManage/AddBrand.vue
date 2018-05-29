@@ -113,7 +113,6 @@
                 that.btnLoading = true;
                 that.$refs[form].validate(valid => {
                     if (valid) {
-                        let url = '';
                         let data = {};
                         data.originalImg = this[form].original_img;
                         data.smallImg = this[form].small_img;
@@ -121,14 +120,8 @@
                         data.area=this[form].area;
                         data.status=this[form].status;
                         data.productcIds=this[form].productcIds;
-                        if (that.isUp) {//修改
-                            url = api.updateBrand;
-                            data.id = that.id;
-                        } else {
-                            url = api.addBrand;
-                        }
                         this.$axios
-                            .post(url, data)
+                            .post(api.addBrand, data)
                             .then(res => {
                                 that.btnLoading = false;
                                 if (res.data.code == 200) {

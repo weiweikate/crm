@@ -44,12 +44,37 @@
         </div>
 
         <!--添加/编辑类目弹窗-->
-        <el-dialog :title="title" :visible.sync="addOrEditMask">
+        <el-dialog :title="title" :visible.sync="addMask">
+            <el-form v-model="addForm">
+                <el-form-item prop="name" label="类目名称" :label-width="formLabelWidth">
+                    <el-input v-model="addForm.name" auto-complete="off"></el-input>
+                </el-form-item>
+                <el-form-item prop="img" label="类目图标" :label-width="formLabelWidth" class="icon-area">
+                    <el-input v-model="addForm.img" auto-complete="off"></el-input>
+                    <el-upload class="icon-uploader"
+                               action="/commonAPI/ossClient/aliyunOSSUploadImage"
+                               :on-success="handleAvatarSuccess">
+                        <el-button size="small" type="primary"><i class="el-icon-upload"></i>上传</el-button>
+                    </el-upload>
+                </el-form-item>
+                <el-form-item prop="status" label="状态" :label-width="formLabelWidth">
+                    <el-select v-model="addForm.status">
+                        <el-option label="启用" value='1'></el-option>
+                        <el-option label="禁用" value='2'></el-option>
+                    </el-select>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button :loading="btnLoading" type="primary" @click="addOrEdit('addForm')">确 认</el-button>
+                <el-button @click="addMask = false">取 消</el-button>
+            </div>
+        </el-dialog>
+        <el-dialog :title="title" :visible.sync="editMask">
             <el-form v-model="form">
-                <el-form-item label="类目名称" :label-width="formLabelWidth">
+                <el-form-item prop="name" label="类目名称" :label-width="formLabelWidth">
                     <el-input v-model="form.name" auto-complete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="类目图标" :label-width="formLabelWidth" class="icon-area">
+                <el-form-item prop="img" label="类目图标" :label-width="formLabelWidth" class="icon-area">
                     <el-input v-model="form.img" auto-complete="off"></el-input>
                     <el-upload class="icon-uploader"
                                action="/commonAPI/ossClient/aliyunOSSUploadImage"
@@ -57,7 +82,7 @@
                         <el-button size="small" type="primary"><i class="el-icon-upload"></i>上传</el-button>
                     </el-upload>
                 </el-form-item>
-                <el-form-item label="状态" :label-width="formLabelWidth">
+                <el-form-item prop="status" label="状态" :label-width="formLabelWidth">
                     <el-select v-model="form.status">
                         <el-option label="启用" value='1'></el-option>
                         <el-option label="禁用" value='2'></el-option>
@@ -65,8 +90,8 @@
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button :loading="btnLoading" type="primary" @click="addOrEdit">确 认</el-button>
-                <el-button @click="addOrEditMask = false">取 消</el-button>
+                <el-button :loading="btnLoading" type="primary" @click="addOrEdit('form')">确 认</el-button>
+                <el-button @click="editMask = false">取 消</el-button>
             </div>
         </el-dialog>
         <!--删除弹窗-->
@@ -95,11 +120,17 @@
                 },
                 itype: "",
                 height: "",
-                addOrEditMask: false,
+                addMask: false,
+                editMask: false,
                 isShowDelToast: false,
                 btnLoading: false,
                 formLabelWidth: "100px",
                 form: {
+                    name: "",
+                    status: "1",
+                    img: ""
+                },
+                addForm: {
                     name: "",
                     status: "1",
                     img: ""
@@ -149,24 +180,25 @@
             // 添加一级类目
             addClassify() {
                 this.title = "添加一级类目";
-                this.addOrEditMask = true;
+                this.addMask = true;
                 this.itype = "add";
             },
             //编辑
             editItem(index, row) {
                 this.title = "编辑一级类目";
-                this.addOrEditMask = true;
+                this.editMask = true;
+                row.status=row.status.toString();
                 this.form = row;
                 this.id = row.id;
                 this.itype = "edit";
             },
             //添加修改确定
-            addOrEdit() {
+            addOrEdit(formName) {
                 let url = "";
                 let data = {};
-                data.name = this.form.name;
-                data.img = this.form.img;
-                data.status = this.form.status;
+                data.name = this[formName].name;
+                data.img = this[formName].img;
+                data.status = this[formName].status;
                 if (this.itype == "add") {
                     url = api.addCategory;
                 } else {
@@ -180,11 +212,13 @@
                         if (res.data.code == 200) {
                             this.$message.success(res.data.msg);
                             this.btnLoading = false;
-                            this.addOrEditMask = false;
+                            this.addMask = false;
+                            this.editMask = false;
                             this.getList(this.page.currentPage);
                         } else {
                             this.btnLoading = false;
                             this.$message.warning(res.data.msg);
+                            this.getList(this.page.currentPage);
                         }
                     })
                     .catch(err => {
@@ -209,7 +243,11 @@
             },
             //上传图片
             handleAvatarSuccess(res, file) {
-                this.form.img = URL.createObjectURL(file.raw);
+                if (this.itype == "add") {
+                    this.addForm.img = URL.createObjectURL(file.raw);
+                } else {
+                    this.form.img = URL.createObjectURL(file.raw);
+                }
             },
             //上传图片
             // beforeUploadIcon(file) {

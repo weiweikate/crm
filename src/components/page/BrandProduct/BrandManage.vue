@@ -1,6 +1,24 @@
 <template>
     <div class="brand-manage">
         <v-breadcrumb :nav="['品牌产品管理','品牌管理']"></v-breadcrumb>
+        <el-card style="margin:10px 0 20px">
+            <el-form ref="form" :inline="true" :model="form">
+                <el-form-item prop="name" label="品牌名称" label-width="120">
+                    <el-input style="width:200px" placeholder="请输入品牌名称" v-model="form.name"></el-input>
+                </el-form-item>
+                <el-form-item prop="status" label="状态" label-width="120">
+                    <el-select v-model="form.status" placeholder="全部">
+                        <el-option label="全部" value=""></el-option>
+                        <el-option label="启用" value="1"></el-option>
+                        <el-option label="停用" value="2"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item>
+                    <el-button @click="getList(1)" type="primary">查询</el-button>
+                    <el-button @click="resetForm('form')">重置</el-button>
+                </el-form-item>
+            </el-form>
+        </el-card>
         <div class="table-block">
             <el-button type="primary" style="margin-bottom: 20px" @click="addBrand">添加品牌</el-button>
             <template>
@@ -72,7 +90,7 @@
                 formLabelWidth: '100px',
                 form: {
                     name: '',
-                    status: '0',
+                    status: '',
                     icon: ''
                 },
                 delId: '',
@@ -82,11 +100,8 @@
         created() {
             let winHeight = window.screen.availHeight - 600;
             this.height = winHeight;
-            this.getList(this.page.currentPage)
         },
         activated() {
-            let winHeight = window.screen.availHeight - 600;
-            this.height = winHeight;
             this.getList(this.page.currentPage)
         },
         methods: {
@@ -94,7 +109,9 @@
             getList(val) {
                 let that = this;
                 let data = {
-                    page: val
+                    page: val,
+                    status:that.form.status,
+                    name:that.form.name,
                 };
                 that.tableLoading = true;
                 that.$axios
@@ -150,13 +167,12 @@
                 this.isShowDelToast = msg;
                 this.getList(this.page.currentPage);
             },
-            //上传图片
-            handleIconSuccess(res, file) {
-
+            //   重置表单
+            resetForm(formName) {
+                this.$refs[formName].resetFields();
+                this.getList(this.page.currentPage)
             },
-            beforeIconUpload(file) {
-                this.form.icon = file.name;
-            }
+
         }
     }
 </script>

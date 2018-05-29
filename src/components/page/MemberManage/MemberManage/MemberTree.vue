@@ -2,25 +2,25 @@
     <div>
         <v-breadcrumb :nav="['会员管理','经销商会员管理','会员详情','会员树状图']"></v-breadcrumb>
         <!--<transition name="move" appear>-->
-            <!--<el-card style="margin:10px 0 20px">-->
-                <!--<el-form ref="form" :inline="true" :model="form" label-width="120">-->
-                    <!--<el-form-item label="用户名">-->
-                        <!--<el-input style="width:200px" placeholder="用户名" v-model="form.name"></el-input>-->
-                    <!--</el-form-item>-->
-                    <!--<el-form-item label="用户ID">-->
-                        <!--<el-input style="width:200px" placeholder="请输入用户昵称" v-model="form.id"></el-input>-->
-                    <!--</el-form-item>-->
-                    <!--<el-form-item label="授权码">-->
-                        <!--<el-input style="width:200px" placeholder="请输入授权码" v-model="form.code"></el-input>-->
-                    <!--</el-form-item>-->
-                    <!--<el-form-item>-->
-                        <!--<el-button @click="search" type="primary">查询</el-button>-->
-                        <!--<el-button>重置</el-button>-->
-                    <!--</el-form-item>-->
-                <!--</el-form>-->
-            <!--</el-card>-->
+        <!--<el-card style="margin:10px 0 20px">-->
+        <!--<el-form ref="form" :inline="true" :model="form" label-width="120">-->
+        <!--<el-form-item label="用户名">-->
+        <!--<el-input style="width:200px" placeholder="用户名" v-model="form.name"></el-input>-->
+        <!--</el-form-item>-->
+        <!--<el-form-item label="用户ID">-->
+        <!--<el-input style="width:200px" placeholder="请输入用户昵称" v-model="form.id"></el-input>-->
+        <!--</el-form-item>-->
+        <!--<el-form-item label="授权码">-->
+        <!--<el-input style="width:200px" placeholder="请输入授权码" v-model="form.code"></el-input>-->
+        <!--</el-form-item>-->
+        <!--<el-form-item>-->
+        <!--<el-button @click="search" type="primary">查询</el-button>-->
+        <!--<el-button>重置</el-button>-->
+        <!--</el-form-item>-->
+        <!--</el-form>-->
+        <!--</el-card>-->
         <!--</transition>-->
-        <div class="tree-block">
+        <div class="tree-block" v-loading="loading">
             <!--上级代理-->
             <div class="first-title">
                 <div class="click-area" v-if="dealerAndUp.up_realname" @click="expandHigher()">
@@ -60,38 +60,39 @@
                 </div>
                 <div v-show="lower.checked">
                     <!--直接代理-->
-                    <div class="direct-area" v-for="(item,index) in lowerListTitle">
-                        <div @click="expendDirect(index)" class="click-area">
-                            <span class="direct-title">直接代理-{{item.name}}：<span>{{item.number}}</span>人</span>
-                            <i :class="item.checked?'el-icon-caret-bottom':'el-icon-caret-top'"></i>
+                    <div class="direct-area">
+                        <div @click="expendDirect()" class="click-area">
+                            <span class="direct-title">直接代理：<span>{{firstList.length}}</span>人</span>
+                            <i :class="checked?'el-icon-caret-bottom':'el-icon-caret-top'"></i>
                         </div>
-                        <div v-show="item.checked">
-                            <div v-for="(direct,i) in item.directList">
-                                <div class="direct-item" @click="toDetail(direct.id)">
-                                    <img src="../../../../assets/images/logo.png" alt="">
-                                    <span>用户名：{{direct.name}}</span>
-                                    <span>用户ID：{{direct.id}}</span><span>授权号：{{direct.code}}</span>
-                                </div>
-                                <div @click="expendIndirect(index,i)" class="click-area">
-                                    <span class="direct-title">间接代理：<span>{{direct.number}}</span>人</span>
-                                    <i :class="direct.checked?'el-icon-caret-bottom':'el-icon-caret-top'"></i>
-                                </div>
-                                <div v-show="direct.checked">
-                                    <!--间接代理-->
-                                    <div v-for="indirect in direct.indirectList" class="indirect-area"
-                                         @click="toDetail(indirect.id)">
-                                        <span>用户名：{{indirect.name}}</span>
-                                        <span>用户ID：{{indirect.id}}</span><span>授权号：{{indirect.code}}</span>
+                        <div v-show="checked">
+                            <div>
+                                <div v-for="(direct,index) in firstList">
+                                    <div class="direct-item" @click="toDetail(direct.id)">
+                                        <img :src="direct.head_img?direct.head_img:'src/assets/images/logo.png'" alt="">
+                                        <span>用户名：{{direct.realname}}</span>
+                                        <span>用户ID：{{direct.id}}</span><span>授权号：{{direct.code}}</span>
                                     </div>
+                                    <div @click="expendIndirect(index)" class="click-area">
+                                        <span class="direct-title">间接代理：<span>{{direct.secCount?direct.secCount:0}}</span>人</span>
+                                        <i :class="direct.checked?'el-icon-caret-bottom':'el-icon-caret-top'"></i>
+                                    </div>
+                                    <div v-show="direct.checked">
+                                        <!--间接代理-->
+                                        <div v-for="indirect in direct.secList" class="indirect-area"
+                                             @click="toDetail(indirect.id)">
+                                            <span>用户名：{{indirect.realname}}</span>
+                                            <span>用户ID：{{indirect.id}}</span><span>授权号：{{indirect.code}}</span>
+                                        </div>
+                                    </div>
+                                    <!--</div>-->
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div></div>
         </div>
-
     </div>
 </template>
 
@@ -114,48 +115,20 @@
                     phone: ''
                 },
                 dealerAndUp: {},
-                firstList:[],
+                firstList: [],
                 lower: {
                     totalCount: '',
                     checked: false
                 },
-                lowerListTitle: [{
-                    name: '省级代理',
-                    number: 23232,
-                    checked: false,
-                    directList: [{
-                        name: '张三',
-                        id: '1212',
-                        code: '32424',
-                        checked: false,
-                        number: 12,
-                        indirectList: [{
-                            name: '张三',
-                            id: '1212',
-                            code: '32424',
-                            checked: false
-                        }, {
-                            name: '张三',
-                            id: '1212',
-                            code: '32424',
-                            checked: false
-                        }],
-                    }, {
-                        name: '张三',
-                        id: '1212',
-                        code: '32424',
-                        checked: false,
-                        number: 4
-                    }],
-                }, {
-                    name: '实习代理',
-                    number: 12234,
-                    checked: false
-                }],
-
+                checked: false,
+                loading:false
             }
         },
         activated() {
+            this.firstList=[];
+            this.lower.totalCount='';
+            this.lower.checked=false;
+            this.checked=false;
             this.id =
                 this.$route.query.memberId ||
                 JSON.parse(sessionStorage.getItem("memberId"));
@@ -168,18 +141,30 @@
                 let data = {
                     id: that.id
                 };
+                that.loading=true;
                 this.$axios
                     .post(api.findDealerTreeById, data)
                     .then(res => {
-                        if(res.data.code==200){
-                            res.data.data.dealerAndUp.checked=false;
-                            that.dealerAndUp=res.data.data.dealerAndUp;
-                            that.lower.totalCount=res.data.data.totalCount;
-                            that.firstList=res.data.data.firstList;
+                        if (res.data.code == 200) {
+                            res.data.data.dealerAndUp.checked = false;
+                            that.dealerAndUp = res.data.data.dealerAndUp;
+                            that.lower.totalCount = res.data.data.totalCount;
+                            for (let i in res.data.data.firstList) {
+                                res.data.data.firstList[i].checked = false;
+                                for (let j in res.data.data.firstList[i].secList) {
+                                    res.data.data.firstList[i].secList[j].checked = false;
+                                }
+                                that.firstList.push(res.data.data.firstList[i]);
+                            }
+                            that.loading=false;
+                        }else{
+                            that.loading=false;
+                            that.$message.warning(res.data.msg);
                         }
                     })
                     .catch(err => {
-                        console.log(err)
+                        console.log(err);
+                        that.loading=false;
                     })
             },
             //查询
@@ -195,16 +180,17 @@
                 this.lower.checked = !this.lower.checked;
             },
             //展开收起直接代理
-            expendDirect(index) {
-                this.lowerListTitle[index].checked = !this.lowerListTitle[index].checked;
+            expendDirect() {
+                this.checked = !this.checked;
             },
             //展开收起直接代理
-            expendIndirect(index, i) {
-                this.lowerListTitle[index].directList[i].checked = !this.lowerListTitle[index].directList[i].checked;
+            expendIndirect(index) {
+                this.firstList[index].checked = !this.firstList[index].checked;
             },
             // 跳到详情页
             toDetail(id) {
-                this.$router.push({path:'/memberDetail',query:{id:id}})
+                localStorage.setItem('memberDetail', id);
+                this.$router.push({path: '/memberDetail', query: {id: id}})
             }
         }
     }
@@ -233,7 +219,9 @@
         .line {
             border-top: 1px solid #dfdfdf;
         }
-        .jump{cursor: pointer}
+        .jump {
+            cursor: pointer
+        }
         .first-child {
             display: flex;
             padding: 10px 0;

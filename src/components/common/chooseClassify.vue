@@ -32,8 +32,8 @@
                 </div>
             </div>
             <div class="opr-area">
-                <el-button type="primary" @click="addBrandClassify">添加品类</el-button>
-                <el-button @click="delBrandClassify">删除品类</el-button>
+                <el-button type="primary" @click="addBrandClassify">添加类目</el-button>
+                <el-button @click="delBrandClassify">删除类目</el-button>
             </div>
             <div class="check-area">
                 <div class="title">已选择一级-二级</div>
@@ -76,21 +76,29 @@
                 loading: false,
             };
         },
-        created() {
-            //获取品牌列表并默认加载第一个品牌对于的品类列表
-            let that = this;
-            setTimeout(function () {
-                if (that.addOrUp == 'update') {
-                    that.getHistoryClassify()
+        watch: {
+            detailData(params) {
+                if(params){
+                    this.getHistoryClassify();
+                    this.search(this.value);
                 }
+            }
+        },
+        created() {
+            // 获取品牌列表并默认加载第一个品牌对于的品类列表
+            let that = this;
+            if(that.addOrUp != 'update'){
                 that.search(that.value);
-            }, 1000)
-
+            }
         },
         methods: {
             //修改时获取原数据
             getHistoryClassify() {
                 let that = this;
+                that.chooseList=[];
+                that.classifyId=[];
+                that.classifyName=[];
+                that.tempChooseList=[];
                 for (let i in that.detailData) {
                     let brandName = that.detailData[i].product_name;
                     let brandId = that.detailData[i].product_id;
@@ -110,6 +118,7 @@
                     that.classifyName.push(child);
                     that.chooseList.push(param);
                 }
+                that.$emit('productcIds', that.classifyId)
             },
             //根据品牌名称查询
             search(name) {
@@ -173,7 +182,6 @@
                             }
                             that.brandList[index].classifyList = res.data.data;
                             that.brandIsAllCheck();
-                            console.log(that.brandList[index])
                         } else {
                             that.$message.warning(res.data.msg);
                         }
@@ -225,25 +233,6 @@
             //添加品类
             addBrandClassify() {
                 let that = this;
-                // that.chooseList = [];
-
-                // for (let i in that.chooseList) {
-                //     for (let j in that.tempChooseList) {
-                //         if (that.classifyId[j] != that.chooseList[i].classifyId) {
-                //             let param = {
-                //                 brandId: that.tempChooseList[j].brandId,
-                //                 classifyId: that.classifyId[j],
-                //                 name: that.tempChooseList[j].brandName + '-' + that.classifyName[j],
-                //                 checked: false
-                //             };
-                //             that.chooseList.push(param);
-                //             that.changeClassifyList(that.tempChooseList[j].brandId, that.classifyId[j], 'add');
-                //             that.brandIsAllCheck();
-                //         }
-                //         continue;
-                //     }
-                //     that.$emit('productcIds', that.classifyId)
-                // }
                 that.chooseList = [];
                 for (let i in that.tempChooseList) {
                     let param = {
