@@ -68,7 +68,11 @@
                     <el-table-column prop="CODE" label="授权码" width="100"></el-table-column>
                     <el-table-column prop="addrPreFix" label="区域/省市区"></el-table-column>
                     <!--<el-table-column prop="style" label="渠道" width="100"></el-table-column>-->
-                    <el-table-column prop="sub_level_num" label="下级" width="50"></el-table-column>
+                    <el-table-column label="下级" width="50">
+                        <template  slot-scope="scope">
+                            <span style="cursor: pointer" @click="toLower(scope.row.id)">{{scope.row.sub_level_num}}</span>
+                        </template>
+                    </el-table-column>
                     <el-table-column label="状态">
                         <template slot-scope="scope">
                             <template v-if="scope.row.status==1">待激活</template>
@@ -157,6 +161,7 @@
                 let that = this;
                 let data = that.form;
                 data.page = val;
+                data.status=2;
                 data.levelId = that.exportForm.levelId;
                 let addrss = that.address;
                 if (addrss && addrss[0]) {
@@ -214,6 +219,11 @@
                 console.log(`当前页: ${val}`);
                 this.page.currentPage = val;
                 this.getList(val)
+            },
+            //跳到下级列表
+            toLower(id){
+                this.form.upDealerid=id;
+               this.getList(this.page.currentPage)
             },
             //详情
             detailItem(index, row) {

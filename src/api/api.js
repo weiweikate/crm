@@ -180,6 +180,8 @@ export const getManageList='/mock/5aeac1c6c186102e067af3f3/test/getManageList';
         export const findDealerTreeById='/admin/dealer/findDealerTreeById';
         //关闭用户
         export const stopDealerById='/admin/dealer/stopDealerById';
+        //开启用户
+        export const openDealerById='/admin/dealer/openDealerById';
 
 
 // 公告通知

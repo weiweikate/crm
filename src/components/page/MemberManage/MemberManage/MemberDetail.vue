@@ -154,9 +154,9 @@
         </div>
 
         <!--基础信息修改弹窗-->
-        <edit-basic @status='closeEditBasic' :dealer='dealer' :id="id" v-if="isShowEditBasic"></edit-basic>
+        <edit-basic @status='closeEditBasic' @msg='basicToast' :dealer='dealer' :id="id" v-if="isShowEditBasic"></edit-basic>
         <!--授权信息修改弹窗-->
-        <edit-author @status='closeEditAuthor' :permit='permit' :id="id" v-if="isShowEditAuthor"></edit-author>
+        <edit-author @status='closeEditAuthor' @msg='authorToast' :permit='permit' :id="id" v-if="isShowEditAuthor"></edit-author>
     </div>
 </template>
 
@@ -192,6 +192,14 @@
             this.getDetail()
         },
         methods: {
+            basicToast(msg) {
+                this.isShowEditBasic = msg;
+                this.getDetail()
+            },
+            authorToast(msg) {
+                this.isShowEditAuthor = msg;
+                this.getDetail()
+            },
             //获取详情
             getDetail() {
                 let that = this;

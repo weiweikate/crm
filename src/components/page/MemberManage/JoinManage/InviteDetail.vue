@@ -12,48 +12,15 @@
                     <span v-if="detail.invite_type==2">供货经销商</span>
                     <span v-if="detail.invite_type==3">网红经销商</span>
                 </div>
-                <!--<div class="item-row">-->
-                    <!--授权品牌：-->
-                    <!--<el-tag-->
-                            <!--:key="tag"-->
-                            <!--v-for="tag in dynamicTags"-->
-                            <!--color="#fff"-->
-                            <!--:disable-transitions="false">-->
-                        <!--{{tag}}-->
-                    <!--</el-tag>-->
-                <!--</div>-->
-                <!--<div class="item-row">-->
-                    <!--授权品类：-->
-                    <!--<el-tag-->
-                            <!--:key="tag"-->
-                            <!--v-for="tag in dynamicTags"-->
-                            <!--color="#fff"-->
-                            <!--:disable-transitions="false">-->
-                        <!--{{tag}}-->
-                    <!--</el-tag>-->
-                <!--</div>-->
-                <!--<div class="item-row">-->
-                    <!--授权渠道：-->
-                    <!--<el-tag-->
-                            <!--:key="tag"-->
-                            <!--v-for="tag in dynamicTags"-->
-                            <!--color="#fff"-->
-                            <!--:disable-transitions="false">-->
-                        <!--{{tag}}-->
-                    <!--</el-tag>-->
-                <!--</div>-->
-                <!--<div class="item-row">-->
-                    <!--授权时间：-->
-                    <!--{{detail.startTime|formatDate}} 至 {{detail.endTime|formatDate}}-->
-                <!--</div>-->
-                <div class="item-row" v-if="detail.invalidType==1">
-                    邀请失效期：
-                    {{detail.invalidTime|formatDate}}
-                </div>
-                <div class="item-row" v-else>
+                <div class="item-row" v-if="detail.invalid_type==1">
                     邀请链接打开次数：
                     {{detail.click_times}}
                 </div>
+                <div class="item-row" v-else>
+                    邀请失效期：
+                    {{detail.invalid_time|formatDate}}
+                </div>
+
                 <div class="item-row">
                     邀请管理员：
                     {{detail.adminName}}
@@ -74,8 +41,8 @@
                             <img :src="item.head_img?item.head_img:'src/assets/images/logo.png'" alt="">
                         </div>
                         <div class="center">
-                            <div>{{item.name}}</div>
-                            <div>{{item.level}}</div>
+                            <div>{{item.nickname}}</div>
+                            <div>{{item.levelName}}</div>
                         </div>
                         <div class="right">
                             <div>联系方式：{{item.phone}}</div>
@@ -107,9 +74,9 @@
         data: function () {
             return {
                 detail: {},
-                id:'',
-                loading:false,
-                list:''
+                id: '',
+                loading: false,
+                list: ''
             }
         },
         activated() {
@@ -121,21 +88,21 @@
         methods: {
             //获取详情
             getDetail() {
-                let that=this;
-                let data={
-                    id:that.id
+                let that = this;
+                let data = {
+                    id: that.id
                 };
                 that.$axios
                     .post(api.findInviteInfo, data)
                     .then(res => {
                         if (res.data.code == 200) {
-                            that.loading=false;
-                            that.detail=res.data.data.invite;
-                            that.list=res.data.data.list;
+                            that.loading = false;
+                            that.detail = res.data.data.invite;
+                            that.list = res.data.data.list;
                             console.log(that.list)
                         } else {
                             that.$message.warning(res.data.msg);
-                            that.loading=false;
+                            that.loading = false;
                         }
                     })
                     .catch(err => {
@@ -148,9 +115,9 @@
                 this.$router.push('/joinManage')
             },
             //跳到用户详情页面
-            toUserDetail(item){
-                localStorage.setItem('memberDetail',item.id);
-                this.$router.push({path:'/memberDetail',query:{id:item.id}})
+            toUserDetail(item) {
+                localStorage.setItem('memberDetail', item.id);
+                this.$router.push({path: '/memberDetail', query: {id: item.id}})
             }
         }
     }
@@ -178,18 +145,22 @@
         border-bottom: 1px solid #e2e2e2;
         margin-bottom: 20px;
     }
-.left{
-    float: left;
-    width: 60px;
-}
-    .center{
+
+    .left {
+        float: left;
+        width: 60px;
+    }
+
+    .center {
         float: left;
         width: 100px;
     }
-.right{
-    float: right;
-    text-align: right;
-}
+
+    .right {
+        float: right;
+        text-align: right;
+    }
+
     .clearfix {
         clear: both
     }
@@ -200,7 +171,8 @@
     }
 
     .color-blue {
-        color: #20a0ff
+        color: #20a0ff;
+        cursor: pointer;
     }
 
     img {
@@ -229,6 +201,6 @@
         border: 1px solid #dfdfdf;
         padding: 8px 12px;
         display: inline-block;
-        margin:0 10px 10px 0;
+        margin: 0 10px 10px 0;
     }
 </style>

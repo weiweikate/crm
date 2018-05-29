@@ -103,6 +103,7 @@ export default {
       bus.$emit("collapse", this.collapse);
       this.isShowTitle = !this.collapse;
     },
+
     // 全屏事件
     handleFullScreen() {
       let element = document.documentElement;

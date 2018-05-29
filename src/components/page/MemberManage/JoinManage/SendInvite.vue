@@ -176,7 +176,7 @@
                 btnLoading: false
             };
         },
-        created() {
+        activated() {
             let that = this;
             that.getLevelList();//加载邀请层级列表
             // that.getStatusONList();//加载授权渠道列表
@@ -270,7 +270,7 @@
             //  取消弹窗
             //取消
             cancle() {
-                this.push('/joinManage')
+                this.$router.push('/joinManage')
             },
             //渠道选项卡
             // changeTab(index, id) {
@@ -331,12 +331,8 @@
             // 提交表单
             submitForm() {
                 let that = this;
-                that.btnLoading = true;
-                let url = '';
                 let data = {};
-                // data.categorys=that.form.categorys;
                 data.levelId=that.form.levelId;
-                // data.brands=that.form.brands;
                 data.inviteType=that.form.inviteType;
                 data.invalidType=that.form.invalidType;
                 if(that.form.invalidType==1){
@@ -344,15 +340,19 @@
                 }else{
                     data.invalidTime = that.form.invalidTime ? moment(that.form.invalidTime).format('YYYY-MM-DD HH:mm:ss') : '';
                 }
-                // data.startTime = that.form.date ? moment(that.form.date[0]).format('YYYY-MM-DD') : '';
-                // data.endTime = that.form.date ? moment(that.form.date[1]).format('YYYY-MM-DD') : '';
-                // data.channels = that.form.channels.join(',');
-                // if (that.isUp) {//修改
-                //     url = api.updateBrand;
-                //     data.id = that.id;
-                // } else {
-                //     url = api.addBrand;
-                // }
+               if(!data.levelId){
+                   that.$message.warning('请选择邀请层级!');
+                   return
+               }
+               if(that.form.invalidType==1&&!data.clickTimes){
+                   that.$message.warning('请输入链接打开次数!');
+                   return
+               }
+                if(that.form.invalidType==2&&!data.invalidTime){
+                    that.$message.warning('请设置失效时间!');
+                    return
+                }
+                that.btnLoading = true;
                 this.$axios
                     .post(api.addInvite, data)
                     .then(res => {

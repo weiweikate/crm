@@ -123,7 +123,7 @@
                     <div class="del-btn-group">
                         <el-button :loading="btnLoading" @click="oprSure(true)" class="del-btn" type="danger">确认
                         </el-button>
-                        <el-button @click="tipsMask==false">取消</el-button>
+                        <el-button @click="tipsMask=false">取消</el-button>
                     </div>
                 </div>
             </div>
@@ -246,10 +246,10 @@
                 if (status == 2) {
                     that.info = '确定再次推送？'
                 }
-                if (status == 1) {
+                if (status == 3) {
                     that.info = '确定取消推送？'
                 }
-                if (status == 3) {
+                if (status == 4) {
                     that.info = '确定删除？'
                 }
                 that.status = status;
@@ -278,6 +278,7 @@
                     .catch(err => {
                         console.log(err);
                         that.btnLoading=false;
+                        that.tipsMask = false;
                     })
             },
             //发布通知/公告

@@ -18,7 +18,7 @@
                     <template slot-scope="scope">
                         <el-button type="primary" @click="secondChannel(scope.row)">二级渠道</el-button>
                         <el-button type="warning" @click='editChan(scope.row)'>编辑</el-button>
-                        <el-button type="danger" @click="deleteMsg(scope.row)">删除</el-button>
+                        <el-button type="danger" v-if="scope.row.status == 2" @click="deleteMsg(scope.row)">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>

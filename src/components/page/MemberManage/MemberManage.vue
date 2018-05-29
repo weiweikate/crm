@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="member">
         <v-breadcrumb :nav="['会员管理','经销商会员管理']"></v-breadcrumb>
         <el-card style="margin:10px 0 20px">
             <el-form ref="form" :inline="true" :model="form">
@@ -55,7 +55,7 @@
                     <el-table-column prop="nickname" label="用户昵称"></el-table-column>
                     <el-table-column prop="phone" label="手机号"></el-table-column>
                     <el-table-column label="授权层级" width="100">
-                        <template slot-scope="scope">{{scope.row.levelName}}级</template>
+                        <template slot-scope="scope">{{scope.row.levelName}}</template>
                     </el-table-column>
                     <el-table-column prop="day_count" label="本日登录" width="80"></el-table-column>
                     <el-table-column prop="month_count" label="本月登录" width="80"></el-table-column>
@@ -64,10 +64,14 @@
                             <template>{{scope.row.last_logintime|formatDate}}</template>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="CODE" label="授权码" width="100"></el-table-column>
+                    <el-table-column prop="code" label="授权码" width="100"></el-table-column>
                     <el-table-column prop="addrPreFix" label="区域/省市区"></el-table-column>
                     <!--<el-table-column prop="style" label="渠道" width="100"></el-table-column>-->
-                    <el-table-column prop="sub_level_num" label="下级" width="50"></el-table-column>
+                    <el-table-column label="下级" width="50">
+                        <template  slot-scope="scope">
+                            <span style="cursor: pointer" @click="toLower(scope.row.id)">{{scope.row.sub_level_num}}</span>
+                        </template>
+                    </el-table-column>
                     <el-table-column label="状态">
                         <template slot-scope="scope">
                             <template v-if="scope.row.status==1">待激活</template>
@@ -79,8 +83,8 @@
                         <template slot-scope="scope">
                             <el-button type="warning" size="small" @click="detailItem(scope.$index,scope.row)">详情
                             </el-button>
-                            <el-button type="danger" v-if="scope.row.status!=3" size="small" @click="closeItem(scope.$index,scope.row.id)">关闭
-                            </el-button>
+                            <el-button type="danger" v-if="scope.row.status!=3" size="small" @click="updateStatusItem(scope.$index,scope.row.id,1)">关闭</el-button>
+                            <el-button type="danger" v-if="scope.row.status==3" size="small" @click="updateStatusItem(scope.$index,scope.row.id,2)">开启</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -96,8 +100,25 @@
                 </el-pagination>
             </div>
         </div>
-
+        <!--消息确认弹窗-->
+        <div class="pwd-mask" v-if="tipsMask">
+            <div class="box">
+                <div class="mask-title">
+                    <icon class="ico" ico='icon-jinggao'/>
+                    温馨提示
+                </div>
+                <div class="mask-content">
+                    <span class="del-tip">{{info}}</span>
+                    <div class="del-btn-group">
+                        <el-button :loading="btnLoading" @click="oprSure(true)" class="del-btn" type="danger">{{btnTxt}}
+                        </el-button>
+                        <el-button @click="tipsMask=false">取消</el-button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
 </template>
 
 <script>
@@ -114,9 +135,11 @@
             return {
                 tableData: [],
                 tableLoading:false,
+                btnLoading:false,
+                tipsMask:false,
                 page: {
                     currentPage: 1,
-                    totalPage: 20
+                    totalPage: 0
                 },
                 height: '',
                 formLabelWidth: '100px',
@@ -134,6 +157,10 @@
                 selected: '',
                 address: [],
                 levelList: [],//用户层级列表
+                id:'',
+                info:'',
+                type:'',
+                btnTxt:''
             }
         },
         created() {
@@ -164,8 +191,11 @@
                     if(addrss[2]){
                         data.areaId=addrss[2];
                     }
+                }else{
+                    data.provinceId='';
+                    data.cityId='';
+                    data.areaId='';
                 }
-
                 that.tableLoading = true;
                 that.$axios
                     .post(api.getDealerPageList, data)
@@ -212,33 +242,61 @@
                 this.page.currentPage = val;
                 this.getList(val)
             },
+            //跳到下级列表
+            toLower(id){
+                sessionStorage.setItem('memberId',id);
+                this.$router.push({path: '/lowerMemberManage'})
+            },
             //详情
             detailItem(index, row) {
                 localStorage.setItem('memberDetail', row.id);
                 this.$router.push({path: '/memberDetail', query: {id: row.id}})
             },
-            //关闭
-            closeItem(index, id) {
+            //关闭,开启
+            updateStatusItem(index, id,num) {
+                let that=this;
+                that.id=id;
+                if(num==1){
+                    that.info='是否确认关闭？';
+                    that.type='关闭';
+                    that.btnTxt='确认关闭'
+                }else{
+                    that.info='是否确认开启？';
+                    that.type='开启';
+                    that.btnTxt='确认开启'
+                }
+                that.tipsMask = true;
+            },
+            oprSure() {
                 let that=this;
                 let data={
-                    id:id
+                    id:that.id
                 };
+                let url='';
+                if(that.type=='关闭'){
+                    url=api.stopDealerById
+                }else{
+                    url=api.openDealerById
+                }
+                that.btnLoading=true;
                 that.$axios
-                    .post(api.stopDealerById, data)
+                    .post(url, data)
                     .then(res => {
                         that.btnLoading = false;
                         if(res.data.code == 200){
-                            that.getList(that.page.currentPage)
+                            that.getList(that.page.currentPage);
+                            that.tipsMask = false;
                         }else{
                             that.$message.warning(res.data.msg);
+                            that.tipsMask = false;
+                            that.btnLoading=false;
                         }
                     })
                     .catch(err => {
-                        that.tableLoading = false;
-                        that.$emit("msg", false);
+                        that.btnLoading = false;
+                        that.tipsMask = false;
                     });
             },
-
             //导出
             exportData() {
 
@@ -259,33 +317,102 @@
     }
 </script>
 
-<style>
-    /*表格样式*/
-    .table-block {
-        padding: 20px 20px 60px;
-        background: #fff
+<style lang="less">
+    .member{
+        /*表格样式*/
+        .table-block {
+            padding: 20px 20px 60px;
+            background: #fff
+        }
+
+        .block {
+            float: right;
+            margin-top: 10px
+        }
+
+        .content {
+            padding: 40px 40px 0
+        }
+
+        .table-block .el-form-item {
+            margin-bottom: 0 !important;
+        }
+
+        .search-area {
+            margin-bottom: 20px
+        }
+
+        .search-area .el-input__inner {
+            width: 160px
+        }
+        .pwd-mask {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 99;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.2);
+            .box {
+                position: relative;
+                width: 530px;
+                height: 305px;
+                background-color: #fff;
+                border-radius: 10px;
+                overflow: hidden;
+                .mask-title {
+                    width: 100%;
+                    height: 56px;
+                    border-bottom: 1px solid #ccc;
+                    padding-left: 45px;
+                    box-sizing: border-box;
+                    text-align: center;
+                    line-height: 56px;
+                    color: #ff6868;
+                    font-weight: 700;
+                    .ico {
+                        position: absolute;
+                        top: 16px;
+                        left: 228px;
+                        color: red;
+                        font-size: 20px;
+                    }
+                }
+                .mask-content {
+                    position: relative;
+                    width: 100%;
+                    height: 248px;
+                    overflow: hidden;
+                    padding: 30px 45px 0 45px;
+                    box-sizing: border-box;
+                    .del-tip {
+                        position: absolute;
+                        top: 30%;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        font-size: 22px;
+                    }
+                    .del-btn-group {
+                        width: 180px;
+                        display: flex;
+                        justify-content: space-between;
+                        position: absolute;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        bottom: 15%;
+                        .del-btn {
+                            background-color: #ff6868;
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
-    .block {
-        float: right;
-        margin-top: 10px
-    }
-
-    .content {
-        padding: 40px 40px 0
-    }
-
-    .table-block .el-form-item {
-        margin-bottom: 0 !important;
-    }
-
-    .search-area {
-        margin-bottom: 20px
-    }
-
-    .search-area .el-input__inner {
-        width: 160px
-    }
 
 
 </style>

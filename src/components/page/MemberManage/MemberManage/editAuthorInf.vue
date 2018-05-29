@@ -108,7 +108,7 @@
             },
             //  取消弹窗
             closeToask() {
-                this.$emit("status", false);
+                this.$emit("msg", false);
             },
             // 提交表单
             submitForm(form) {

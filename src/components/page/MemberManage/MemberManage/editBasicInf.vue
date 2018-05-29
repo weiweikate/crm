@@ -26,12 +26,12 @@
                                 <el-input v-model="dealer.realname" placeholder="请输入用户姓名" size="medium"></el-input>
                             </el-form-item>
                             <el-form-item label="手机号">
-                                <el-input v-model="dealer.phone" placeholder="请输入手机号" size="medium"></el-input>
+                                <el-input v-model="dealer.phone" @change="textPhone" placeholder="请输入手机号" size="medium"></el-input>
                             </el-form-item>
                         </div>
                         <div class="form-item">
                             <el-form-item label="身份证号">
-                                <el-input v-model="dealer.idcard" placeholder="请输入身份证号码" size="medium"></el-input>
+                                <el-input v-model="dealer.idcard" @change="testIdCard" placeholder="请输入身份证号码" size="medium"></el-input>
                             </el-form-item>
                         </div>
                         <div class="form-item address-area">
@@ -96,11 +96,29 @@
             },
             //  取消弹窗
             closeToask() {
-                this.$emit("status", false);
+                this.$emit("msg", false);
             },
             //上传图片
             handleAvatarSuccess(res, file) {
                 this.dealer.head_img = res.data.imageUrl;
+            },
+            textPhone(){
+                let that=this;
+                let reg=/^[1][3,4,5,7,8][0-9]{9}$/;
+                if (!reg.test(that.form.phone)) {
+                    that.$message.warning('请输入正确的手机号格式!');
+                    that.form.phone='';
+                    return false;
+                }
+            },
+            testIdCard(){
+                let that=this;
+                let reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+                if(!reg.test(that.form.idCard)) {
+                    that.$message.warning('请输入正确的身份证号!');
+                    that.form.idCard='';
+                    return false;
+                }
             },
             // 提交表单
             submitForm(form) {
@@ -113,6 +131,7 @@
                 data.idcard=that.dealer.idcard;
                 data.nickname=that.dealer.nickname;
                 data.phone=that.dealer.phone;
+                data.wecahtId=that.dealer.wecaht_id;
                 data.realname=that.dealer.realname;
                 if(that.address){
                     data.provinceId=that.address[0];
@@ -134,10 +153,10 @@
                         that.btnLoading = false;
                         if(res.data.code == 200){
                             that.$message.success('修改成功');
-                            that.$emit("msg", false);
+                            this.$emit("msg", false);
                         }else{
                             that.$message.warning(res.data.msg);
-                            that.$emit("msg", false);
+                            this.$emit("msg", false);
                         }
                     })
                     .catch(err => {

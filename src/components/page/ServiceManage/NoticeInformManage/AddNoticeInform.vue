@@ -70,7 +70,7 @@
                     </el-form-item>
                     <div class="submit-btn">
                         <el-button type="primary" @click="submitForm('form')">确认保存</el-button>
-                        <el-button>取消</el-button>
+                        <el-button @click="cancel">取消</el-button>
                     </div>
                 </el-form>
             </div>
@@ -85,6 +85,7 @@
     import * as api from '../../../../api/api';
     import region from '../../../common/Region';
     import moment from 'moment'
+    import utils from '../../../../utils/index'
 
     export default {
         components: {
@@ -158,6 +159,7 @@
             };
         },
         activated() {
+            utils.cleanData(1,this.form);
             this.getLevelList();
             this.username = localStorage.getItem("ms_username");
             this.userId = localStorage.getItem("ms_userID");
@@ -167,6 +169,10 @@
         //     this.$refs['form'].resetFields();
         // },
         methods: {
+            //取消
+            cancel(){
+               this.$router.push('/noticeInformManage')
+            },
             // 获取省市区
             getRegion(msg) {
                 this.address = msg;
@@ -307,7 +313,7 @@
                 if (that.form.pushType == 2) {
                     params.orderTime = that.date ? moment(that.date).format('YYYY-MM-DD HH:mm:ss') : '';
                 }
-                if(that.pushCountry!=1&&that.pushCountry!=2){
+                if(that.form.pushCountry!=1&&that.form.pushCountry!=2){
                     that.form.pushCountry=3;
                     if(that.address){
                         params.provinceId=that.address[0];
@@ -475,7 +481,7 @@
         }
         .el-radio {
             display: block;
-            margin-left: 0;
+            margin-left: 0 !important;
             line-height: 32px;
         }
         .el-date-editor {

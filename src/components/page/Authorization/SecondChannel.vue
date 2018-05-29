@@ -17,7 +17,7 @@
                 <el-table-column label="操作" align="center">
                     <template slot-scope="scope">
                         <el-button type="warning" @click='edit(scope.row)'>编辑</el-button>
-                        <el-button type="danger" @click="deleteMsg(scope.row)">删除</el-button>
+                        <el-button type="danger" v-if="scope.row.status == 2" @click="deleteMsg(scope.row)">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
