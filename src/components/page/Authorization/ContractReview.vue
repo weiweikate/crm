@@ -3,7 +3,7 @@
         <breadcrumb :nav='nav'></breadcrumb>
         <el-card>
           <el-form ref="form" :model="form" inline label-width="80px">
-            <el-form-item prop="date" label="时间">
+            <el-form-item prop="date" label="续约申请时间">
                 <el-date-picker
                 v-model="form.date"
                 type="datetimerange"

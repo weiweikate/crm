@@ -53,14 +53,14 @@ export default {
               index: "channelItemManage",
               title: "渠道类目管理"
             },
-            {
-              index: "certificateUse",
-              title: "授权证书模板"
-            },
-            {
-              index: "contractReview",
-              title: "续约审核"
-            }
+            // {
+            //   index: "certificateUse",
+            //   title: "授权证书模板"
+            // },
+            // {
+            //   index: "contractReview",
+            //   title: "续约审核"
+            // }
           ]
         },
         {

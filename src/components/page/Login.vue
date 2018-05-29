@@ -16,7 +16,7 @@
                             </el-input>
                         </el-form-item>
                         <div class="login-btn">
-                            <el-button @click="submitForm('form1')">登录</el-button>
+                            <el-button :loading="btnLoading" @click="submitForm('form1')">登录</el-button>
                         </div>
                     </el-form>
                 </el-tab-pane>
@@ -35,123 +35,147 @@
                             <el-button class="code-btn" type="primary" v-else>{{codeTime}}s</el-button>
                         </el-form-item>
                         <div class="login-btn">
-                            <el-button @click="submitForm('form2')">登录</el-button>
+                            <el-button :loading="btnLoading" @click="submitForm('form2')">登录</el-button>
                         </div>
                     </el-form>
                 </el-tab-pane>
-                <el-tab-pane label="扫码登陆" name="third">扫码登陆</el-tab-pane>
+                <el-tab-pane label="扫码登陆" name="third">
+                    <div style="width:100%;text-align:center">扫码登陆暂未开通，敬请期待！</div>
+                </el-tab-pane>
             </el-tabs>
         </div>
     </div>
 </template>
 
 <script>
-    import * as api from "../../api/api.js";
-    import icon from "../common/ico";
+import * as api from "../../api/api.js";
+import icon from "../common/ico";
 
-    export default {
-        components: {
-            icon
-        },
-        data() {
-            return {
-                loginType: "first",
-                code: true,
-                codeTime: 5,
-                form1: {
-                    phone: "17612341234",
-                    password: "123456789"
-                },
-                form2: {
-                    phone: "17612341234",
-                    code: "123456789"
-                },
-                rules: {
-                    username: [
-                        {required: true, message: "请输入登陆手机号", trigger: "blur"}
-                    ],
-                    password: [
-                        {required: true, message: "请输入登陆密码", trigger: "blur"}
-                    ],
-                    code: [{required: true, message: "请输入验证码", trigger: "blur"}]
-                }
-            };
-        },
-        methods: {
-            // 提交表单
-            submitForm(formName) {
-                this.$refs[formName].validate(valid => {
-                    if (valid) {
-                        let data = this[formName];
-                        let url;
-                        if (formName == 'form1') {
-                            url = api.loginByPwd;
-                        } else {
-                            url = api.loginByCode;
-                        }
-                        this.$axios
-                            .post(url, data)
-                            .then(res => {
-                                console.log(res.data)
-                                if (res.data.code == 200) {
-                                    this.$message.success("登陆成功！");
-                                    localStorage.setItem("ms_username", res.data.data.name);
-                                    localStorage.setItem("ms_userID", res.data.data.id);
-                                    this.$router.push("/dashboard");
-                                } else {
-                                    this.$message.warning(res.data.msg);
-                                }
-                            })
-                            .catch(err => {
-                                console.log(err);
-                            });
-                    } else {
-                        console.log("error submit!!");
-                        return false;
-                    }
-                });
-            },
-            // 获取验证码
-            getCode() {
-                let phoneNum = this.form2.phone;
-                if (phoneNum == '') {
-                    this.$message.warning('请输入手机号!');
-                    return;
-                }
-                let that = this;
-                this.code = false;
-                this.codeTime = 60;
-                let timer = setInterval(function () {
-                    that.codeTime--;
-                    if (that.codeTime <= 0) {
-                        that.code = true;
-                        clearInterval(timer);
-                    }
-                }, 1000)
-                let data = {phone: this.form2.phone}
-                this.$axios
-                    .post(api.getCode, data)
-                    .then(res => {
-                        if (res.data.code == 200) {
-                            this.$message.success(res.data.msg);
-                            alert(res.data.data);
-                        } else {
-                            this.$message.warning(res.data.msg);
-                        }
-                    })
-                    .catch(err => {
-                        console.log(err);
-                    });
-            },
-            // tab切换
-            tabClick(params) {
-                console.log(params);
-            }
-        }
+export default {
+  components: {
+    icon
+  },
+  data() {
+    return {
+      loginType: "first",
+      btnLoading: false,
+      code: true,
+      codeTime: 5,
+      form1: {
+        phone: "",
+        password: ""
+      },
+      form2: {
+        phone: "",
+        code: ""
+      },
+      rules: {
+        phone: [
+          { required: true, message: "请输入登陆手机号", trigger: "blur" }
+        ],
+        password: [
+          { required: true, message: "请输入登陆密码", trigger: "blur" }
+        ],
+        code: [{ required: true, message: "请输入验证码", trigger: "blur" }]
+      }
     };
-
+  },
+  methods: {
+    // 提交表单
+    submitForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.btnLoading = true;
+          let data = this[formName];
+          let url;
+          if (formName == "form1") {
+            url = api.loginByPwd;
+          } else {
+            url = api.loginByCode;
+          }
+          this.$axios
+            .post(url, data)
+            .then(res => {
+              if (res.data.code == 200) {
+                localStorage.setItem("ms_username", res.data.data.name);
+                localStorage.setItem("ms_userID", res.data.data.id);
+                this.getUserPriList(res.data.data.id);
+              } else {
+                this.$message.warning(res.data.msg);
+              }
+            })
+            .catch(err => {
+              console.log(err);
+              this.btnLoading = false;
+            });
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+    },
+    // 获取验证码
+    getCode() {
+      let phoneNum = this.form2.phone;
+      if (phoneNum == "") {
+        this.$message.warning("请输入手机号!");
+        return;
+      }
+      let that = this;
+      this.code = false;
+      this.codeTime = 60;
+      let timer = setInterval(function() {
+        that.codeTime--;
+        if (that.codeTime <= 0) {
+          that.code = true;
+          clearInterval(timer);
+        }
+      }, 1000);
+      let data = { phone: this.form2.phone };
+      this.$axios
+        .post(api.getCode, data)
+        .then(res => {
+          if (res.data.code == 200) {
+            this.$message.success(res.data.msg);
+            alert(res.data.data);
+          } else {
+            this.$message.warning(res.data.msg);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    // tab切换
+    tabClick(params) {
+      
+    },
+    // 获取权限列表
+    getUserPriList(id) {
+      this.$axios
+        .post(api.findAdminUserbyId, { id: id })
+        .then(res => {
+          if (res.data.code == 200) {
+            let privilegeList = [];
+            res.data.data.adminUserPrivilegeList.forEach((v, k) => {
+              privilegeList.push(v.privilege_id);
+            });
+            localStorage.setItem('privilegeList',JSON.stringify(privilegeList));
+            this.$message.success("登陆成功！");
+            this.$router.push("/dashboard");
+          }else{
+              this.$message.warning(res.data.msg);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+          this.btnLoading = false;
+        });
+    }
+  }
+};
 </script>
 
 <style lang='less'>
-    @import "../../assets/css/login/login.css";
+@import "../../assets/css/login/login.css";
 </style>

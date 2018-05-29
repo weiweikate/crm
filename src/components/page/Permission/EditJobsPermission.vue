@@ -75,6 +75,7 @@ export default {
   activated() {
     this.getDepartmentList();
     this.getRoleList();
+    this.checkAllUser = [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],
     this.id =
       this.$route.params.userId || sessionStorage.getItem("editJobsPermission");
     this.$axios
@@ -149,13 +150,18 @@ export default {
         this.checkedUser.push([]);
       }
       this.userManList.forEach((v1,k1)=>{
+        let arrLength = 0;
         v1.value.forEach((v2,k2)=>{
           v2.value.forEach((v3,k3)=>{
+            arrLength ++;
             if(that.getUserPriList.indexOf(v3.id) != -1){
               that.checkedUser[k1].push(v3.id);
             }
           })
         })
+        if(arrLength == that.checkedUser[k1].length){
+          that.checkAllUser[k1] = true;
+        }
       })
     },
 

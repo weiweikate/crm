@@ -36,9 +36,9 @@ axios.interceptors.request.use(config => {
 axios.interceptors.response.use(
   res => {
     if(res.data.code == 210){
-      Message.warning(res.data.msg);
       sessionStorage.clear();
-      return;
+      localStorage.clear();
+      Message.warning({duration:1000,message:'登陆超时，请重新登陆'})
     }
     if (res.status != '200') {
       Message.error({duration:1000,message:'响应失败'})

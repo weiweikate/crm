@@ -66,26 +66,36 @@
                         <span>快捷操作模块</span>
                     </div>
                     <div class="right-wrap">
+                        <router-link to="/brandProductClassify" tag="div">
                         <div class="right-content">
                             <div class="r-ico-wrap"><icon ico='icon-chanpin1' /></div>
                             <span class="r-content">发布产品</span>
                         </div>
+                        </router-link>
+                        <router-link to="/addNoticeInform" tag="div">
                         <div class="right-content">
                             <div class="r-ico-wrap"><icon ico='icon-tongzhi' /></div>
                             <span class="r-content">发布公告/通知</span>
                         </div>
+                        </router-link>
+                        <router-link to="/addManger" tag="div">
                         <div class="right-content">
                             <div class="r-ico-wrap"><icon ico='icon-huiyuan' /></div>
                             <span class="r-content">创建管理员账号</span>
                         </div>
+                        </router-link>
+                        <router-link to="/memberManage" tag="div">
                         <div class="right-content">
                             <div class="r-ico-wrap"><icon ico='icon-huiyuantianjiakehu' /></div>
                             <span class="r-content">会员邀请</span>
                         </div>
+                        </router-link>
+                        <router-link to="/rootsCodeQuery" tag="div">
                         <div class="right-content">
                             <div class="r-ico-wrap"><icon ico='icon-chaxun' /></div>
                             <span class="r-content">防伪码查询</span>
                         </div>
+                        </router-link>
                     </div>
                 </el-card>
             </el-col>
