@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-breadcrumb :nav="['品牌产品管理','品牌管理','添加品牌']"></v-breadcrumb>
+        <v-breadcrumb :nav="['品牌产品管理','品牌管理','编辑品牌']"></v-breadcrumb>
         <div class="container">
             <div class="brand-box">
                 <el-form :model="form" ref="form" :rules="rules">
@@ -90,17 +90,6 @@
                 addBrand:''
             }
         },
-        created() {
-            let that = this;
-            that.id =
-                that.$route.query.brandId || sessionStorage.getItem('brandId');
-            that.addBrand =
-                that.$route.query.addBrand || sessionStorage.getItem('addBrand');
-            if (that.id&&!that.isUp) {
-                that.getDetail();
-                that.isUp = true;
-            }
-        },
         activated() {
             let that = this;
             that.id =
@@ -108,14 +97,6 @@
             if (that.id&&!that.isUp) {
                 that.getDetail();
                 that.isUp = true;
-            }
-        },
-        mounted() {
-            let that = this;
-            that.addBrand =
-                that.$route.query.addBrand || sessionStorage.getItem('addBrand');
-            if (that.addBrand=='1') {
-                that.$refs['form'].resetFields();
             }
         },
         methods: {

@@ -17,16 +17,18 @@
             <el-button @click="sendInvite" style="margin-bottom: 20px" type="primary">发起邀请</el-button>
             <template>
                 <el-table v-loading="tableLoading" :data="tableData" :height="height" border style="width: 100%">
-                    <el-table-column prop="ID" label="邀请记录ID" width="150"></el-table-column>
-                    <el-table-column prop="level" label="邀请层级" width="150"></el-table-column>
-                    <el-table-column prop="dayLogin" label="授权渠道"></el-table-column>
-                    <el-table-column prop="monthLogin" label="邀请代理品牌"></el-table-column>
-                    <el-table-column prop="lastLoginTime" label="邀请时间" width="180"></el-table-column>
-                    <el-table-column prop="code" label="发起者" width="150"></el-table-column>
+                    <el-table-column prop="id" label="邀请记录ID"></el-table-column>
+                    <el-table-column prop="levelName" label="邀请层级"></el-table-column>
+                    <!--<el-table-column prop="dayLogin" label="授权渠道"></el-table-column>-->
+                    <!--<el-table-column prop="monthLogin" label="邀请代理品牌"></el-table-column>-->
+                    <el-table-column prop="lastLoginTime" label="邀请时间">
+                        <template slot-scope="scope">{{scope.row.create_time|formatDate}}</template>
+                    </el-table-column>
+                    <el-table-column prop="adminUser" label="发起者"></el-table-column>
                     <el-table-column label="操作">
                         <template slot-scope="scope">
                             <el-button type="warning" size="small" @click="detailItem(scope.$index,scope.row)">详情</el-button>
-                            <el-button type="danger" size="small" @click="watchItem(scope.$index,scope.row.id)">查看邀请</el-button>
+                            <!--<el-button type="danger" size="small" @click="watchItem(scope.$index,scope.row.id)">查看邀请</el-button>-->
                         </template>
                     </el-table-column>
                 </el-table>
@@ -76,9 +78,7 @@
             this.height=winHeight;
             this.getList(this.page.currentPage)
         },
-        activated() {
-            let winHeight=window.screen.availHeight-520;
-            this.height=winHeight;
+        activated(){
             this.getList(this.page.currentPage)
         },
         methods: {
@@ -87,7 +87,7 @@
                 let that = this;
                 let data = {
                     page: val,
-                    initiator:that.form.initiator,
+                    initiator:that.form.initiator
                 };
                 that.tableLoading = true;
                 that.$axios
@@ -133,6 +133,7 @@
             //重置表单
             resetForm(formName) {
                 this.$refs[formName].resetFields();
+                this.getList(this.page.currentPage)
             },
         }
     }

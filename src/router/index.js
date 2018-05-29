@@ -71,10 +71,16 @@ export default new Router({
                     meta: { title: '品牌管理' }
                 },
                 {
-                    name:'addOrUpBrand',
-                    path: '/addOrUpBrand',
-                    component: resolve => require(['../components/page/BrandProduct/BrandManage/AddOrUpBrand.vue'], resolve),
+                    name:'addBrand',
+                    path: '/addBrand',
+                    component: resolve => require(['../components/page/BrandProduct/BrandManage/AddBrand.vue'], resolve),
                     meta: { title: '添加品牌' }
+                },
+                {
+                    name:'editBrand',
+                    path: '/editBrand',
+                    component: resolve => require(['../components/page/BrandProduct/BrandManage/EditBrand.vue'], resolve),
+                    meta: { title: '编辑品牌' }
                 },
                 // 会员管理
                 {
@@ -94,6 +100,12 @@ export default new Router({
                     path: '/memberManage',
                     component: resolve => require(['../components/page/MemberManage/MemberManage.vue'], resolve),
                     meta: { title: '经销商会员管理' }
+                },
+                {
+                    name:'lowerMemberManage',
+                    path: '/lowerMemberManage',
+                    component: resolve => require(['../components/page/MemberManage/MemberManage/LowerMemberManage.vue'], resolve),
+                    meta: { title: '下级代理' }
                 },
                 {
                     name:'memberDetail',
@@ -137,6 +149,12 @@ export default new Router({
                     path: '/addNoticeInform',
                     component: resolve => require(['../components/page/ServiceManage/NoticeInformManage/AddNoticeInform.vue'], resolve),
                     meta: { title: '发布通知/公告' }
+                },
+                {
+                    name:'noticeInformDetail',
+                    path: '/noticeInformDetail',
+                    component: resolve => require(['../components/page/ServiceManage/NoticeInformManage/NoticeInformDetail.vue'], resolve),
+                    meta: { title: '通知/公告详情' }
                 },
                 {
                     name:'feedBack',

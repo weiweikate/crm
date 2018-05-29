@@ -1,12 +1,12 @@
 <template>
     <div>
-        <el-select v-model="province" filterable placeholder="请选择省份" @change="getCity(false)" :loading="pLoading">
+        <el-select :disabled="isDisabled" v-model="province" filterable placeholder="请选择省份" @change="getCity(false)" :loading="pLoading">
             <el-option v-for="item in provinceArr" :key="item.value" :label="item.label" :value="item.value"></el-option>
         </el-select>
-        <el-select v-model="city" filterable placeholder="请选择城市" @change="getArea(false)" :loading="cLoading">
+        <el-select :disabled="isDisabled" v-model="city" filterable placeholder="请选择城市" @change="getArea(false)" :loading="cLoading">
             <el-option v-for="item in cityArr" :key="item.value" :label="item.label" :value="item.value"></el-option>
         </el-select>
-        <el-select v-model="area" filterable placeholder="请选择区" @change="getAllRegion" :loading="aLoading">
+        <el-select :disabled="isDisabled" v-model="area" filterable placeholder="请选择区" @change="getAllRegion" :loading="aLoading">
             <el-option v-for="item in areaArr" :key="item.value" :label="item.label" :value="item.value"></el-option>
         </el-select>
     </div>
@@ -14,7 +14,7 @@
 <script>
 import * as api from "../../api/api.js";
 export default {
-  props: ["regionMsg"],
+  props: ["regionMsg",'isDisabled'],
   data() {
     return {
       pLoading: false,
@@ -26,7 +26,7 @@ export default {
       provinceArr: [],
       cityArr: [],
       areaArr: [],
-      region: []
+      region: [],
     };
   },
   watch: {
