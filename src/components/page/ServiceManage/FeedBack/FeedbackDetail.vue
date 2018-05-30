@@ -11,7 +11,7 @@
                         联系电话：{{detail.phone}}
                     </div>
                     <div class="detail-item">
-                        用户层级：{{detail.name}}
+                        用户层级：{{detail.remark}}
                     </div>
                     <div class="detail-item">
                         所在区域：{{detail.address}}
@@ -143,7 +143,7 @@
                 replyContent:'',
             }
         },
-        created(){
+        activated(){
             this.id =
                 this.$route.query.id ||
                 JSON.parse(sessionStorage.getItem("feedDetail").id);

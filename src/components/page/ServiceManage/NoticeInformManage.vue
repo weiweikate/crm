@@ -247,9 +247,11 @@
                                     }
                                 }
                                 let temp=[];
-                                if (arr[i] && arr[i] == 1) {
-                                    if(temp.indexOf(name)==-1){
-                                        temp.push(name)
+                                for(let k in arr){
+                                    if (arr[k] && arr[k] == 1) {
+                                        if(temp.indexOf(name)==-1){
+                                            temp.push(that.levels[k])
+                                        }
                                     }
                                 }
                                 res.data.data.data[i].push_way=temp.join(',');

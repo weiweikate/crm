@@ -34,14 +34,16 @@
                     </el-form-item>
 
                     <el-form-item label="推送方式" style="position: relative">
-                        <el-radio-group v-model="form.pushType">
-                            <el-radio label="1" value="1">即时推送</el-radio>
-                            <el-radio label="2" value="2">定时推送</el-radio>
+                        <el-radio-group @change="changeStyle" v-model="form.pushType">
+                            <el-radio :label="1" value="1">即时推送</el-radio>
+                            <el-radio :label="2" value="2">定时推送</el-radio>
                         </el-radio-group>
                         <el-date-picker
                                 v-model="date"
                                 type="datetime"
+                                :disabled="dateDisabled"
                                 format="yyyy-MM-dd HH:mm:ss"
+                                :picker-options="pickerOptions"
                                 placeholder="选择日期时间">
                         </el-date-picker>
                     </el-form-item>
@@ -55,13 +57,14 @@
                             </el-checkbox>
                         </el-checkbox-group>
                     </el-form-item>
-                    <el-form-item label="推送区域" class="region-area">
-                        <el-radio-group v-model="form.pushCountry">
-                            <el-radio label="1" value="1">全国</el-radio>
-                            <el-radio label="2" value="2">国外</el-radio>
+                    <el-form-item label="推送区域" prop="pushCountry" class="region-area">
+                        <el-radio-group @change="changeArea" v-model="form.pushCountry">
+                            <el-radio :label="3">部分</el-radio>
+                            <el-radio :label="1">全国</el-radio>
+                            <el-radio :label="2">国外</el-radio>
                         </el-radio-group>
                         <div class="el-cascader">
-                            <region @regionMsg='getRegion' :regionMsg='address'></region>
+                            <region @regionMsg='getRegion' :isDisabled="areaDisabled" :regionMsg='address'></region>
                         </div>
                     </el-form-item>
                     <el-form-item>
@@ -69,7 +72,7 @@
                         {{username}}
                     </el-form-item>
                     <div class="submit-btn">
-                        <el-button type="primary" @click="submitForm('form')">确认保存</el-button>
+                        <el-button type="primary" v-loading="btnLoading" @click="submitForm('form')">确认保存</el-button>
                         <el-button @click="cancel">取消</el-button>
                     </div>
                 </el-form>
@@ -100,7 +103,7 @@
                     content: '',//   内容
                     pushType: '1',//   1：即时推送  2：定时推送
                     pushWay: '',//   推送人群
-                    pushCountry: '',//   1：全国 2：国外 3：定省
+                    pushCountry: '3',//   1：全国 2：国外 3：定省
                     createAdmin: '',//   发布人
                     original_img: '',
                     small_img: ''
@@ -149,7 +152,16 @@
                 cityArr: [],
                 areaArr: [],
                 region: [],
-                address: ''
+                address: '',
+                btnLoading:false,
+                dateDisabled:true,
+                areaDisabled:true,
+                pickerOptions: {
+                    disabledDate(time) {
+                        return time.getTime() < new Date() - 8.64e7;
+                    }
+                },
+                time:''
             };
         },
         created(){
@@ -160,21 +172,39 @@
         },
         activated() {
             utils.cleanData(1,this.form);
+            // console.log(this.form)
             this.form.nType='1';
-            this.form.pushType='1';
             this.title='';
+            this.isIndeterminate=false;
+            this.checkAll=false;
+            this.date='';
+            // this.form.pushType='1';
+            // this.form.pushCountry='3';
             this.getLevelList();
             this.username = localStorage.getItem("ms_username");
             this.userId = localStorage.getItem("ms_userID");
             this.form.createAdmin = localStorage.getItem("ms_userID");
         },
-        // activated(){
-        //     this.$refs['form'].resetFields();
-        // },
         methods: {
             //取消
             cancel(){
                this.$router.push('/noticeInformManage')
+            },
+            //推送方式
+            changeStyle(){
+              if(this.form.pushType==1){
+                  this.dateDisabled=true
+              }  else{
+                  this.dateDisabled=false
+              }
+            },
+            //推送区域
+            changeArea(){
+              if(this.form.pushCountry==3){
+                  this.areaDisabled=false
+              }  else{
+                  this.areaDisabled=true
+              }
             },
             // 获取省市区
             getRegion(msg) {
@@ -309,15 +339,22 @@
             // 提交表单
             submitForm() {
                 let that = this;
-                let params = that.form;
+                let params = {};
+                params.pushType=that.form.pushType;
+                params.nType=that.form.nType;
+                params.pushCountry=that.form.pushCountry;
+                params.pushWay=that.form.pushWay;
+                params.content=that.form.content;
+                params.createAdmin=that.form.createAdmin;
+                params.original_img=that.form.original_img;
+                params.small_img=that.form.small_img;
                 if (that.form.nType == 1) {
                     params.title = that.title;
                 }
                 if (that.form.pushType == 2) {
                     params.orderTime = that.date ? moment(that.date).format('YYYY-MM-DD HH:mm:ss') : '';
                 }
-                if(that.form.pushCountry!=1&&that.form.pushCountry!=2){
-                    that.form.pushCountry=3;
+                if(that.form.pushCountry==3){
                     if(that.address){
                         params.provinceId=that.address[0];
                         if(that.address[1]){
@@ -330,6 +367,9 @@
                         }else{
                             params.areaId=''
                         }
+                    }else{
+                        that.$message.warning('请选择推送区域!');
+                        return
                     }
                 }
                 that.btnLoading = true;
@@ -337,9 +377,9 @@
                     .post(api.addNotice, params)
                     .then(res => {
                         if (res.data.code == 200) {
-                            that.btnLoading = false;
                             that.$message.success(res.data.msg);
                             setTimeout(function () {
+                                that.btnLoading = false;
                                 that.$router.push('/noticeInformManage')
                             }, 1000)
                         } else {

@@ -35,6 +35,12 @@
                             <el-option label="已处理" value="2"></el-option>
                         </el-select>
                     </el-form-item>
+                    <el-form-item prop="userName" label="用户" label-width="120">
+                        <el-input style="width:200px" placeholder="请输入用户" v-model="form.userName"></el-input>
+                    </el-form-item>
+                    <el-form-item prop="adminName" label="处理人" label-width="120">
+                        <el-input style="width:200px" placeholder="请输入处理人" v-model="form.adminName"></el-input>
+                    </el-form-item>
                     <el-form-item>
                         <el-button @click="getList(1)" type="primary">查询</el-button>
                         <el-button @click="resetForm('form')">重置</el-button>
@@ -53,7 +59,7 @@
                             <template v-if="scope.row.d_type == 3">网红经销商</template>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="name" label="层级"></el-table-column>
+                    <el-table-column prop="remark" label="层级"></el-table-column>
                     <el-table-column prop="phone" label="联系电话"></el-table-column>
                     <el-table-column prop="address" label="所在区域"></el-table-column>
                     <el-table-column label="反馈时间">
@@ -123,7 +129,9 @@
                     level: '',
                     date: '',
                     type:'',
-                    status:''
+                    status:'',
+                    adminName:'',
+                    userName:''
                 },
                 levelList:[],//用户层级列表
                 selected: ''
@@ -150,6 +158,8 @@
                     level:that.form.level,
                     type:that.form.type,
                     status:that.form.status,
+                    userName:that.form.userName,
+                    adminName:that.form.adminName,
                     beginTime:that.form.date?moment(that.form.date[0]).format('YYYY-MM-DD'):'',
                     endTime:that.form.date?moment(that.form.date[1]).format('YYYY-MM-DD'):'',
                 };

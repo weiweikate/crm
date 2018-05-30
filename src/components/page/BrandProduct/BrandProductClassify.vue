@@ -144,6 +144,8 @@
         created() {
             let winHeight = window.screen.availHeight - 500;
             this.height = winHeight;
+        },
+        activated(){
             this.getList(this.page.currentPage);
         },
         methods: {
