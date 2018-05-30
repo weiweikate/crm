@@ -19,7 +19,7 @@
             </el-form>
         </el-card>
         <el-card class="con-card">
-          <el-button type="primary" @click="addManger">新建管理员</el-button>
+          <el-button v-if="p.addAdminUser" type="primary" @click="addManger">新建管理员</el-button>
           <el-table v-loading="tableLoading" class="w-table" stripe :data="tableData" :height="height" border style="width: 100%">
               <el-table-column prop="id" label="ID" width="100" align="center"></el-table-column>
               <el-table-column prop="name" label="管理员姓名" align="center"></el-table-column>
@@ -32,13 +32,13 @@
                   <template v-else-if="scope.row.status == 1">正常</template>
                 </template>
               </el-table-column>
-              <el-table-column label="操作"  width="400" align="center">
+              <el-table-column v-if="isShowOperate" label="操作" width="400" align="center">
                 <template slot-scope="scope">
-                  <el-button size="mini" type="primary" @click="editManger(scope.row)">编辑</el-button>
-                  <el-button v-if='scope.row.status == 1' size="mini" type="warning" @click="resetPwd(scope.row)">密码重置</el-button>
-                  <el-button size="mini" type="warning" @click="showLog(scope.row)">查看日志</el-button>
-                  <el-button v-if='scope.row.status == 0' @click="deleteUser(scope.row)" size="mini" type="danger"  >账号删除</el-button>
-                  <template>
+                  <el-button v-if="p.updateAdminUser" size="mini" type="primary" @click="editManger(scope.row)">编辑</el-button>
+                  <el-button v-if='scope.row.status == 1 && p.resetPassword' size="mini" type="warning" @click="resetPwd(scope.row)">密码重置</el-button>
+                  <el-button v-if="p.showAdminLog" size="mini" type="warning" @click="showLog(scope.row)">查看日志</el-button>
+                  <el-button v-if='scope.row.status == 0&&p.deleteAdminUser' @click="deleteUser(scope.row)" size="mini" type="danger"  >账号删除</el-button>
+                  <template v-if="p.updateAdminUserStatus">
                     <el-popover placement="top" width="160" v-model="scope.row.visible">
                       <p v-if='scope.row.status == 1'>确定关闭账号？</p>
                       <p v-if='scope.row.status == 0'>确定开启账号？</p>
@@ -83,12 +83,25 @@
 import breadcrumb from "../../common/Breadcrumb";
 import * as api from "../../../api/api.js";
 import deleteToast from "../../common/DeleteToast";
+import utils from '../../../utils/index.js'
+import * as pApi from '../../../privilegeList/index.js';
 export default {
   components: {
     breadcrumb,deleteToast
   },
   data() {
     return {
+      // 权限控制
+      p:{
+        addAdminUser:false,
+        updateAdminUser:false,
+        resetPassword:false,
+        showAdminLog:false,
+        updateAdminUserStatus:false,
+        deleteAdminUser:false,
+      },
+      isShowOperate:true,
+
       nav: ["权限管理", "管理员账号管理"],
       isShowResetPwd:false,
       isShowDelToast:false,
@@ -121,11 +134,22 @@ export default {
   created() {
     let winHeight = window.screen.availHeight - 500;
     this.height = winHeight;
+    this.pControl();
   },
   activated(){
+    this.pControl();
     this.getList(this.page.currentPage);
   },
   methods: {
+    // 权限控制
+    pControl() {
+      for (const k in this.p) {
+        this.p[k] = utils.pc(pApi[k]);
+      }
+      if(!this.p.updateAdminUser && !this.p.resetPassword && !this.p.showAdminLog && !this.p.updateAdminUserStatus){
+        this.isShowOperate = false;
+      }
+    },
     //  获取数据
     getList(val) {
       let that = this;
@@ -137,13 +161,18 @@ export default {
       this.$axios
         .post(api.getMangerList, data)
         .then(res => {
-          that.tableData = [];
+          if(res.data.code == 200){
+            that.tableData = [];
           res.data.data.data.forEach((v,k)=>{
             v.visible = false;
             that.tableData.push(v);
           })
           that.page.totalPage = res.data.data.resultCount;
           that.tableLoading = false;
+          }else{
+            this.$message.warning(res.data.msg);
+             that.tableLoading = false;
+          }
         })
         .catch(err => {
           console.log(err);

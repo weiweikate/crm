@@ -2,7 +2,7 @@
     <div>
         <breadcrumb :nav='breadcrumb'></breadcrumb>
         <el-card>
-            <el-button type='primary' @click="addChan">添加渠道</el-button>
+            <el-button v-if="p.addPermitChannel_1" type='primary' @click="addChan">添加渠道</el-button>
             <el-table v-loading="tableLoading" class="w-table" stripe :data="tableData" :height="height" border style="width: 100%">
                 <el-table-column prop="id" label="ID" width="180" align="center"></el-table-column>
                 <el-table-column prop="name" label="品类" align="center"></el-table-column>
@@ -14,10 +14,10 @@
                     <template v-if="scope.row.status == 3">删除</template>
                   </template> 
                 </el-table-column>
-                <el-table-column label="操作" align="center">
+                <el-table-column v-if="isShowOperate" label="操作" align="center">
                     <template slot-scope="scope">
-                        <el-button type="primary" @click="secondChannel(scope.row)">二级渠道</el-button>
-                        <el-button type="warning" @click='editChan(scope.row)'>编辑</el-button>
+                        <el-button v-if="p.addPermitChannel_2" type="primary" @click="secondChannel(scope.row)">二级渠道</el-button>
+                        <el-button v-if="p.updatePermitChannel_1" type="warning" @click='editChan(scope.row)'>编辑</el-button>
                         <el-button type="danger" v-if="scope.row.status == 2" @click="deleteMsg(scope.row)">删除</el-button>
                     </template>
                 </el-table-column>
@@ -44,6 +44,8 @@ import addChannel from "./ChannelItemManage/addChannel";
 import editChannel from "./ChannelItemManage/editChannel";
 import deleteToast from "../../common/DeleteToast";
 import * as api from "../../../api/api.js";
+import utils from '../../../utils/index.js'
+import * as pApi from '../../../privilegeList/index.js';
 export default {
   components: {
     breadcrumb,
@@ -53,6 +55,15 @@ export default {
   },
   data() {
     return {
+      // 权限控制
+      p:{
+        addPermitChannel_1:false,
+        addPermitChannel_2:false,
+        updatePermitChannel_1:false,
+        updatePermitChannel_2:false,
+      },
+      isShowOperate:true,
+
       breadcrumb: ["授权管理", "渠道类目管理"],
       isShowAddChan: false,
       isShowEditChan: false,
@@ -72,11 +83,22 @@ export default {
   created() {
     let winHeight = window.screen.availHeight - 360;
     this.height = winHeight;
+    this.pControl();
   },
   activated(){
     this.getList();
+    this.pControl();
   },
   methods: {
+    // 权限控制
+    pControl() {
+      for (const k in this.p) {
+        this.p[k] = utils.pc(pApi[k]);
+      }
+      if (!this.p.updatePermitChannel_2 && !this.p.updatePermitChannel_2) {
+        this.isShowOperate = false;
+      }
+    },
     //获取列表
     getList() {
       this.tableLoading = true;

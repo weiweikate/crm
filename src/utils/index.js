@@ -95,11 +95,17 @@ let handleCityIndex = function (regionoption,v1, v2, v3) {
 }
 
 // 权限判断
-let permissionControl = function (arr) {  
-    
+let permissionControl = function (per) { 
+    let userPrivilegeList = JSON.parse(localStorage.getItem('privilegeList')); 
+    if(userPrivilegeList.indexOf(per) !=-1){
+        return true;
+    }else{
+        return false;
+    }
 }
 
 module.exports.encryptData = encryptData;
 module.exports.cleanData = cleanData;
 module.exports.handleCity = handleCity;
 module.exports.handleCityIndex = handleCityIndex;
+module.exports.pc = permissionControl;

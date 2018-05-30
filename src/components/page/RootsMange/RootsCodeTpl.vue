@@ -2,7 +2,7 @@
     <div>
         <breadcrumb :nav='nav'></breadcrumb>
         <el-card>
-            <el-button type='primary' @click="addCodeTpl('addTplForm')">添加模板</el-button>
+            <el-button v-if="p.addCodeTemplate" type='primary' @click="addCodeTpl('addTplForm')">添加模板</el-button>
             <el-table v-loading="tableLoading" class="w-table" stripe :data="tableData" :height="height" border style="width: 100%">
                 <el-table-column prop="id" label="编号" width="180" align="center"></el-table-column>
                 <el-table-column prop="templateName" label="模板名称" align="center"></el-table-column>
@@ -31,25 +31,15 @@
                 <el-table-column label="操作" align="center">
                     <template slot-scope="scope">
                         <template v-if="scope.row.productCount == 0">
-                          <el-button type="warning" @click='editCodeTpl(scope.row)'>编辑</el-button>
-                          <el-button type="danger" @click="deleteTpl(scope.row)">删除</el-button>
+                          <el-button v-if="p.updateCodeTemplate" type="warning" @click='editCodeTpl(scope.row)'>编辑</el-button>
+                          <el-button v-if="p.deleteCodeTemplate" type="danger" @click="deleteTpl(scope.row)">删除</el-button>
                         </template>
                         <template v-if="scope.row.productCount > 0">
-                          <el-button type="warning" @click="failureTpl(scope.row)">失效</el-button>
+                          <el-button v-if="p.loseCodeTemplate" type="warning" @click="failureTpl(scope.row)">失效</el-button>
                         </template>
                     </template>
                 </el-table-column>
             </el-table>
-            <div class="block">
-                <el-pagination
-                    background
-                    @size-change="handleSizeChange"
-                    @current-change="handleCurrentChange"
-                    :current-page="page.currentPage"
-                    layout="total, prev, pager, next, jumper"
-                    :total="page.totalPage">
-                </el-pagination>
-            </div>
         </el-card>
         <el-dialog title="添加防伪码模板" :visible.sync="isShowaddCodeDialog">
             <el-form :model="addTplForm" :rules="rules" ref="addTplForm" label-width="140px">
@@ -112,6 +102,8 @@
 import breadcrumb from "../../common/Breadcrumb";
 import deleteToast from "../../common/DeleteToast";
 import * as api from "../../../api/api.js";
+import utils from '../../../utils/index.js'
+import * as pApi from '../../../privilegeList/index.js';
 export default {
   components: {
     breadcrumb,
@@ -119,6 +111,14 @@ export default {
   },
   data() {
     return {
+      // 权限控制
+      p:{
+        addCodeTemplate:false,
+        updateCodeTemplate:false,
+        deleteCodeTemplate:false,
+        loseCodeTemplate:false,
+      },
+
       nav: ["溯源管理", "防伪码模板"],
       tableLoading: false,
       btnLoading: false,
@@ -167,24 +167,30 @@ export default {
   created() {
     let winHeight = window.screen.availHeight - 360;
     this.height = winHeight;
+    this.pControl();
+  },
+  activated(){
+    this.pControl();
     this.getList(this.page.currentPage);
   },
   methods: {
+    // 权限控制
+    pControl() {
+      for (const k in this.p) {
+        this.p[k] = utils.pc(pApi[k]);
+      }
+    },
     //获取列表
     getList(val) {
       let that = this;
-      let data = {
-        page: val
-      };
       this.tableLoading = true;
       this.$axios
-        .post(api.rootsGetCodeTplList, data)
+        .post(api.rootsGetCodeTplList, {})
         .then(res => {
           that.tableLoading = false;
           if (res.data.code == 200) {
             this.tableData = [];
-            this.tableData = res.data.data.data;
-            this.page.totalPage = res.data.data.resultCount;
+            this.tableData = res.data.data;
           } else {
             this.$message.error(res.data.msg);
           }
@@ -330,6 +336,8 @@ export default {
     setBigBoxCode(val){
       if(val == 2){
         this.isShowBigBox = false;
+        this.addTplForm.bigBoxCodeNum = '';
+        this.editTplForm.bigBoxCodeNum = '';
         this.isUseSmallBox = true;
         this.addTplForm.smallBoxCodeNum = 1;
         this.editTplForm.smallBoxCodeNum = 1;

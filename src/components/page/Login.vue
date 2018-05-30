@@ -100,7 +100,9 @@ export default {
                 localStorage.setItem("ms_username", res.data.data.name);
                 localStorage.setItem("ms_userID", res.data.data.id);
                 this.getUserPriList(res.data.data.id);
+                this.btnLoading = false;
               } else {
+                this.btnLoading = false;
                 this.$message.warning(res.data.msg);
               }
             })
@@ -158,7 +160,7 @@ export default {
           if (res.data.code == 200) {
             let privilegeList = [];
             res.data.data.adminUserPrivilegeList.forEach((v, k) => {
-              privilegeList.push(v.privilege_id);
+              privilegeList.push(v.page_uri);
             });
             localStorage.setItem('privilegeList',JSON.stringify(privilegeList));
             this.$message.success("登陆成功！");

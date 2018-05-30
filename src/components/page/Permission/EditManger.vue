@@ -58,7 +58,7 @@
                         </el-collapse-item>
                     </el-collapse>
                     <el-form-item>
-                      <el-button type="primary" @click="submitForm('form')" style="margin-left:35%">提交</el-button>
+                      <el-button :loading="btnLoading" type="primary" @click="submitForm('form')" style="margin-left:35%">提交</el-button>
                       <el-button @click="resetForm('form')">重置</el-button>
                     </el-form-item>
                 </el-form>
@@ -76,6 +76,7 @@ export default {
   data() {
     return {
       nav: ["权限管理", "修改管理员信息"],
+      btnLoading:false,
       checkAllUser: [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],
       checkedUser: [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
       getUserPriList:[],
@@ -146,18 +147,22 @@ export default {
       data.id = this.id;
       this.$refs[formName].validate((valid) => {
           if (valid) {
+            this.btnLoading = true;
             this.$axios
             .post(api.updateAdminUser, data)
             .then(res => {
               if(res.data.code == 200){
                 this.$message.success(res.data.data);
                 this.$router.push('/manageList');
+                this.btnLoading = false;
               }else{
                 this.$message.warning(res.data.msg);
+                this.btnLoading = false;
               }
             })
             .catch(err => {
               console.log(err);
+              this.btnLoading = false;
             });
           } else {
             console.log('error submit!!');

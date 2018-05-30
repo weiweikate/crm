@@ -43,7 +43,7 @@ export const getManageList='/mock/5aeac1c6c186102e067af3f3/test/getManageList';
 
 // 溯源管理
     // 获取所有防伪码模板列表
-    export const rootsGetCodeTplList = '/admin/securityCodeTemplate/getPage';
+    export const rootsGetCodeTplList = '/admin/securityCodeTemplate/getAll';
     // 新增防伪码模板
     export const rootsAddCodeTplList = '/admin/securityCodeTemplate/add';
     // 查询防伪码模板
@@ -69,7 +69,7 @@ export const getManageList='/mock/5aeac1c6c186102e067af3f3/test/getManageList';
     // 添加管理员
     export const addManger = '/admin/adminUser/addAdminUser';
     // 重置登陆密码
-    export const resetPassword = ' /admin/adminUser/resetPassword';
+    export const resetPassword = '/admin/adminUser/resetPassword';
     // 开启/关闭管理员账号
     export const updateAdminUserStatus = '/admin/adminUser/updateAdminUserStatus';
     // 删除管理员账号

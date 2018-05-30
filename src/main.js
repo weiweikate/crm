@@ -26,7 +26,6 @@ Vue.filter('formatDate',function (value) {
 //使用钩子函数对路由进行权限跳转
 router.beforeEach((to, from, next) => {
     let privilege = JSON.parse(localStorage.getItem('privilegeList'));
-    console.log(privilege)
     const role = localStorage.getItem('ms_username');
     if(!role && to.path !== '/login'){
         next('/login');

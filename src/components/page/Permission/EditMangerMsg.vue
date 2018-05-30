@@ -23,7 +23,7 @@
                 <el-form ref="form" :model="form" :rules="rules">
                     <el-form-item prop="phone">
                         <el-input class="edit-pwd-inp" size="large" placeholder="请输入手机号" v-model="form.phone">
-                            <icon slot="prefix" class="inp-ico " ico="icon-zhucedengluyonghuming"></icon>
+                            <icon slot="prefix" class="inp-ico" ico="icon-zhucedengluyonghuming"></icon>
                         </el-input>
                     </el-form-item>
                     <el-form-item prop="code">

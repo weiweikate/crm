@@ -2,7 +2,7 @@
     <div>
         <breadcrumb :nav='breadcrumb'></breadcrumb>
         <el-card>
-            <el-button type='primary' @click="addChan">添加渠道</el-button>
+            <el-button v-if="p.addPermitChannel_2" type='primary' @click="addChan">添加渠道</el-button>
             <el-table v-loading="tableLoading" class="w-table" stripe :data="tableData" :height="height" border style="width: 100%">
                 <el-table-column prop="id" label="ID" width="180" align="center"></el-table-column>
                 <el-table-column prop="name" label="品类" align="center"></el-table-column>
@@ -14,10 +14,10 @@
                     <template v-if="scope.row.status == 3">删除</template>
                   </template> 
                 </el-table-column>
-                <el-table-column label="操作" align="center">
+                <el-table-column v-if="isShowOperate" label="操作" align="center">
                     <template slot-scope="scope">
-                        <el-button type="warning" @click='edit(scope.row)'>编辑</el-button>
-                        <el-button type="danger" v-if="scope.row.status == 2" @click="deleteMsg(scope.row)">删除</el-button>
+                        <el-button v-if="p.updatePermitChannel_2" type="warning" @click='edit(scope.row)'>编辑</el-button>
+                        <el-button type="danger" v-if="scope.row.status == 2 && updatePermitChannel_3" @click="deleteMsg(scope.row)">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -43,6 +43,8 @@ import addChannel from "./SecondChannel/addChannel";
 import editChannel from "./SecondChannel/editChannel";
 import deleteToast from "../../common/DeleteToast";
 import * as api from "../../../api/api.js";
+import utils from "../../../utils/index.js";
+import * as pApi from "../../../privilegeList/index.js";
 export default {
   components: {
     breadcrumb,
@@ -52,18 +54,28 @@ export default {
   },
   data() {
     return {
-      breadcrumb: ["授权审核管理", "渠道类目管理","线上平台二级渠道管理"],
+      // 权限控制
+      p: {
+        addPermitChannel_1: false,
+        addPermitChannel_2: false,
+        updatePermitChannel_1: false,
+        updatePermitChannel_2: false,
+        updatePermitChannel_3: false
+      },
+      isShowOperate: true,
+
+      breadcrumb: ["授权审核管理", "渠道类目管理", "线上平台二级渠道管理"],
       isShowAddChan: false,
       isShowEditChan: false,
       isShowDelToast: false,
       tableLoading: false,
-      row:'',
-      fathermsg:{},
+      row: "",
+      fathermsg: {},
       delId: 66,
-      delUrl:'http://api',
+      delUrl: "http://api",
       tableData: [{ ID: 123 }],
-      id:'',
-      fatherName:'',
+      id: "",
+      fatherName: "",
       page: {
         currentPage: 1,
         totalPage: 20
@@ -74,15 +86,30 @@ export default {
   created() {
     let winHeight = window.screen.availHeight - 360;
     this.height = winHeight;
+    this.pControl();
   },
-  activated(){
-    this.id = this.$route.params.id || JSON.parse(sessionStorage.getItem('secondChannel')).id;
-    this.fatherName = this.$route.params.fatherName || JSON.parse(sessionStorage.getItem('secondChannel')).fatherName;
+  activated() {
+    this.pControl();
+    this.id =
+      this.$route.params.id ||
+      JSON.parse(sessionStorage.getItem("secondChannel")).id;
+    this.fatherName =
+      this.$route.params.fatherName ||
+      JSON.parse(sessionStorage.getItem("secondChannel")).fatherName;
     this.fathermsg.id = this.id;
     this.fathermsg.fatherName = this.fatherName;
     this.getList();
   },
   methods: {
+    // 权限控制
+    pControl() {
+      for (const k in this.p) {
+        this.p[k] = utils.pc(pApi[k]);
+      }
+      if (!this.p.updatePermitChannel_2 && !this.p.updatePermitChannel_2) {
+        this.isShowOperate = false;
+      }
+    },
     //获取列表
     getList() {
       let that = this;
@@ -94,12 +121,12 @@ export default {
         .post(api.permitChannelGetList, data)
         .then(res => {
           this.tableLoading = false;
-          if(res.data.code == 200){
+          if (res.data.code == 200) {
             this.tableData = [];
             this.tableData = res.data.data;
-          }else{
+          } else {
             this.$message.warning(res.data.msg);
-          }   
+          }
         })
         .catch(err => {
           console.log(err);
@@ -130,7 +157,7 @@ export default {
     },
 
     // 添加渠道
-    addChan(){
+    addChan() {
       this.isShowAddChan = true;
     },
     // 关闭添加弹窗
@@ -140,7 +167,7 @@ export default {
     },
     // 关闭编辑弹窗
     closeEditChan(msg) {
-      this.getList();  
+      this.getList();
       this.isShowEditChan = msg;
     },
     // 删除弹窗

@@ -4,15 +4,15 @@
         <el-card>
             <el-button type='primary' @click="addModule">新增功能模块</el-button>
             <el-table :span-method='mergeRow' v-loading="tableLoading" class="w-table" :data="tableData" :height="height" border style="width: 100%">
-                <el-table-column prop="id" label="ID" width="180" align="center"></el-table-column>
-                <el-table-column prop="title" label="一级模块" align="center"></el-table-column>
-                <el-table-column prop="children" label="二级模块" align="center"></el-table-column>
+                <el-table-column prop="id" label="ID" width="80" align="center"></el-table-column>
+                <el-table-column prop="title" label="一级模块" width="200" align="center"></el-table-column>
+                <el-table-column prop="children" label="二级模块" width="200" align="center"></el-table-column>
                 <el-table-column prop="three" label="权限" align="center">
                   <template slot-scope="scope">
                     <el-tag v-for="(v,k) in scope.row.three" :key="k">{{v.title}}</el-tag>
                   </template>
                 </el-table-column>
-                <el-table-column label="操作" align="center">
+                <el-table-column label="操作" width="120" align="center">
                     <template slot-scope="scope">
                         <el-button type="primary" @click='addPermission(scope.row)'>添加权限</el-button>
                     </template>
@@ -25,7 +25,7 @@
                     <el-input class="add-module-inp" v-model="addModuleForm.name"></el-input>
                 </el-form-item>
                 <el-form-item prop="mdLevel" label="模块层级">
-                    <el-select v-model="addModuleForm.mdLevel" placeholder="请选择">
+                    <el-select @change="getFirstList" v-model="addModuleForm.mdLevel" placeholder="请选择">
                         <el-option
                         v-for="item in mdLevel"
                         :key="item.value"
@@ -47,23 +47,23 @@
             </el-form>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="isShowaddToask = false">取 消</el-button>
-                <el-button type="primary" @click="confirmAddModule('addModuleForm')">确 定</el-button>
+                <el-button :loading="btnLoading" type="primary" @click="confirmAddModule('addModuleForm')">确 定</el-button>
             </span>
         </el-dialog>
         <el-dialog title="添加权限" width='30%' :visible.sync="isShowPermission">
             <el-form label-position="right" ref="addPermissionForm" :rules="rules" :model="addPermissionForm">
                 <el-form-item prop="url" label="URL">
-                    <el-input class="add-module-inp" style="margin-left:25px" v-model="addPermissionForm.url"></el-input>
+                    <el-input class="add-module-inp" style="margin-left:25px" v-model.trim="addPermissionForm.url"></el-input>
                 </el-form-item>
                 <el-form-item prop="belongModule" label="所属模块">
-                    <el-input class="add-module-inp" disabled v-model="addPermissionForm.belongModule"></el-input>
+                    <el-input class="add-module-inp" disabled v-model.trim="addPermissionForm.belongModule"></el-input>
                 </el-form-item>
                 <el-form-item prop="perName" label="权限名称">
-                    <el-input class="add-module-inp" v-model="addPermissionForm.perName"></el-input>
+                    <el-input class="add-module-inp" v-model.trim="addPermissionForm.perName"></el-input>
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
-              <el-button type="primary" @click="confirmAddPer('addPermissionForm')">确 定</el-button>
+              <el-button :loading="btnLoading" type="primary" @click="confirmAddPer('addPermissionForm')">确 定</el-button>
               <el-button @click="isShowPermission = false">取 消</el-button>
             </span>
         </el-dialog>
@@ -82,6 +82,7 @@ export default {
       tableLoading: false,
       isShowaddToask: false,
       isShowPermission: false,
+      btnLoading:false,
       mdLevel: [
         {
           value: "1",
@@ -207,20 +208,24 @@ export default {
       }else{
         data.parentId = 0;
       }
+      this.btnLoading = true;
       this.$axios.post(api.addFunctionModule,data)
       .then(res=>{
         if(res.data.code == 200){
           this.$message.success(res.data.data);
           this.getList();
+          this.btnLoading = false;
           this.isShowaddToask = false;
         }else{
+          this.btnLoading = false;
+          this.isShowaddToask = false;
           this.$message.error(res.data.msg);
         }
       })
       .catch(err=>{
+        this.btnLoading = false;
         console.log(err);
       })
-      this.isShowaddToask = false;
     },
 
     // 获取一级模块列表
@@ -256,14 +261,18 @@ export default {
           data.parentId = this.addPermissionForm.parentId;
           data.name = this.addPermissionForm.perName;
           data.url = this.addPermissionForm.url;
+          this.btnLoading = true;
           this.$axios
             .post(api.addPrivilege, data)
             .then(res => {
               if (res.data.code == 200) {
                 this.$message.success(res.data.data);
                 this.getList();
+                this.btnLoading = false;
                 this.isShowaddToask = false;
               } else {
+                this.btnLoading = false;
+                this.isShowaddToask = false;
                 this.$message.error(res.data.msg);
               }
             })

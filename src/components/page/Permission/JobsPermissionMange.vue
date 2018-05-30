@@ -2,15 +2,15 @@
     <div>
         <breadcrumb :nav='nav'></breadcrumb>
         <el-card>
-            <el-button type='primary' @click="addRole">添加角色</el-button>
+            <el-button v-if="p.addRole" type='primary' @click="addRole">添加角色</el-button>
             <el-table v-loading="tableLoading" class="w-table" stripe :data="tableData" :height="height" border style="width: 100%">
                 <el-table-column prop="id" label="ID" width="180" align="center"></el-table-column>
                 <el-table-column prop="rname" label="角色名称" align="center"></el-table-column>
                 <el-table-column prop="dname" label="部门" align="center"></el-table-column>
-                <el-table-column label="操作" align="center">
+                <el-table-column v-if="isShowOperate" label="操作" align="center">
                     <template slot-scope="scope">
-                        <el-button type="warning" @click='editRole(scope.row)'>编辑</el-button>
-                        <el-button type="danger" @click="deleteRole(scope.row)">删除</el-button>
+                        <el-button v-if="p.updateRole" type="warning" @click='editRole(scope.row)'>编辑</el-button>
+                        <el-button v-if="p.deleteRole" type="danger" @click="deleteRole(scope.row)">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -32,6 +32,8 @@
 import breadcrumb from "../../common/Breadcrumb";
 import deleteToast from "../../common/DeleteToast";
 import * as api from "../../../api/api.js";
+import utils from '../../../utils/index.js'
+import * as pApi from '../../../privilegeList/index.js';
 export default {
   components: {
     breadcrumb,
@@ -39,6 +41,14 @@ export default {
   },
   data() {
     return {
+      // 权限控制
+      p:{
+        addRole:false,
+        updateRole:false,
+        deleteRole:false,
+      },
+      isShowOperate:true,
+
       nav: ["岗位管理", "岗位权限管理"],
       tableLoading: false,
       isShowDelToast: false,
@@ -54,11 +64,22 @@ export default {
   created() {
     let winHeight = window.screen.availHeight - 360;
     this.height = winHeight;
+    this.pControl();
   },
   activated(){
+    this.pControl();
     this.getList(this.page.currentPage);
   },
   methods: {
+    // 权限控制
+    pControl() {
+      for (const k in this.p) {
+        this.p[k] = utils.pc(pApi[k]);
+      }
+      if (!this.p.updateRole && !this.p.deleteRole) {
+        this.isShowOperate = false;
+      }
+    },
     //获取列表
     getList(val) {
       let that = this;
