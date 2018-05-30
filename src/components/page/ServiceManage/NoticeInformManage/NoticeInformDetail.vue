@@ -147,6 +147,8 @@
                 myQuillEditor: HTMLInputElement,
                 imgInput: HTMLInputElement
             };
+        },
+        activated(){
             this.id =
                 this.$route.query.id ||
                 JSON.parse(sessionStorage.getItem("noticeInformDetail").id);
@@ -199,7 +201,9 @@
                                     if (resData.data.code == 200) {
                                         for (let i in resData.data.data) {
                                             let name=resData.data.data[i].name;
-                                            that.users.push(name);
+                                            if(that.users.indexOf(name)==-1){
+                                                that.users.push(name);
+                                            }
                                             if (arr[i] && arr[i] == 1) {
                                                 count++;
                                                 if(that.checkedUsers.indexOf(name)==-1){
