@@ -199,6 +199,8 @@ export default {
       width: 128px;
       height: 128px;
       margin-top: 15px;
+      border-radius: 64px;
+      background-color: white;
     }
   }
 }

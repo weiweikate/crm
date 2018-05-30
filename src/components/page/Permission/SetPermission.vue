@@ -2,7 +2,7 @@
     <div class="set-permission">
         <breadcrumb :nav='nav'></breadcrumb>
         <el-card>
-            <el-button type='primary' @click="addModule">新增功能模块</el-button>
+            <el-button v-if="p.addFunctionModule" type='primary' @click="addModule">新增功能模块</el-button>
             <el-table :span-method='mergeRow' v-loading="tableLoading" class="w-table" :data="tableData" :height="height" border style="width: 100%">
                 <el-table-column prop="id" label="ID" width="80" align="center"></el-table-column>
                 <el-table-column prop="title" label="一级模块" width="200" align="center"></el-table-column>
@@ -12,9 +12,9 @@
                     <el-tag v-for="(v,k) in scope.row.three" :key="k">{{v.title}}</el-tag>
                   </template>
                 </el-table-column>
-                <el-table-column label="操作" width="120" align="center">
+                <el-table-column v-if="p.addPrivilege" label="操作" width="120" align="center">
                     <template slot-scope="scope">
-                        <el-button type="primary" @click='addPermission(scope.row)'>添加权限</el-button>
+                        <el-button v-if="p.addPrivilege" type="primary" @click='addPermission(scope.row)'>添加权限</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -78,6 +78,12 @@ export default {
   },
   data() {
     return {
+      // 权限控制
+      p:{
+        addFunctionModule:false,
+        addPrivilege:false,
+      },
+
       nav: ["权限管理", "权限设置"],
       tableLoading: false,
       isShowaddToask: false,
@@ -132,6 +138,12 @@ export default {
     this.getFirstList();
   },
   methods: {
+    // 权限控制
+    pControl() {
+      for (const k in this.p) {
+        this.p[k] = utils.pc(pApi[k]);
+      }
+    },
     //获取列表
     getList() {
       let that = this;

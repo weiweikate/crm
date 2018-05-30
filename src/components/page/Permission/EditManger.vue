@@ -69,6 +69,7 @@
 <script>
 import breadcrumb from "../../common/Breadcrumb";
 import * as api from "../../../api/api.js";
+import * as pApi from '../../../privilegeList/index.js';
 export default {
   components: {
     breadcrumb
@@ -121,7 +122,7 @@ export default {
           this.form.superior = res.data.data.immediateSuperior;
           this.form.face = res.data.data.face;
           res.data.data.adminUserPrivilegeList.forEach((v,k)=>{
-            this.getUserPriList.push(v.privilege_id);
+            this.getUserPriList.push(v.privilegeId);
           })
           this.assemblyData();
         }else{
@@ -145,6 +146,7 @@ export default {
       data = this.form;
       data.role = role.join(',');
       data.id = this.id;
+      data.url = pApi.updateAdminUser;
       this.$refs[formName].validate((valid) => {
           if (valid) {
             this.btnLoading = true;

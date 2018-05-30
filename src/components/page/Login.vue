@@ -39,9 +39,9 @@
                         </div>
                     </el-form>
                 </el-tab-pane>
-                <el-tab-pane label="扫码登陆" name="third">
+                <!-- <el-tab-pane label="扫码登陆" name="third">
                     <div style="width:100%;text-align:center">扫码登陆暂未开通，敬请期待！</div>
-                </el-tab-pane>
+                </el-tab-pane> -->
             </el-tabs>
         </div>
     </div>
@@ -99,6 +99,7 @@ export default {
               if (res.data.code == 200) {
                 localStorage.setItem("ms_username", res.data.data.name);
                 localStorage.setItem("ms_userID", res.data.data.id);
+                localStorage.setItem("ms_hadFirstLogin", res.data.data.hadFirstLogin);
                 this.getUserPriList(res.data.data.id);
                 this.btnLoading = false;
               } else {
@@ -138,7 +139,7 @@ export default {
         .post(api.getCode, data)
         .then(res => {
           if (res.data.code == 200) {
-            this.$message.success(res.data.msg);
+            this.$message.success(res.data.data);
             alert(res.data.data);
           } else {
             this.$message.warning(res.data.msg);
@@ -160,7 +161,7 @@ export default {
           if (res.data.code == 200) {
             let privilegeList = [];
             res.data.data.adminUserPrivilegeList.forEach((v, k) => {
-              privilegeList.push(v.page_uri);
+              privilegeList.push(v.url);
             });
             localStorage.setItem('privilegeList',JSON.stringify(privilegeList));
             this.$message.success("登陆成功！");

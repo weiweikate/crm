@@ -43,4 +43,6 @@
         export const deleteRole = '/admin/role/deleteRole';
     // 权限设置
         // 新增功能模块
+        export const addFunctionModule = '/admin/privilege/addFunctionModule';
         // 添加权限
+        export const addPrivilege = '/admin/privilege/addPrivilege';

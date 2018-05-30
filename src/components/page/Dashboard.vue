@@ -66,12 +66,12 @@
                         <span>快捷操作模块</span>
                     </div>
                     <div class="right-wrap">
-                        <router-link to="/brandProductClassify" tag="div">
+                        <!-- <router-link to="/brandProductClassify" tag="div"> -->
                         <div class="right-content">
                             <div class="r-ico-wrap"><icon ico='icon-chanpin1' /></div>
                             <span class="r-content">发布产品</span>
                         </div>
-                        </router-link>
+                        <!-- </router-link> -->
                         <router-link to="/addNoticeInform" tag="div">
                         <div class="right-content">
                             <div class="r-ico-wrap"><icon ico='icon-tongzhi' /></div>
@@ -84,7 +84,7 @@
                             <span class="r-content">创建管理员账号</span>
                         </div>
                         </router-link>
-                        <router-link to="/memberManage" tag="div">
+                        <router-link to="/sendInvite" tag="div">
                         <div class="right-content">
                             <div class="r-ico-wrap"><icon ico='icon-huiyuantianjiakehu' /></div>
                             <span class="r-content">会员邀请</span>
@@ -124,7 +124,6 @@ export default {
     };
   },
   created(){
-      console.log(localStorage.getItem('ms_hadFirstLogin'));
       if(localStorage.getItem('ms_hadFirstLogin') == 1){
           this.isShowActAccCode = true;
       }

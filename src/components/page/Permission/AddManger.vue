@@ -69,6 +69,7 @@
 <script>
 import breadcrumb from "../../common/Breadcrumb";
 import * as api from "../../../api/api.js";
+import * as pApi from '../../../privilegeList/index.js';
 export default {
   components: {
     breadcrumb
@@ -117,13 +118,14 @@ export default {
       })
       data = this.form;
       data.role = role.join(',');
+      data.url = pApi.addAdminUser;
       this.$refs[formName].validate((valid) => {
           if (valid) {
             this.$axios
             .post(api.addManger, data)
             .then(res => {
               if(res.data.code == 200){
-                this.$message.success(res.data.msg);
+                this.$message.success(res.data.data);
                 this.$router.push('/manageList');
               }else{
                 this.$message.warning(res.data.msg);

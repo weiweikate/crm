@@ -34,7 +34,7 @@
               </el-table-column>
               <el-table-column v-if="isShowOperate" label="操作" width="400" align="center">
                 <template slot-scope="scope">
-                  <el-button v-if="p.updateAdminUser" size="mini" type="primary" @click="editManger(scope.row)">编辑</el-button>
+                  <el-button  size="mini" type="primary" @click="editManger(scope.row)">编辑</el-button>
                   <el-button v-if='scope.row.status == 1 && p.resetPassword' size="mini" type="warning" @click="resetPwd(scope.row)">密码重置</el-button>
                   <el-button v-if="p.showAdminLog" size="mini" type="warning" @click="showLog(scope.row)">查看日志</el-button>
                   <el-button v-if='scope.row.status == 0&&p.deleteAdminUser' @click="deleteUser(scope.row)" size="mini" type="danger"  >账号删除</el-button>

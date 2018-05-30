@@ -14,6 +14,14 @@
                     <span>权限信息</span>
                     <p>默认权限：<el-tag style="margin-right:5px" v-for="(v,k) in privilege" :key="k">{{v}}</el-tag></p>
                     <div class="avatar"><img :src="face" alt=""></div>
+                    <el-upload
+                        class="avatar"
+                        :action="uploadImg"
+                        :show-file-list="false"
+                        :on-success="uploadAvatar">
+                        <img v-if="face == ''" src="../../../assets/images/logo.png" alt="">
+                        <img v-else :src="face" alt="">
+                    </el-upload>
                     <el-button type="primary" class='edit-btn' @click='editPwd'>登陆密码修改</el-button>
                 </div>
             </div>
@@ -66,6 +74,7 @@ export default {
       nav: ["权限管理", "管理员基础信息修改"],
       isShowEditPwd: false,
       code:true,
+      uploadImg:'',
       name:'',
       telephone:'',
       deptmentName:'',
@@ -78,7 +87,7 @@ export default {
         phone: "",
         code:'',
         password:'',
-        repeatPwd:''
+        repeatPwd:'',
       },
       rules: {
           phone:[{ required: true, message: '请输入电话号码', trigger: 'blur' }],
@@ -87,7 +96,32 @@ export default {
       }
     };
   },
+  created() {
+    this.uploadImg = api.addImg;
+    this.id = localStorage.getItem('ms_userID');
+    this.$axios.post(api.findAdminUserbyId,{id:this.id})
+    .then(res=>{
+        if(res.data.code == 200){
+            this.name = res.data.data.name;
+            this.telephone = res.data.data.telephone;
+            this.deptmentName = res.data.data.deptmentName;
+            this.jobName = res.data.data.jobName;
+            this.immediateSuperior = res.data.data.immediateSuperior;
+            this.face = res.data.data.face;
+            this.privilege = [];
+            res.data.data.adminUserPrivilegeList.forEach((v,k)=>{
+                this.privilege.push(v.name);
+            })
+        }else{
+            this.$message.warning(res.data.msg);
+        }
+    })
+    .catch(err=>{
+        console.log(err)
+    })
+  },
   activated() {
+    this.uploadImg = api.addImg;
     this.id = localStorage.getItem('ms_userID');
     this.$axios.post(api.findAdminUserbyId,{id:this.id})
     .then(res=>{
@@ -111,7 +145,7 @@ export default {
     })
   },
   methods:{
-    //   修改密码
+    //  修改信息
       editPwd(){
           this.form = {};
           this.isShowEditPwd = true;
@@ -146,7 +180,16 @@ export default {
           }
         });
       },
-    //   获取验证码
+
+    // 上传图片
+    uploadAvatar(res) {
+      if(res.code == 200){
+        this.face = res.data.imageUrl;
+      }else{
+        this.$message.warning(res.msg);
+      }
+    },
+    //  获取验证码
      getCode(){
       if(this.form.phone == ''){
         this.$message.warning('请输入手机号');
@@ -250,6 +293,21 @@ export default {
   .el-form-item__error{
       left: 92px;
   }
+  .el-upload {
+      border: 1px dashed #d9d9d9;
+      border-radius: 6px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .el-upload:hover {
+      border-color: #409eff;
+    }
+    .el-upload--text {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
 }
 </style>
 

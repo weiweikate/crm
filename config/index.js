@@ -3,17 +3,10 @@
 // see http://vuejs-templates.github.io/webpack for documentation.
 
 const path = require("path");
-<<<<<<< Updated upstream
-// let baseURL = "http://172.16.10.252";
-// let baseURL = "http://172.16.10.51";
-// let baseURL = "http://172.16.10.54";
-let baseURL = "http://172.16.10.53";
-=======
 let baseURL = "http://172.16.10.252";
 // let baseURL = "http://172.16.10.51";
 // let baseURL = "http://172.16.10.54";
 // let baseURL = "http://172.16.10.53";
->>>>>>> Stashed changes
 let url_1 = baseURL+':8101';
 let url_2 = baseURL+':8100';
 
