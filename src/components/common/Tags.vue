@@ -8,7 +8,7 @@
                 <span class="tags-li-icon" @click="closeTags(index)"><i class="el-icon-close"></i></span>
             </li>
         </ul>
-        <div class="tags-close-box">
+        <div class="tags-close-box" v-if="showOthers">
             <el-dropdown @command="handleTags">
                 <el-button style="background-color:#f56c6c;border-color:#f56c6c" size="mini" type="primary">
                     标签选项<i class="el-icon-arrow-down el-icon--right"></i>
@@ -28,7 +28,8 @@
         data() {
             return {
                 tagsList: [],
-                extraLst:[]
+                extraLst:[],
+                showOthers:false
             }
         },
         methods: {
@@ -68,6 +69,7 @@
                     path: route.path
                 })
                 if(!isExist && this.tagsList.length>11){
+                    this.showOthers=true;
                     this.extraLst.push({
                     title: route.meta.title,
                     path: route.path
@@ -115,7 +117,7 @@
         position: relative;
         height: 30px;
         overflow: hidden;
-        background: white;
+        /*background: white;*/
         padding-right: 120px;
     }
 
@@ -177,7 +179,7 @@
         text-align: center;
         width: 110px;
         height: 30px;
-        background: #fff;
+        /*background: #fff;*/
         box-shadow: -3px 0 15px 3px rgba(0, 0, 0, .1);
         z-index: 10;
     }

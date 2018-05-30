@@ -42,11 +42,11 @@
                 <el-form-item prop="levelId" label="用户层级" label-width="120">
                     <el-select v-model="exportForm.levelId" placeholder="全部层级">
                         <el-option label="全部层级" value=""></el-option>
-                        <el-option :label="item.name" :value="item.level" v-for="(item,index) in levelList" :key="index"></el-option>
+                        <el-option :label="item.name" :value="item.id" v-for="(item,index) in levelList" :key="index"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item>
-                    <!--<el-button @click="exportData" type="primary">导出</el-button>-->
+                    <el-button @click="exportData" type="primary">导出</el-button>
                 </el-form-item>
             </el-form>
             <template>
@@ -299,7 +299,42 @@
             },
             //导出
             exportData() {
-
+                let that=this;
+                let data = that.form;
+                data.page=that.page.currentPage;
+                data.levelId=that.exportForm.levelId;
+                let addrss=that.address;
+                if(addrss && addrss[0]){
+                    data.provinceId=addrss[0];
+                    if(addrss[1]){
+                        data.cityId=addrss[1];
+                    }
+                    if(addrss[2]){
+                        data.areaId=addrss[2];
+                    }
+                }else{
+                    data.provinceId='';
+                    data.cityId='';
+                    data.areaId='';
+                }
+                that.$axios
+                    .post(api.exportDealerListExcel, data, { responseType: "blob" })
+                    .then(res => {
+                        var data = res.data;
+                        if (!data) {
+                            return;
+                        }
+                        let url = window.URL.createObjectURL(new Blob([data]));
+                        let link = document.createElement("a");
+                        link.style.display = "none";
+                        link.href = url;
+                        link.setAttribute("download", "会员列表.xlsx");
+                        document.body.appendChild(link);
+                        link.click();
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
             },
             //   重置表单
             resetForm(formName) {

@@ -115,7 +115,7 @@
                 tableLoading: false,
                 page: {
                     currentPage: 1,
-                    totalPage: 20
+                    totalPage: 0
                 },
                 height: '',
                 formLabelWidth: '100px',
@@ -207,6 +207,7 @@
             //重置表单
             resetForm(formName) {
                 this.$refs[formName].resetFields();
+                this.form.date='';
                 this.getList(this.page.currentPage)
             },
         }

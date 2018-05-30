@@ -160,6 +160,9 @@
         },
         activated() {
             utils.cleanData(1,this.form);
+            this.form.nType='1';
+            this.form.pushType='1';
+            this.title='';
             this.getLevelList();
             this.username = localStorage.getItem("ms_username");
             this.userId = localStorage.getItem("ms_userID");
@@ -347,6 +350,7 @@
                     .catch(err => {
                         that.btnLoading = false
                     })
+
             },
 
         },

@@ -74,7 +74,7 @@
                         </div>
                         <div class="item-row">
                             <div class="item">授权码：{{permit.code}}</div>
-                            <div class="item">授权层级：{{permit.level}}级</div>
+                            <div class="item">授权层级：{{permit.levelName}}级</div>
                         </div>
                     </div>
                 </div>
@@ -154,9 +154,9 @@
         </div>
 
         <!--基础信息修改弹窗-->
-        <edit-basic @status='closeEditBasic' @msg='basicToast' :dealer='dealer' :id="id" v-if="isShowEditBasic"></edit-basic>
+        <edit-basic  @msg='basicToast' :dealer='dealer' :id="id" v-if="isShowEditBasic"></edit-basic>
         <!--授权信息修改弹窗-->
-        <edit-author @status='closeEditAuthor' @msg='authorToast' :permit='permit' :id="id" v-if="isShowEditAuthor"></edit-author>
+        <edit-author @msg='authorToast' :permit='permit' :id="id" v-if="isShowEditAuthor"></edit-author>
     </div>
 </template>
 
@@ -193,12 +193,18 @@
         },
         methods: {
             basicToast(msg) {
-                this.isShowEditBasic = msg;
-                this.getDetail()
+                let that=this;
+                that.isShowEditBasic = msg;
+                setTimeout(function () {
+                    that.getDetail()
+                },1000)
             },
             authorToast(msg) {
-                this.isShowEditAuthor = msg;
-                this.getDetail()
+                let that=this;
+                that.isShowEditAuthor = msg;
+                setTimeout(function () {
+                    that.getDetail()
+                },1000)
             },
             //获取详情
             getDetail() {
@@ -267,14 +273,7 @@
             updateAuthorInf() {
                 this.isShowEditAuthor = true;
             },
-            // 关闭编辑弹窗
-            closeEditBasic(msg) {
-                this.isShowEditBasic = msg;
-            },
-            // 关闭编辑弹窗
-            closeEditAuthor(msg) {
-                this.isShowEditAuthor = msg;
-            },
+
         }
     }
 </script>

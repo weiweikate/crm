@@ -26,12 +26,12 @@
                                 <el-input v-model="dealer.realname" placeholder="请输入用户姓名" size="medium"></el-input>
                             </el-form-item>
                             <el-form-item label="手机号">
-                                <el-input v-model="dealer.phone" @change="textPhone" placeholder="请输入手机号" size="medium"></el-input>
+                                <el-input v-model="dealer.phone" @blur="textPhone" placeholder="请输入手机号" size="medium"></el-input>
                             </el-form-item>
                         </div>
                         <div class="form-item">
                             <el-form-item label="身份证号">
-                                <el-input v-model="dealer.idcard" @change="testIdCard" placeholder="请输入身份证号码" size="medium"></el-input>
+                                <el-input v-model="dealer.idcard" @blur="testIdCard" placeholder="请输入身份证号码" size="medium"></el-input>
                             </el-form-item>
                         </div>
                         <div class="form-item address-area">
@@ -42,12 +42,13 @@
                         </div>
                     </div>
                     <div class="right">
-                        <img :src="dealer.head_img?dealer.head_img:'src/assets/images/logo.png'" alt="">
+                        <img :src="img?img:'src/assets/images/logo.png'" alt="">
                         <!--<img v-else src="../../../../assets/images/logo.png" alt="">-->
                         <el-upload
                                 action="/commonAPI/ossClient/aliyunOSSUploadImage"
                                 :show-file-list="false"
-                                :on-success="handleAvatarSuccess">
+                                :on-success="handleAvatarSuccess"
+                                :before-upload="beforeAvatarUpload">
                             <el-button type="primary">编辑头像</el-button>
                         </el-upload>
                         <div class="tip">请上传jpg，png格式</div>
@@ -81,13 +82,17 @@
         data() {
             return {
                 address: '',
-                form:{}
+                form:{},
+                phone:true,
+                idCard:true,
+                img:''
             };
         },
         created(){
             let reginArr=[];
             reginArr.push(this.dealer.province_id,this.dealer.city_id,this.dealer.area_id);
             this.address=reginArr;
+            this.img=this.dealer.head_img;
         },
         methods: {
             // 获取省市区
@@ -100,24 +105,36 @@
             },
             //上传图片
             handleAvatarSuccess(res, file) {
+                this.img = res.data.imageUrl;
                 this.dealer.head_img = res.data.imageUrl;
+            },
+            beforeAvatarUpload(file) {
+                const isJPG = (file.type === 'image/jpeg'||file.type === 'image/png');
+                if (!isJPG) {
+                    this.$message.error('请上传jpg，png格式!');
+                }
+                return isJPG ;
             },
             textPhone(){
                 let that=this;
-                let reg=/^[1][3,4,5,7,8][0-9]{9}$/;
-                if (!reg.test(that.form.phone)) {
+                let reg=/^1(3|4|5|7|8)\d{9}$/;
+                if (!reg.test(that.dealer.phone)) {
                     that.$message.warning('请输入正确的手机号格式!');
-                    that.form.phone='';
+                    that.phone=false;
                     return false;
+                }else{
+                    that.phone=true;
                 }
             },
             testIdCard(){
                 let that=this;
-                let reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
-                if(!reg.test(that.form.idCard)) {
+                let reg = /^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$|^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}([0-9]|X|x)$/;
+                if(!reg.test(that.dealer.idcard)) {
                     that.$message.warning('请输入正确的身份证号!');
-                    that.form.idCard='';
+                    that.idCard=false;
                     return false;
+                }else{
+                    that.idCard=true;
                 }
             },
             // 提交表单
@@ -127,7 +144,7 @@
                 data.id=that.id;
                 data.address=that.dealer.address;
                 data.address=that.dealer.address;
-                data.headImg=that.dealer.head_img;
+                data.headImg=that.img;
                 data.idcard=that.dealer.idcard;
                 data.nickname=that.dealer.nickname;
                 data.phone=that.dealer.phone;
@@ -145,6 +162,9 @@
                     }else{
                         data.areaId=''
                     }
+                }
+                if(that.phone==false||that.idCard==false){
+                    return false
                 }
                 that.addrPreFix=that.address;
                 that.$axios

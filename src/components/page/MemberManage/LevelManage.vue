@@ -185,6 +185,7 @@
             cancel(){
                 this.addMask = false;
                 this.editMask = false;
+                this.getList(this.page.currentPage)
             },
             //获取列表
             getList(val) {

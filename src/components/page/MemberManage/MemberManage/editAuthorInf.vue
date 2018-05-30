@@ -10,7 +10,7 @@
                     <el-form-item label="授权层级" class="special">
                         <el-select v-model="permit.level" placeholder="全部层级">
                             <el-option label="全部层级" value=""></el-option>
-                            <el-option :label="item.name" :value="item.level" v-for="(item,index) in levelList"
+                            <el-option :label="item.name" :value="item.id" v-for="(item,index) in levelList"
                                        :key="index"></el-option>
                         </el-select>
                     </el-form-item>
@@ -22,7 +22,7 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item label="上级代理:" class="special">
-                        <el-input v-model="permit.id" @blur="sureUpdate" size="medium"></el-input>
+                        <el-input v-model="permit.up_dealerid" @blur="sureUpdate" size="medium"></el-input>
                         <span class="tip">请输入上级代理</span>
                     </el-form-item>
 
@@ -60,7 +60,7 @@
         components: {
             icon
         },
-        props:{
+        props: {
             id: {
                 require: true
             },
@@ -72,29 +72,29 @@
             return {
                 isUpdateUperMask: false,
                 levelList: [],//用户层级列表
-                num:'',
-                oldId:','
+                num: '',
+                oldId: ''
             };
         },
-        created(){
+        created() {
             this.getLevelList();
-            this.permit.level=this.permit.level_id;
-            this.oldId=this.permit.id;
-            this.permit.d_type=this.permit.d_type.toString()
+            this.permit.level = this.permit.level_id;
+            this.oldId = this.permit.id;
+            this.permit.d_type = this.permit.d_type.toString()
         },
         methods: {
             //获取用户层级列表
             getLevelList() {
                 let that = this;
-                let data={};
+                let data = {};
                 that.$axios
                     .post(api.getDealerLevelList, data)
                     .then(res => {
                         if (res.data.code == 200) {
                             that.levelList = res.data.data;
-                            for(let i in res.data.data){
-                                if(that.permit.level_id==res.data.data[i].id){
-                                    that.num=i;
+                            for (let i in res.data.data) {
+                                if (that.permit.level_id == res.data.data[i].id) {
+                                    that.num = i;
                                 }
                             }
                         } else {
@@ -111,22 +111,24 @@
                 this.$emit("msg", false);
             },
             // 提交表单
-            submitForm(form) {
-                let that=this;
+            submitForm() {
+                let that = this;
                 that.closeToask();
-                let data={};
-                data.id=that.id;
-                data.dType=that.permit.d_type;
-                data.levelId=that.permit.level_id;
-                data.upDealerid=that.permit.id;
+                let data = {};
+                data.id = that.id;
+                data.dType = that.permit.d_type;
+                data.levelId = that.permit.level;
+                if (that.oldId != that.permit.up_dealerid) {
+                    data.upDealerid = that.permit.up_dealerid;
+                }
                 that.$axios
                     .post(api.updateDealerPermitById, data)
                     .then(res => {
                         that.btnLoading = false;
-                        if(res.data.code == 200){
+                        if (res.data.code == 200) {
                             that.$message.success('修改成功');
                             that.$emit("msg", false);
-                        }else{
+                        } else {
                             that.$message.warning(res.data.msg);
                             that.$emit("msg", false);
                         }
@@ -137,12 +139,14 @@
                     });
             },
             sureUpdate() {
-                this.isUpdateUperMask = true
+                if (this.oldId != this.permit.id) {
+                    this.isUpdateUperMask = true
+                }
             },
             closeUpdateUperMask(status) {
                 this.isUpdateUperMask = false;
-                if(!status){
-                    this.permit.id=this.oldId;
+                if (!status) {
+                    this.permit.id = this.oldId;
                 }
             }
         }

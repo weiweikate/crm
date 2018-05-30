@@ -43,7 +43,7 @@
                     <div style="margin-top: 30px" v-if="detail.status==1">
                         <el-button type="primary" v-loading="btnLoading" @click="update">确认回复</el-button>
                         <el-button type="success" v-loading="btnLoading" @click="update">修改问题类型</el-button>
-                        <el-button>取消</el-button>
+                        <el-button @click="cancel">取消</el-button>
                     </div>
                 </div>
                 <div v-for="(item,index) in list">
@@ -192,7 +192,10 @@
                 this.id=item.id;
                 this.getDetail()
             },
-
+            //取消
+            cancel(){
+                this.$router.push('/feedBack')
+            },
             //修改
             update(){
                 let that=this;

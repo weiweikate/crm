@@ -66,7 +66,7 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button type="primary" @click="addOrEdit('addForm')">确 认</el-button>
-                <el-button @click="addMask = false">取 消</el-button>
+                <el-button @click="cancel">取 消</el-button>
             </div>
         </el-dialog>
         <el-dialog :title="title" :visible.sync="editMask">
@@ -94,7 +94,7 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button type="primary" @click="addOrEdit('form')">确 认</el-button>
-                <el-button @click="editMask = false">取 消</el-button>
+                <el-button @click="cancel">取 消</el-button>
             </div>
         </el-dialog>
         <!--删除弹窗-->
@@ -201,7 +201,7 @@
             editItem(row) {
                 this.title = "编辑二级类目";
                 this.editMask = true;
-                row.status=row.status.toString();
+                row.status = row.status.toString();
                 this.form = row;
                 this.itemId = row.id;
                 this.itype = "edit";
@@ -259,24 +259,12 @@
                     this.form.img = URL.createObjectURL(file.raw);
                 }
             },
-            //上传图片
-            // beforeIconUpload(file) {
-            //     let fd = new FormData();
-            //     fd.append("file", file);
-            //     this.$axios
-            //         .post(api.addImg, fd, {
-            //             headers: {
-            //                 "Content-Type": "multipart/form-data"
-            //             }
-            //         })
-            //         .then(res => {
-            //             console.log(res.data);
-            //             this.form.img = "http://img";
-            //         })
-            //         .catch(err => {
-            //             console.log(err);
-            //         });
-            // }
+            //取消
+            cancel() {
+                this.addMask = false;
+                this.editMask = false;
+                this.getList(this.page.currentPage);
+            }
         }
     };
 </script>

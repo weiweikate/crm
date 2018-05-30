@@ -66,7 +66,7 @@
                             <template v-if="scope.row.push_country==1">全国</template>
                             <template v-if="scope.row.push_country==2">国外</template>
                             <template v-if="scope.row.push_country==3">
-                                {{scope.row.provinceName}}{{scope.row.cityName}}{{scope.row.areaName}}
+                                {{scope.row.address}}
                             </template>
                         </template>
                     </el-table-column>
@@ -169,20 +169,41 @@
                 isShowDelToast: false,
                 status:'',
                 id:'',
-                btnLoading:false
+                btnLoading:false,
+                levels:[]
             }
         },
         created() {
             let winHeight = window.screen.availHeight - 520;
             this.height = winHeight;
-            this.getList(this.page.currentPage)
+            this.getTable();
         },
         activated() {
             let winHeight = window.screen.availHeight - 520;
             this.height = winHeight;
-            this.getList(this.page.currentPage)
+            this.getTable();
         },
         methods: {
+            getTable(){
+                let that=this;
+                let param={};
+                that.$axios
+                    .post(api.getDealerLevelList, param)
+                    .then(resData => {
+                        if (resData.data.code == 200) {
+                            for (let i in resData.data.data) {
+                                let name=resData.data.data[i].name;
+                                that.levels.push(name);
+                            }
+                            this.getList(this.page.currentPage)
+                        } else {
+                            that.$message.warning(res.data.msg);
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+            },
             change(num) {
                 let that = this;
                 that.checked = [false, false];
@@ -213,6 +234,26 @@
                     .then(res => {
                         if (res.data.code == 200) {
                             that.tableLoading = false;
+                            for(let i in res.data.data.data){
+                                let num=res.data.data.data[i].push_way;
+                                let arr = [];
+                                for (let j = 0; 1; j++) {
+                                    if (num / 2 >= 1) {
+                                        arr[j] = num % 2;
+                                        num = parseInt(num / 2);
+                                    } else {
+                                        arr[j] = 1;
+                                        break;
+                                    }
+                                }
+                                let temp=[];
+                                if (arr[i] && arr[i] == 1) {
+                                    if(temp.indexOf(name)==-1){
+                                        temp.push(name)
+                                    }
+                                }
+                                res.data.data.data[i].push_way=temp.join(',');
+                            }
                             that.tableData = res.data.data.data;
                             that.page.totalPage = res.data.data.resultCount;
                         } else {
@@ -288,6 +329,7 @@
             //重置表单
             resetForm(formName) {
                 this.$refs[formName].resetFields();
+                this.form.date='';
                 this.getList(this.page.currentPage)
             },
         }
