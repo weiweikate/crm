@@ -71,3 +71,48 @@
         export const updateBrand='/admin/brand/updateBrand';
         // 删除品牌
         export const deleteBrand='/admin/brand/deleteBrand';
+//经销商层级管理
+        // 添加经销商层级
+        export const addDealerLevel='/admin/dealerLevel/addDealerLevel';
+        // 修改经销商层级
+        export const updateDealerLevel='/admin/dealerLevel/updateDealerLevel';
+
+//经销商加盟管理
+        //发起经销商接口
+        export const addInvite='/admin/invite/addInvite';
+        //查看用户邀请详情
+        export const findInviteInfo='/admin/invite/findInviteInfo';
+
+// 经销商会员管理
+    //会员详情
+    export const findDealerById='/admin/dealer/findDealerById';
+    //修改授权信息
+    export const updateDealerPermitById='/admin/dealer/updateDealerPermitById';
+    //根据id修改经销商信息
+    export const updateDealerById='/admin/dealer/updateDealerById';
+    //关闭用户
+    export const stopDealerById='/admin/dealer/stopDealerById';
+    //开启用户
+    export const openDealerById='/admin/dealer/openDealerById';
+    //导出
+    export const exportDealerListExcel='/admin/dealer/exportDealerListExcel';
+    //用户的树状结构
+    export const findDealerTreeById='/admin/dealer/findDealerTreeById';
+
+// 公告通知
+    //发布通知/公告
+    export const addNotice='/admin/notice/addNotice';
+    // 公告详情
+    export const getNoticeDetailById='/admin/notice/findNoticeDetailById';
+    // 再次推送
+    export const updateNoticeStatus_1='/admin/notice/updateNoticeStatus_1';
+    // 取消推送
+    export const updateNoticeStatus_2='/admin/notice/updateNoticeStatus_2';
+    // 删除
+    export const updateNoticeStatus_3='/admin/notice/updateNoticeStatus_3';
+
+// 问题反馈
+    // 问题详情
+    export const feedbackDetail='/admin/feedback/findFeedbackByid';
+    //修改反馈详情
+    export const updateFeedback='/admin/feedback/updateFeedback';
