@@ -53,6 +53,7 @@
 <script>
 import breadcrumb from "../../common/Breadcrumb";
 import * as api from "../../../api/api.js";
+import * as pApi from '../../../privilegeList/index.js';
 import moment from 'moment';
 export default {
   components: {
@@ -98,6 +99,7 @@ export default {
         id:this.id,
         beginTime:this.form.beginTime == ''?'':moment(this.form.beginTime).format('YYYY-MM-DD HH:mm:ss'),
         endTime:this.form.endTime == ''?'':moment(this.form.endTime).format('YYYY-MM-DD HH:mm:ss'),
+        url:pApi.showAdminLog,
         page: val
       };
       this.tableLoading = true;

@@ -25,6 +25,7 @@
 <script>
 import icon from "../../../common/ico";
 import * as api from '../../../../api/api.js';
+import * as pApi from '../../../../privilegeList/index.js';
 export default {
   components: {
     icon
@@ -52,6 +53,7 @@ export default {
         data.name = this.form.name;
         data.status = this.form.status;
         data.fatherid = '0';
+        data.url = pApi.addPermitChannel_1;
         this.$axios
         .post(api.addPermitChannel, data)
         .then(res => {

@@ -44,6 +44,7 @@
 <script>
 import breadcrumb from "../../common/Breadcrumb";
 import * as api from "../../../api/api.js";
+import * as pApi from '../../../privilegeList/index.js';
 export default {
   components: {
     breadcrumb
@@ -117,6 +118,7 @@ export default {
             data.id = this.id;
             data.name = this.form.name;
             data.department = this.form.department.join(',');
+            data.url = pApi.updateRole;
           this.$axios
             .post(api.updateRole, data)
             .then(res => {

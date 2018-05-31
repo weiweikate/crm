@@ -185,6 +185,7 @@ export default {
 
     // 上传图片
     uploadAvatar(res) {
+        let imageUrl = res.data.imageUrl;
       if(res.code == 200){
           let data = {};
           data.id = this.id;
@@ -193,7 +194,8 @@ export default {
           this.$axios.post(api.updateAdminUserFace,data)
           .then(res=>{
             if(res.data.code == 200){
-                this.face = res.data.imageUrl;
+                this.$message.success(res.data.data);
+                this.face = imageUrl;
             }else{
                 this.$message.warning(res.data.msg);
             }
@@ -274,6 +276,7 @@ export default {
         overflow: hidden;
         img {
             width: 100%;
+            height:100%;
         }
       }
       .edit-btn {

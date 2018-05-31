@@ -25,7 +25,7 @@
                 </el-pagination>
             </div>
         </el-card>
-        <delete-toast :id='delId' :url='delUrl' @msg='deleteToast' v-if="isShowDelToast"></delete-toast>
+        <delete-toast :id='delId' :url='delUrl' :uri='delUri' @msg='deleteToast' v-if="isShowDelToast"></delete-toast>
     </div>
 </template>
 <script>
@@ -54,6 +54,7 @@ export default {
       isShowDelToast: false,
       delId: 66,
       delUrl: "http://api",
+      delUri:'',
       tableData: [],
       page: {
         currentPage: 1,
@@ -128,6 +129,7 @@ export default {
     deleteRole(row) {
       this.delId = row.id;
       this.delUrl = api.deleteRole;
+      this.delUri = pApi.deleteRole;
       this.isShowDelToast = true;
     },
     deleteToast(msg) {

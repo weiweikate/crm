@@ -95,7 +95,7 @@
             </div>
         </el-dialog>
         <!--删除弹窗-->
-        <delete-toast :id='delId' :url='delUrl' @msg='deleteToast' v-if="isShowDelToast"></delete-toast>
+        <delete-toast :id='delId' :url='delUrl' :uri='delUri' @msg='deleteToast' v-if="isShowDelToast"></delete-toast>
     </div>
 </template>
 
@@ -149,7 +149,8 @@
                 id: '',
                 title: "添加一级类目",
                 delId: 0,
-                delUrl: "http://api"
+                delUrl: "http://api",
+                delUri:'',
             };
         },
         created() {
@@ -225,8 +226,10 @@
                 data.status = this[formName].status;
                 if (this.itype == "add") {
                     url = api.addCategory;
+                    data.url = pApi.addProductCategory_1;
                 } else {
                     url = api.editCategory;
+                    data.url = pApi.updateProductCategory_1;
                     data.id = this.id;
                 }
                 this.btnLoading = true;
@@ -234,7 +237,7 @@
                     .post(url, data)
                     .then(res => {
                         if (res.data.code == 200) {
-                            this.$message.success(res.data.msg);
+                            this.$message.success(res.data.data);
                             this.btnLoading = false;
                             this.addMask = false;
                             this.editMask = false;
@@ -258,6 +261,7 @@
             delItem(index, id) {
                 this.delId = id;
                 this.delUrl = api.deleteCategory;
+                this.delUri = pApi.deleteProductCategory_1;
                 this.isShowDelToast = true;
             },
             // 删除弹窗

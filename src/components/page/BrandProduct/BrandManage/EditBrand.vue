@@ -52,6 +52,7 @@
     import vBreadcrumb from '../../../common/Breadcrumb.vue';
     import vChoosearea from '../../../common/chooseClassify.vue';
     import * as api from '../../../../api/api'
+    import * as pApi from '../../../../privilegeList/index.js';
 
     export default {
         components: {
@@ -150,6 +151,7 @@
                         data.status=this[form].status;
                         data.productcIds=this[form].productcIds;
                         data.id = that.id;
+                        data.url = pApi.updateBrand;
                         this.$axios
                             .post(api.updateBrand, data)
                             .then(res => {

@@ -76,7 +76,7 @@
               <el-button @click="isShowResetPwd = false">取 消</el-button>
             </span>
         </el-dialog>
-        <delete-toast :id='delId' :url='delUrl' @msg='deleteToast' v-if="isShowDelToast"></delete-toast>
+        <delete-toast :id='delId' :url='delUrl' :uri='delUri' @msg='deleteToast' v-if="isShowDelToast"></delete-toast>
     </div>
 </template>
 <script>
@@ -108,6 +108,7 @@ export default {
       closeBtn:false,
       delId:-1,
       delUrl:'api',
+      delUri:'',
       form: {
         name: "",
         phone: ""
@@ -214,6 +215,7 @@ export default {
     resetPwd(row){
       this.pwdForm = {};
       this.pwdForm.id = row.id;
+      this.pwdForm.url = pApi.resetPassword;
       this.isShowResetPwd = true;
     },
     confirmReset(formName){
@@ -242,6 +244,7 @@ export default {
     deleteUser(row){
       this.delId = row.id;
       this.delUrl = api.deleteAdminUser;
+      this.delUri = pApi.deleteAdminUser;
       this.isShowDelToast = true;
     },
     deleteToast(msg) {
@@ -254,6 +257,7 @@ export default {
       let data = {};
       data.id = row.id;
       data.status = status;
+      data.url = pApi.updateAdminUserStatus;
       this.closeBtn = true;
       this.$axios.post(api.updateAdminUserStatus,data)
       .then(res=>{

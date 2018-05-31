@@ -25,6 +25,7 @@
 <script>
 import icon from "../../../common/ico";
 import * as api from '../../../../api/api.js';
+import * as pApi from '../../../../privilegeList/index.js';
 export default {
   props:['row'],
   components: {
@@ -59,6 +60,7 @@ export default {
         data.name = this.form.name;
         data.status = this.form.status;
         data.id = this.form.id;
+        data.url = pApi.updatePermitChannel_1;
         this.$axios
         .post(api.updatePermitChannel, data)
         .then(res => {

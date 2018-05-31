@@ -17,7 +17,7 @@
                 <el-table-column v-if="isShowOperate" label="操作" align="center">
                     <template slot-scope="scope">
                         <el-button v-if="p.updatePermitChannel_2" type="warning" @click='edit(scope.row)'>编辑</el-button>
-                        <el-button type="danger" v-if="scope.row.status == 2 && updatePermitChannel_3" @click="deleteMsg(scope.row)">删除</el-button>
+                        <el-button type="danger" v-if="scope.row.status == 2 && p.updatePermitChannel_3" @click="deleteMsg(scope.row)">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -34,7 +34,7 @@
         </el-card>
         <add-channel @status='closeAddChan' :fathermsg='fathermsg' v-if="isShowAddChan"></add-channel>
         <edit-channel @status='closeEditChan' :row='row' v-if="isShowEditChan"></edit-channel>
-        <delete-toast :id='delId' :url='delUrl' status='3' @msg='deleteToast' v-if="isShowDelToast"></delete-toast>
+        <delete-toast :id='delId' :url='delUrl' :uri='delUri' status='3' @msg='deleteToast' v-if="isShowDelToast"></delete-toast>
     </div>
 </template>
 <script>
@@ -73,6 +73,7 @@ export default {
       fathermsg: {},
       delId: 66,
       delUrl: "http://api",
+      delUri:'',
       tableData: [{ ID: 123 }],
       id: "",
       fatherName: "",
@@ -153,6 +154,7 @@ export default {
     deleteMsg(row) {
       this.delId = row.id;
       this.delUrl = api.updatePermitChannel;
+      this.delUri = pApi.updatePermitChannel_3;
       this.isShowDelToast = true;
     },
 

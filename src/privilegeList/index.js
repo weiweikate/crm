@@ -4,6 +4,8 @@
         export const addPermitChannel_1 = '/admin/permitChannel/addPermitChannel_1';
         // 编辑一级渠道类目
         export const updatePermitChannel_1 = '/admin/permitChannel/updatePermitChannel_1';
+        // 删除一级级渠道类目
+        export const updatePermitChannel_4 = '/admin/permitChannel/updatePermitChannel_4'
         // 添加二级渠道类目
         export const addPermitChannel_2 = '/admin/permitChannel/addPermitChannel_2';
         // 编辑二级渠道类目
@@ -62,3 +64,10 @@
         export const updateProductCategory_2 = '/admin/productCategory/updateProductCategory_2';
         // 删除二级类目
         export const deleteProductCategory_2 = '/admin/productCategory/deleteProductCategory_2';
+    // 品牌管理
+        // 添加品牌
+        export const addBrand = '/admin/brand/addBrand';
+        // 编辑品牌
+        export const updateBrand='/admin/brand/updateBrand';
+        // 删除品牌
+        export const deleteBrand='/admin/brand/deleteBrand';

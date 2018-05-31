@@ -28,6 +28,7 @@
 <script>
 import icon from "../../../common/ico";
 import * as api from '../../../../api/api.js'
+import * as pApi from '../../../../privilegeList/index.js';
 export default {
   props:['fathermsg'],
   components: {
@@ -62,6 +63,7 @@ export default {
       data.fatherid = this.form.fatherId;
       data.name = this.form.name;
       data.status = this.form.status;
+      data.url = pApi.addPermitChannel_2;
       this.$axios.post(api.addPermitChannel,data)
       .then(res=>{
         if(res.data.code == 200){

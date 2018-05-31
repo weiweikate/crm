@@ -95,7 +95,7 @@
                 <el-button @click="isShoweditCodeDialog = false">取 消</el-button>
             </div>
         </el-dialog>
-        <delete-toast :id='delId' :url='delUrl' @msg='deleteToast' v-if="isShowDelToast"></delete-toast>
+        <delete-toast :id='delId' :url='delUrl' :uri='delUri' @msg='deleteToast' v-if="isShowDelToast"></delete-toast>
     </div>
 </template>
 <script>
@@ -130,6 +130,7 @@ export default {
       useBigBoxCode:'1',
       delId: 0,
       delUrl: "http://api",
+      delUri:'',
       addTplForm: {
         templateName: "",
         bigBoxCodeNum: "1",
@@ -221,6 +222,7 @@ export default {
           let that = this;
           let data = {};
           data = this.addTplForm;
+          data.url = pApi.addCodeTemplate;
           this.$axios
             .post(api.rootsAddCodeTplList, data)
             .then(res => {
@@ -278,6 +280,7 @@ export default {
           data.templateName = this.editTplForm.templateName;
           data.smallBoxCodeNum = this.editTplForm.smallBoxCodeNum;
           data.packagingCodeNum = this.editTplForm.packagingCodeNum;
+          data.url = pApi.updateCodeTemplate;
           this.$axios
             .post(api.rootsEditCodeTplList, data)
             .then(res => {
@@ -306,9 +309,8 @@ export default {
 
     // 失效防伪码模板
     failureTpl(row){
-      this.$axios.post(api.loseById,{id:row.id})
+      this.$axios.post(api.loseById,{id:row.id,url:pApi.loseCodeTemplate})
       .then(res=>{
-        console.log(res.data)
         if(res.data.code == 200){
           this.$message.success('修改成功!');
           this.getList(this.page.currentPage)
@@ -325,6 +327,7 @@ export default {
     deleteTpl(row) {
       this.delId = row.id;
       this.delUrl = api.rootsDelCodeTplList;
+      this.delUri = pApi.deleteCodeTemplate;
       this.isShowDelToast = true;
     },
     deleteToast(msg) {

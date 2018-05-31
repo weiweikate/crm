@@ -22,7 +22,10 @@ export default {
     url: {
       require: true
     },
-    status:{}
+    uri:{
+      require:true
+    },
+    status:{},
   },
   components: {
     icon
@@ -39,7 +42,7 @@ export default {
         let that = this;
         that.btnLoading = true;
         let url = that.url;
-        let data = {id:that.id,status:that.status};
+        let data = {id:that.id,status:that.status,url:that.uri};
         this.$axios
           .post(url, data)
           .then(res => {

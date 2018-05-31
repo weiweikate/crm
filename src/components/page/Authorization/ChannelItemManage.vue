@@ -18,7 +18,7 @@
                     <template slot-scope="scope">
                         <el-button v-if="p.addPermitChannel_2" type="primary" @click="secondChannel(scope.row)">二级渠道</el-button>
                         <el-button v-if="p.updatePermitChannel_1" type="warning" @click='editChan(scope.row)'>编辑</el-button>
-                        <el-button type="danger" v-if="scope.row.status == 2" @click="deleteMsg(scope.row)">删除</el-button>
+                        <el-button type="danger" v-if="scope.row.status == 2 && p.updatePermitChannel_4" @click="deleteMsg(scope.row)">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -35,7 +35,7 @@
         </el-card>
         <add-channel @status='closeAddChan' v-if="isShowAddChan"></add-channel>
         <edit-channel @status='closeEditChan' :row='row' v-if="isShowEditChan"></edit-channel>
-        <delete-toast :id='delId' :url='delUrl' status='3' @msg='deleteToast' v-if="isShowDelToast"></delete-toast>
+        <delete-toast :id='delId' :url='delUrl' :uri='delUri' status='3' @msg='deleteToast' v-if="isShowDelToast"></delete-toast>
     </div>
 </template>
 <script>
@@ -61,6 +61,7 @@ export default {
         addPermitChannel_2:false,
         updatePermitChannel_1:false,
         updatePermitChannel_2:false,
+        updatePermitChannel_4:false
       },
       isShowOperate:true,
 
@@ -72,6 +73,7 @@ export default {
       row:'',
       delId: 66,
       delUrl:'http://api',
+      delUri:'',
       tableData: [{ ID: 123 }],
       page: {
         currentPage: 1,
@@ -95,7 +97,7 @@ export default {
       for (const k in this.p) {
         this.p[k] = utils.pc(pApi[k]);
       }
-      if (!this.p.updatePermitChannel_2 && !this.p.updatePermitChannel_2) {
+      if (!this.p.updatePermitChannel_2 && !this.p.updatePermitChannel_2 && !this.p.updatePermitChannel_4) {
         this.isShowOperate = false;
       }
     },
@@ -131,6 +133,7 @@ export default {
     deleteMsg(row) {
       this.delId = row.id;
       this.delUrl = api.updatePermitChannel;
+      this.delUri = pApi.updatePermitChannel_4;
       this.isShowDelToast = true;
     },
 

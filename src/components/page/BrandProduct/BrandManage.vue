@@ -20,7 +20,7 @@
             </el-form>
         </el-card>
         <div class="table-block">
-            <el-button type="primary" style="margin-bottom: 20px" @click="addBrand">添加品牌</el-button>
+            <el-button v-if="p.addBrand" type="primary" style="margin-bottom: 20px" @click="addBrand">添加品牌</el-button>
             <template>
                 <el-table v-loading="tableLoading" :data="tableData" :height="height" border style="width: 100%">
                     <el-table-column prop="id" label="ID" width="100"></el-table-column>
@@ -39,12 +39,12 @@
                             <template v-if="scope.row.status == 2">停用</template>
                         </template>
                     </el-table-column>
-                    <el-table-column label="操作">
+                    <el-table-column v-if="isShowOperate" label="操作">
                         <template slot-scope="scope">
                             <!--<el-button type="primary" size="small" @click="toBrand(scope.$index,scope.row)">品牌页</el-button>-->
-                            <el-button type="warning" size="small" @click="editItem(scope.$index,scope.row.id)">编辑
+                            <el-button  v-if="p.updateBrand" type="warning" size="small" @click="editItem(scope.$index,scope.row.id)">编辑
                             </el-button>
-                            <el-button type="danger" size="small" @click="delItem(scope.$index,scope.row.id)">删除
+                            <el-button v-if="p.deleteBrand" type="danger" size="small" @click="delItem(scope.$index,scope.row.id)">删除
                             </el-button>
                         </template>
                     </el-table-column>
@@ -62,7 +62,7 @@
             </div>
         </div>
         <!--删除弹窗-->
-        <delete-toast :id='delId' :url='delUrl' @msg='deleteToast' v-if="isShowDelToast"></delete-toast>
+        <delete-toast :id='delId' :url='delUrl' :uri='delUri' @msg='deleteToast' v-if="isShowDelToast"></delete-toast>
     </div>
 </template>
 
@@ -71,6 +71,8 @@
     import icon from '../../common/ico.vue';
     import deleteToast from "../../common/DeleteToast";
     import * as api from '../../../api/api';
+    import utils from '../../../utils/index.js'
+    import * as pApi from '../../../privilegeList/index.js';
 
     export default {
         components: {
@@ -78,6 +80,14 @@
         },
         data() {
             return {
+                // 权限控制
+                p:{
+                    addBrand:false,
+                    updateBrand:false,
+                    deleteBrand:false,
+                },
+                isShowOperate:true,
+
                 tableData: [],
                 tableLoading: false,
                 page: {
@@ -95,16 +105,28 @@
                 },
                 delId: '',
                 delUrl: '',
+                delUri:''
             }
         },
         created() {
             let winHeight = window.screen.availHeight - 600;
             this.height = winHeight;
+            this.pControl();
         },
         activated() {
+            this.pControl();
             this.getList(this.page.currentPage)
         },
         methods: {
+            // 权限控制
+            pControl() {
+                for (const k in this.p) {
+                    this.p[k] = utils.pc(pApi[k]);
+                }
+                if (!this.p.updateBrand && !this.p.deleteBrand) {
+                    this.isShowOperate = false;
+                }
+            },
             //获取列表
             getList(val) {
                 let that = this;
@@ -160,6 +182,7 @@
             delItem(index, id) {
                 this.delId = id;
                 this.delUrl = api.deleteBrand;
+                this.delUri = pApi.deleteBrand;
                 this.isShowDelToast = true;
             },
             // 删除弹窗

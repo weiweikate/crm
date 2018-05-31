@@ -98,7 +98,7 @@
             </div>
         </el-dialog>
         <!--删除弹窗-->
-        <delete-toast :id='delId' :url='delUrl' @msg='deleteToast' v-if="isShowDelToast"></delete-toast>
+        <delete-toast :id='delId' :url='delUrl' :uri='delUri' @msg='deleteToast' v-if="isShowDelToast"></delete-toast>
     </div>
 </template>
 
@@ -152,7 +152,8 @@
                 name: "",
                 itype: "",
                 delId: 66,
-                delUrl: "http://api"
+                delUrl: "http://api",
+                delUri:''
             };
         },
         created() {
@@ -237,9 +238,11 @@
                 if (this.itype == "add") {
                     url = api.addCategory;
                     data.fatherid = this.id;
+                    data.url = pApi.addProductCategory_2;
                 } else {
                     url = api.editCategory;
                     data.id = this.itemId;
+                    data.url = pApi.updateProductCategory_2;
                 }
                 this.btnLoading = true;
                 this.$axios
@@ -265,6 +268,7 @@
             delItem(id) {
                 this.delId = id;
                 this.delUrl = api.deleteCategory;
+                this.delUri = pApi.deleteProductCategory_2;
                 this.isShowDelToast = true;
             },
             // 删除弹窗
