@@ -219,6 +219,7 @@ export default {
       }
       let data = {};
       data.name = this.addModuleForm.name;
+      data.url = pApi.addFunctionModule;
       if(this.addModuleForm.mdLevel == '2'){
         data.parentId = this.addModuleForm.first;
       }else{

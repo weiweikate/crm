@@ -96,6 +96,8 @@ export const getManageList='/mock/5aeac1c6c186102e067af3f3/test/getManageList';
     export const queryTopMenuList = '/admin/privilege/queryTopMenuList';
     // 新增功能模块
     export const addFunctionModule = '/admin/privilege/addFunctionModule';
+    // 修改头像
+    export const updateAdminUserFace = 'admin/adminUser/updateAdminUserFace';
 
 // 品牌产品管理
     // 获取一二级类目列表

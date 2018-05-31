@@ -64,6 +64,8 @@
 import breadcrumb from "../../common/Breadcrumb";
 import icon from "../../common/ico";
 import * as api from '../../../api/api.js';
+import utils from '../../../utils/index.js'
+import * as pApi from '../../../privilegeList/index.js';
 export default {
   components: {
     breadcrumb,
@@ -184,7 +186,21 @@ export default {
     // 上传图片
     uploadAvatar(res) {
       if(res.code == 200){
-        this.face = res.data.imageUrl;
+          let data = {};
+          data.id = this.id;
+          data.url = pApi.updateAdminUserFace;
+          data.face = res.data.imageUrl;
+          this.$axios.post(api.updateAdminUserFace,data)
+          .then(res=>{
+            if(res.data.code == 200){
+                this.face = res.data.imageUrl;
+            }else{
+                this.$message.warning(res.data.msg);
+            }
+          })
+          .catch(err=>{
+            console.log(err);
+          })
       }else{
         this.$message.warning(res.msg);
       }

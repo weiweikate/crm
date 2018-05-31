@@ -2,7 +2,7 @@
     <div class="second-classify">
         <v-breadcrumb :nav="['品牌产品管理','品牌分类管理',name]"></v-breadcrumb>
         <div class="table-block">
-            <el-button type="primary" style="margin-bottom: 20px" @click="addClassify">添加二级类目</el-button>
+            <el-button v-if="p.addProductCategory_2" type="primary" style="margin-bottom: 20px" @click="addClassify">添加二级类目</el-button>
             <template>
                 <el-table :data="tableData" :height="height" border style="width: 100%">
                     <el-table-column prop="id" label="ID" width="180"></el-table-column>
@@ -19,23 +19,23 @@
                             <template v-if="scope.row.status == 2">禁用</template>
                         </template>
                     </el-table-column>
-                    <el-table-column label="操作">
+                    <el-table-column v-if="isShowOperate" label="操作">
                         <template slot-scope="scope">
                             <!--<el-button type="primary" size="small" @click="toSecondClassify(scope.row.id)">参数管理</el-button>-->
-                            <el-button type="warning" size="small" @click="editItem(scope.row)">编辑</el-button>
-                            <el-button type="danger" size="small" @click="delItem(scope.row.id)">删除</el-button>
+                            <el-button v-if="p.updateProductCategory_2" type="warning" size="small" @click="editItem(scope.row)">编辑</el-button>
+                            <el-button v-if="p.deleteProductCategory_2" type="danger" size="small" @click="delItem(scope.row.id)">删除</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
             </template>
             <div class="block">
                 <el-pagination
-                        background
-                        @size-change="handleSizeChange"
-                        @current-change="handleCurrentChange"
-                        :current-page="page.currentPage"
-                        layout="total, prev, pager, next, jumper"
-                        :total="page.totalPage">
+                    background
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page="page.currentPage"
+                    layout="total, prev, pager, next, jumper"
+                    :total="page.totalPage">
                 </el-pagination>
             </div>
         </div>
@@ -107,6 +107,8 @@
     import icon from "../../common/ico.vue";
     import deleteToast from "../../common/DeleteToast";
     import * as api from "../../../api/api";
+    import utils from '../../../utils/index.js'
+    import * as pApi from '../../../privilegeList/index.js';
 
     export default {
         components: {
@@ -116,6 +118,14 @@
         },
         data() {
             return {
+                // 权限控制
+                p:{
+                    addProductCategory_2:false,
+                    updateProductCategory_2:false,
+                    deleteProductCategory_2:false,
+                },
+                isShowOperate:true,
+
                 tableData: [],
                 page: {
                     currentPage: 1,
@@ -148,8 +158,10 @@
         created() {
             let winHeight = window.screen.availHeight - 500;
             this.height = winHeight;
+            this.pControl();
         },
         activated() {
+            this.pControl();
             this.name =
                 this.$route.query.name ||
                 JSON.parse(sessionStorage.getItem("secondClassify").name);
@@ -159,6 +171,15 @@
             this.getList(this.page.currentPage);
         },
         methods: {
+            // 权限控制
+            pControl() {
+                for (const k in this.p) {
+                    this.p[k] = utils.pc(pApi[k]);
+                }
+                if (!this.p.updateProductCategory_2 && !this.p.deleteProductCategory_2) {
+                    this.isShowOperate = false;
+                }
+            },
             //获取列表
             getList(val) {
                 let that = this;
