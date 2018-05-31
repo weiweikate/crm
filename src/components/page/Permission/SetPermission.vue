@@ -276,7 +276,8 @@ export default {
           let data = {};
           data.parentId = this.addPermissionForm.parentId;
           data.name = this.addPermissionForm.perName;
-          data.uri = this.addPermissionForm.url;
+          data.url = this.addPermissionForm.url;
+          data.uri = pApi.addPrivilege;
           this.btnLoading = true;
           this.$axios
             .post(api.addPrivilege, data)
