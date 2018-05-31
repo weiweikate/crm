@@ -134,7 +134,6 @@
 <script>
     import vBreadcrumb from '../../common/Breadcrumb.vue';
     import icon from '../../common/ico.vue';
-    import deleteToast from "../../common/DeleteToast";
     import * as api from '../../../api/api';
     import moment from 'moment'
     import {getList} from "../../../api/api";
@@ -142,7 +141,7 @@
     import * as pApi from '../../../privilegeList/index.js';
     export default {
         components: {
-            vBreadcrumb, icon, deleteToast
+            vBreadcrumb, icon
         },
         data() {
             return {
@@ -328,6 +327,9 @@
                 }
                 if(that.status==3){
                     data.url=pApi.updateNoticeStatus_2
+                }
+                if(that.status==4){
+                    data.url=pApi.updateNoticeStatus_3
                 }
                 that.btnLoading=true;
                 that.$axios

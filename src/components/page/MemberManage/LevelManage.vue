@@ -26,7 +26,7 @@
                             <!--<el-button type="primary" size="small" @click="priceLevel(scope.$index,scope.row)">价格阶层</el-button>-->
                             <el-button type="warning" v-if="p.updateDealerLevel" size="small" @click="editItem(scope.$index,scope.row)">编辑
                             </el-button>
-                            <el-button type="danger" size="small" @click="delItem(scope.$index,scope.row.id)">删除
+                            <el-button type="danger" v-if="p.deleteDealerLevelById" size="small" @click="delItem(scope.$index,scope.row.id)">删除
                             </el-button>
                         </template>
                     </el-table-column>
@@ -120,7 +120,7 @@
             </div>
         </el-dialog>-->
         <!--删除弹窗-->
-        <delete-toast :id='delId' :url='delUrl' @msg='deleteToast' v-if="isShowDelToast"></delete-toast>
+        <delete-toast :id='delId' :uri='delUri' :url='delUrl' @msg='deleteToast' v-if="isShowDelToast"></delete-toast>
     </div>
 </template>
 
@@ -141,6 +141,7 @@
                 p:{
                     addDealerLevel:false,
                     updateDealerLevel:false,
+                    deleteDealerLevelById:false
                 },
                 isShowOperate:true,
 
@@ -171,6 +172,7 @@
                 isShowDelToast: false,
                 delId: '',
                 delUrl: '',
+                delUri:'',
                 tableLoading: false,
                 btnLoading: false,
                 isUp:false,
@@ -192,7 +194,7 @@
                 for (const k in this.p) {
                     this.p[k] = utils.pc(pApi[k]);
                 }
-                if (!this.p.updateDealerLevel) {
+                if (!this.p.updateDealerLevel&&!this.p.deleteDealerLevelById) {
                     this.isShowOperate = false;
                 }
             },
@@ -306,6 +308,7 @@
             delItem(index, id) {
                 this.delId = id;
                 this.delUrl = api.deleteDealerLevelById;
+                this.delUri=pApi.deleteDealerLevelById;
                 this.isShowDelToast = true;
             },
             // 删除弹窗

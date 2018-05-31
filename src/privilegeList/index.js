@@ -76,6 +76,8 @@
         export const addDealerLevel='/admin/dealerLevel/addDealerLevel';
         // 修改经销商层级
         export const updateDealerLevel='/admin/dealerLevel/updateDealerLevel';
+        // 根据id删除
+        export const deleteDealerLevelById='/admin/dealerLevel/deleteDealerLevelById';
 
 //经销商加盟管理
         //发起经销商接口
@@ -114,5 +116,7 @@
 // 问题反馈
     // 问题详情
     export const feedbackDetail='/admin/feedback/findFeedbackByid';
-    //修改反馈详情
+    //修改问题类型
     export const updateFeedback='/admin/feedback/updateFeedback';
+    //回复
+    export const updateFeedback_2='/admin/feedback/updateFeedback_2';

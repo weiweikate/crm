@@ -41,8 +41,8 @@
                         处理人：{{username}}
                     </div>
                     <div style="margin-top: 30px" v-if="detail.status==1">
-                        <el-button type="primary" v-if="p.updateFeedback" v-loading="btnLoading" @click="update">确认回复</el-button>
-                        <el-button type="success" v-if="p.updateFeedback" v-loading="btnLoading" @click="update">修改问题类型</el-button>
+                        <el-button type="primary" v-if="p.updateFeedback" v-loading="btnLoading" @click="update('reply')">确认回复</el-button>
+                        <el-button type="success" v-if="p.updateFeedback_2" v-loading="btnLoading" @click="update('update')">修改问题类型</el-button>
                         <el-button @click="cancel">取消</el-button>
                     </div>
                 </div>
@@ -134,6 +134,7 @@
                 // 权限控制
                 p:{
                     updateFeedback:false,
+                    updateFeedback_2:false,
                 },
 
                 list: [],
@@ -212,14 +213,22 @@
                 this.$router.push('/feedBack')
             },
             //修改
-            update(){
+            update(status){
                 let that=this;
                 let params={
-                    id:that.id,
-                    typeKey:that.item.type_key,
-                    replyContent:that.detail.reply_content,
-                    url:pApi.updateFeedback
+                    id:that.id
                 };
+                if(status=='reply'){//回复
+                    params.replyContent=that.detail.reply_content;
+                    params.url=pApi.updateFeedback_2;
+                    if(!params.replyContent){
+                        that.$message.warning('请输入回复内容!');
+                        return
+                    }
+                }else{
+                    params.typeKey=that.detail.type_key;
+                    params.url=pApi.updateFeedback
+                }
                 that.btnLoading=true;
                 that.$axios
                     .post(api.updateFeedback,params)

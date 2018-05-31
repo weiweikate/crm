@@ -31,7 +31,7 @@
                     <div class="img-area">
                         <img :src="dealerAndUp.up_head_img?dealerAndUp.up_head_img:'src/assets/images/logo.png'" alt="">
                     </div>
-                    <div class="detail-area">
+                    <div class="tree-detail-area">
                         <div>用户名：{{dealerAndUp.up_realname}}</div>
                         <div>用户ID：{{dealerAndUp.up_id}}<span>授权号：{{dealerAndUp.up_code}}</span></div>
                     </div>
@@ -44,7 +44,7 @@
                     <div class="img-area">
                         <img :src="dealerAndUp.head_img?dealerAndUp.head_img:'src/assets/images/logo.png'" alt="">
                     </div>
-                    <div class="detail-area">
+                    <div class="tree-detail-area">
                         <div>用户名：{{dealerAndUp.realname}}</div>
                         <div>用户ID：{{dealerAndUp.id}}<span>授权号：{{dealerAndUp.code}}</span></div>
                     </div>
@@ -237,11 +237,12 @@
                     border: 2px solid #dfdfdf
                 }
             }
-            .detail-area {
+            .tree-detail-area {
                 float: left;
-                margin-top: 10px;
+                /*margin-top: 10px;*/
                 color: #666;
                 font-size: 14px;
+                line-height: 30px;
                 span {
                     margin-left: 10px
                 }

@@ -161,7 +161,8 @@
                         return time.getTime() < new Date() - 8.64e7;
                     }
                 },
-                time:''
+                time:'',
+                ajax:false,
             };
         },
         created(){
@@ -374,26 +375,28 @@
                 }
                 params.url=pApi.addNotice;
                 that.btnLoading = true;
-                that.$axios
-                    .post(api.addNotice, params)
-                    .then(res => {
-                        if (res.data.code == 200) {
-                            that.$message.success(res.data.msg);
-                            setTimeout(function () {
+                if(!that.ajax){
+                    that.ajax=true;
+                    that.$axios
+                        .post(api.addNotice, params)
+                        .then(res => {
+                            if (res.data.code == 200) {
+                                that.$message.success(res.data.msg);
+                                setTimeout(function () {
+                                    that.btnLoading = false;
+                                    that.$router.push('/noticeInformManage')
+                                }, 1000)
+                            } else {
                                 that.btnLoading = false;
-                                that.$router.push('/noticeInformManage')
-                            }, 1000)
-                        } else {
-                            that.btnLoading = false;
-                            that.$message.warning(res.data.msg);
-                        }
-                    })
-                    .catch(err => {
-                        that.btnLoading = false
-                    })
-
+                                that.ajax=false;
+                                that.$message.warning(res.data.msg);
+                            }
+                        })
+                        .catch(err => {
+                            that.btnLoading = false
+                        })
+                }
             },
-
         },
         computed: {
             qnLocation() {
