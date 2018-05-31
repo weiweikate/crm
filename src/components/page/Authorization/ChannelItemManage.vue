@@ -74,7 +74,7 @@ export default {
       delId: 66,
       delUrl:'http://api',
       delUri:'',
-      tableData: [{ ID: 123 }],
+      tableData: [],
       page: {
         currentPage: 1,
         totalPage: 20
@@ -88,8 +88,8 @@ export default {
     this.pControl();
   },
   activated(){
-    this.getList();
     this.pControl();
+    this.getList();
   },
   methods: {
     // 权限控制
@@ -139,8 +139,8 @@ export default {
 
     // 进入二级渠道
     secondChannel(row){
-      sessionStorage.setItem('secondChannel',JSON.stringify({id:row.id,fatherName:row.name}));
-      this.$router.push({name:'secondChannel',params:{id: row.id,fatherName:row.name}})
+      sessionStorage.setItem('secondChannel',JSON.stringify({id:row.id,fatherName:row.name,firstName:row.name}));
+      this.$router.push({name:'secondChannel',params:{id: row.id,fatherName:row.name,firstName:row.name}})
     },
 
     // 添加渠道

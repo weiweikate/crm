@@ -64,7 +64,7 @@ export default {
       },
       isShowOperate: true,
 
-      breadcrumb: ["授权审核管理", "渠道类目管理", "线上平台二级渠道管理"],
+      breadcrumb: ["授权审核管理", "渠道类目管理", ""],
       isShowAddChan: false,
       isShowEditChan: false,
       isShowDelToast: false,
@@ -91,6 +91,7 @@ export default {
   },
   activated() {
     this.pControl();
+    this.breadcrumb[2] = this.$route.params.firstName;
     this.id =
       this.$route.params.id ||
       JSON.parse(sessionStorage.getItem("secondChannel")).id;

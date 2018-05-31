@@ -164,6 +164,7 @@ export default {
               data.phone = this.form.phone;
               data.password = this.form.password;
               data.code = this.form.code;
+              data.url = pApi.updateAdminUserPassword;
               this.$axios.post(api.updateAdminUserPassword,data)
               .then(res=>{
                   if(res.data.code == 200){

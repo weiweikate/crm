@@ -48,8 +48,9 @@
         export const addFunctionModule = '/admin/privilege/addFunctionModule';
         // 添加权限
         export const addPrivilege = '/admin/privilege/addPrivilege';
-    // 修改头像
-        export const updateAdminUserFace = 'admin/adminUser/updateAdminUserFace'
+    // 修改信息
+        export const updateAdminUserFace = '/admin/adminUser/updateAdminUserFace'
+        export const updateAdminUserPassword = '/admin/adminUser/updateAdminUserPassword';
 // 品牌产品管理
     // 产品分类管理
         // 添加一级类目
