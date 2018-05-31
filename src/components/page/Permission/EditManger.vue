@@ -136,6 +136,7 @@ export default {
   methods: {
     //提交表单
     submitForm(formName){
+      let that = this;
       let data= {};
       let role = [];
       this.checkedUser.forEach((v,k)=>{
@@ -154,9 +155,16 @@ export default {
             .post(api.updateAdminUser, data)
             .then(res => {
               if(res.data.code == 200){
-                this.$message.success(res.data.data);
-                this.$router.push('/manageList');
                 this.btnLoading = false;
+                if(this.id == localStorage.getItem('ms_userID')){
+                  this.$message.success('修改信息成功，请重新登陆');
+                  setTimeout(function () {
+                    that.$router.push('/login');
+                  },1000)
+                }else{
+                  this.$message.success(res.data.data);
+                  this.$router.push('/manageList');
+                }
               }else{
                 this.$message.warning(res.data.msg);
                 this.btnLoading = false;

@@ -46,3 +46,17 @@
         export const addFunctionModule = '/admin/privilege/addFunctionModule';
         // 添加权限
         export const addPrivilege = '/admin/privilege/addPrivilege';
+// 品牌产品管理
+    // 产品分类管理
+        // 添加一级类目
+        export const addProductCategory_1 = '/admin/productCategory/addProductCategory';
+        // 编辑一级类目
+        export const updateProductCategory_1 = '/admin/productCategory/updateProductCategory';
+        // 删除一级类目
+        export const deleteProductCategory_1 = '/admin/productCategory/deleteProductCategory';
+        // 添加二级类目
+        export const addProductCategory_2 = '/admin/productCategory/addProductCategory';
+        // 编辑二级类目
+        export const updateProductCategory_2 = '/admin/productCategory/updateProductCategory';
+        // 删除二级类目
+        export const deleteProductCategory_2 = '/admin/productCategory/deleteProductCategory';

@@ -72,6 +72,8 @@
 <script>
 import breadcrumb from "../../common/Breadcrumb";
 import * as api from "../../../api/api.js";
+import utils from '../../../utils/index.js'
+import * as pApi from '../../../privilegeList/index.js';
 export default {
   components: {
     breadcrumb
@@ -80,8 +82,8 @@ export default {
     return {
       // 权限控制
       p:{
-        addFunctionModule:false,
-        addPrivilege:false,
+        addFunctionModule:true,
+        addPrivilege:true,
       },
 
       nav: ["权限管理", "权限设置"],
@@ -132,8 +134,10 @@ export default {
   created() {
     let winHeight = window.screen.availHeight - 360;
     this.height = winHeight;
+    // this.pControl();
   },
   activated() {
+    // this.pControl();
     this.getList();
     this.getFirstList();
   },
@@ -272,7 +276,7 @@ export default {
           let data = {};
           data.parentId = this.addPermissionForm.parentId;
           data.name = this.addPermissionForm.perName;
-          data.url = this.addPermissionForm.url;
+          data.uri = this.addPermissionForm.url;
           this.btnLoading = true;
           this.$axios
             .post(api.addPrivilege, data)

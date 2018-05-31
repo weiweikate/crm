@@ -2,7 +2,7 @@
     <div class="brand-product">
         <v-breadcrumb :nav="['品牌产品管理','品牌分类管理']"></v-breadcrumb>
         <div class="table-block">
-            <el-button type="primary" style="margin-bottom: 20px" @click="addClassify">添加一级类目</el-button>
+            <el-button v-if="p.addProductCategory_1" type="primary" style="margin-bottom: 20px" @click="addClassify">添加一级类目</el-button>
             <template>
                 <el-table :data="tableData" :height="height" border style="width: 100%">
                     <el-table-column prop="id" label="ID" width="180"></el-table-column>
@@ -18,14 +18,14 @@
                             <template v-if="scope.row.status == 2">禁用</template>
                         </template>
                     </el-table-column>
-                    <el-table-column label="操作">
+                    <el-table-column v-if="isShowOperate" label="操作">
                         <template slot-scope="scope">
-                            <el-button type="primary" size="small" @click="toSecondClassify(scope.$index,scope.row)">
+                            <el-button v-if="p.addProductCategory_2" type="primary" size="small" @click="toSecondClassify(scope.$index,scope.row)">
                                 二级类目
                             </el-button>
-                            <el-button type="warning" size="small" @click="editItem(scope.$index,scope.row)">编辑
+                            <el-button v-if="p.updateProductCategory_1" type="warning" size="small" @click="editItem(scope.$index,scope.row)">编辑
                             </el-button>
-                            <el-button type="danger" size="small" @click="delItem(scope.$index,scope.row.id)">删除
+                            <el-button v-if="p.deleteProductCategory_1" type="danger" size="small" @click="delItem(scope.$index,scope.row.id)">删除
                             </el-button>
                         </template>
                     </el-table-column>
@@ -104,6 +104,8 @@
     import icon from "../../common/ico.vue";
     import deleteToast from "../../common/DeleteToast";
     import * as api from "../../../api/api";
+    import utils from '../../../utils/index.js'
+    import * as pApi from '../../../privilegeList/index.js';
 
     export default {
         components: {
@@ -113,6 +115,15 @@
         },
         data() {
             return {
+                // 权限控制
+                p:{
+                    addProductCategory_1:false,
+                    updateProductCategory_1:false,
+                    deleteProductCategory_1:false,
+                    addProductCategory_2:false,
+                },
+                isShowOperate:true,
+
                 tableData: [],
                 page: {
                     currentPage: 1,
@@ -144,11 +155,22 @@
         created() {
             let winHeight = window.screen.availHeight - 500;
             this.height = winHeight;
+            this.pControl();
         },
         activated(){
+            this.pControl();
             this.getList(this.page.currentPage);
         },
         methods: {
+            // 权限控制
+            pControl() {
+                for (const k in this.p) {
+                    this.p[k] = utils.pc(pApi[k]);
+                }
+                if (!this.p.updateProductCategory_1 && !this.p.deleteProductCategory_1 && !this.p.addProductCategory_2) {
+                    this.isShowOperate = false;
+                }
+            },
             //获取列表
             getList(val) {
                 let that = this;
