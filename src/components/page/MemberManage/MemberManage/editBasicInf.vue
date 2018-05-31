@@ -67,6 +67,7 @@
     import icon from "../../../common/ico";
     import region from '../../../common/Region';
     import * as api from '../../../../api/api'
+    import * as pApi from '../../../../privilegeList/index.js';
     export default {
         components: {
             icon,region
@@ -150,6 +151,7 @@
                 data.phone=that.dealer.phone;
                 data.wecahtId=that.dealer.wecaht_id;
                 data.realname=that.dealer.realname;
+                data.url=pApi.updateDealerById;
                 if(that.address){
                     data.provinceId=that.address[0];
                     if(that.address[1]){

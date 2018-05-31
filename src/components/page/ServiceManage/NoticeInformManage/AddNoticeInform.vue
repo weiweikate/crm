@@ -89,7 +89,7 @@
     import region from '../../../common/Region';
     import moment from 'moment'
     import utils from '../../../../utils/index'
-
+    import * as pApi from '../../../../privilegeList/index.js';
     export default {
         components: {
             vBreadcrumb, icon, region
@@ -372,6 +372,7 @@
                         return
                     }
                 }
+                params.url=pApi.addNotice;
                 that.btnLoading = true;
                 that.$axios
                     .post(api.addNotice, params)

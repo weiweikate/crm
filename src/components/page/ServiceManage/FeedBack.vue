@@ -82,7 +82,7 @@
                         </template>
                     </el-table-column>
                     <el-table-column prop="adminName" label="处理人"></el-table-column>
-                    <el-table-column label="操作">
+                    <el-table-column v-if="p.feedbackDetail" label="操作">
                         <template slot-scope="scope">
                             <el-button type="primary" size="small" @click="detailItem(scope.$index,scope.row)">查看详情
                             </el-button>
@@ -110,13 +110,19 @@
     import icon from '../../common/ico.vue';
     import * as api from '../../../api/api';
     import moment from 'moment';
-
+    import utils from '../../../utils/index.js'
+    import * as pApi from '../../../privilegeList/index.js';
     export default {
         components: {
             vBreadcrumb, icon
         },
         data() {
             return {
+                // 权限控制
+                p:{
+                    feedbackDetail:false,
+                },
+
                 tableData: [],
                 tableLoading: false,
                 page: {
@@ -140,16 +146,20 @@
         created() {
             let winHeight = window.screen.availHeight - 520;
             this.height = winHeight;
-            this.getList(this.page.currentPage);
-            this.getLevelList()
+            this.pControl();
         },
         activated() {
-            let winHeight = window.screen.availHeight - 520;
-            this.height = winHeight;
             this.getList(this.page.currentPage);
-            this.getLevelList()
+            this.getLevelList();
+            this.pControl();
         },
         methods: {
+            // 权限控制
+            pControl() {
+                for (const k in this.p) {
+                    this.p[k] = utils.pc(pApi[k]);
+                }
+            },
             //获取列表
             getList(val) {
                 let that = this;

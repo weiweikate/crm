@@ -47,7 +47,7 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item>
-                    <!--<el-button @click="exportData" type="primary">导出</el-button>-->
+                    <el-button v-if="p.exportDealerListExcel" @click="exportData" type="primary">导出</el-button>
                 </el-form-item>
             </el-form>
             <template>
@@ -80,11 +80,15 @@
                             <template v-if="scope.row.status==3">已关闭</template>
                         </template>
                     </el-table-column>
-                    <el-table-column label="操作">
+                    <el-table-column v-if="isShowOperate" label="操作">
                         <template slot-scope="scope">
                             <el-button type="warning" size="small" @click="detailItem(scope.$index,scope.row)">详情
                             </el-button>
-                            <el-button type="danger" v-if="scope.row.status!=3" size="small" @click="closeItem(scope.$index,scope.row.id)">关闭
+                            <el-button type="danger" v-if="scope.row.status!=3&&p.stopDealerById" size="small"
+                                       @click="updateStatusItem(scope.$index,scope.row.id,1)">关闭
+                            </el-button>
+                            <el-button type="danger" v-if="scope.row.status==3&&p.openDealerById" size="small"
+                                       @click="updateStatusItem(scope.$index,scope.row.id,2)">开启
                             </el-button>
                         </template>
                     </el-table-column>
@@ -101,7 +105,23 @@
                 </el-pagination>
             </div>
         </div>
-
+        <!--消息确认弹窗-->
+        <div class="pwd-mask" v-if="tipsMask">
+            <div class="box">
+                <div class="mask-title">
+                    <icon class="ico" ico='icon-jinggao'/>
+                    温馨提示
+                </div>
+                <div class="mask-content">
+                    <span class="del-tip">{{info}}</span>
+                    <div class="del-btn-group">
+                        <el-button :loading="btnLoading" @click="oprSure(true)" class="del-btn" type="danger">{{btnTxt}}
+                        </el-button>
+                        <el-button @click="tipsMask=false">取消</el-button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -110,15 +130,26 @@
     import icon from '../../../common/ico.vue';
     import region from '../../../common/Region';
     import * as api from '../../../../api/api';
-
+    import utils from '../../../../utils/index.js'
+    import * as pApi from '../../../../privilegeList/index.js';
     export default {
         components: {
             vBreadcrumb, icon, region
         },
         data() {
             return {
+                // 权限控制
+                p:{
+                    stopDealerById:false,
+                    openDealerById:false,
+                    exportDealerListExcel:false,
+                },
+                isShowOperate:true,
+
                 tableData: [],
                 tableLoading: false,
+                btnLoading: false,
+                tipsMask: false,
                 page: {
                     currentPage: 1,
                     totalPage: 20
@@ -139,23 +170,33 @@
                 selected: '',
                 address: [],
                 levelList: [],//用户层级列表
+                id: '',
+                info: '',
+                type: '',
+                btnTxt: ''
             }
         },
         created() {
             let winHeight = window.screen.availHeight - 520;
             this.height = winHeight;
-            this.form.upDealerid = JSON.parse(sessionStorage.getItem("memberId"));
-            this.getList(this.page.currentPage);
-            this.getLevelList()
+            this.pControl();
         },
         activated() {
-            let winHeight = window.screen.availHeight - 520;
-            this.height = winHeight;
             this.form.upDealerid = JSON.parse(sessionStorage.getItem("memberId"));
             this.getList(this.page.currentPage);
-            this.getLevelList()
+            this.getLevelList();
+            this.pControl();
         },
         methods: {
+            // 权限控制
+            pControl() {
+                for (const k in this.p) {
+                    this.p[k] = utils.pc(pApi[k]);
+                }
+                if (!this.p.stopDealerById && !this.p.openDealerById) {
+                    this.isShowOperate = false;
+                }
+            },
             //获取列表
             getList(val) {
                 let that = this;
@@ -230,31 +271,89 @@
                 localStorage.setItem('memberDetail', row.id);
                 this.$router.push({path: '/memberDetail', query: {id: row.id}})
             },
-            //关闭
-            closeItem(index, id) {
+            //关闭,开启
+            updateStatusItem(index, id, num) {
+                let that = this;
+                that.id = id;
+                if (num == 1) {
+                    that.info = '是否确认关闭？';
+                    that.type = '关闭';
+                    that.btnTxt = '确认关闭'
+                } else {
+                    that.info = '是否确认开启？';
+                    that.type = '开启';
+                    that.btnTxt = '确认开启'
+                }
+                that.tipsMask = true;
+            },
+            oprSure() {
                 let that = this;
                 let data = {
-                    id: id
+                    id: that.id
                 };
+                let url = '';
+                if (that.type == '关闭') {
+                    url = api.stopDealerById
+                } else {
+                    url = api.openDealerById
+                }
+                that.btnLoading = true;
                 that.$axios
-                    .post(api.stopDealerById, data)
+                    .post(url, data)
                     .then(res => {
                         that.btnLoading = false;
                         if (res.data.code == 200) {
-                            that.getList(that.page.currentPage)
+                            that.getList(that.page.currentPage);
+                            that.tipsMask = false;
                         } else {
                             that.$message.warning(res.data.msg);
+                            that.tipsMask = false;
+                            that.btnLoading = false;
                         }
                     })
                     .catch(err => {
-                        that.tableLoading = false;
-                        that.$emit("msg", false);
+                        that.btnLoading = false;
+                        that.tipsMask = false;
                     });
             },
-
             //导出
             exportData() {
-
+                let that = this;
+                let data = that.form;
+                data.page = that.page.currentPage;
+                data.levelId = that.exportForm.levelId;
+                let addrss = that.address;
+                if (addrss && addrss[0]) {
+                    data.provinceId = addrss[0];
+                    if (addrss[1]) {
+                        data.cityId = addrss[1];
+                    }
+                    if (addrss[2]) {
+                        data.areaId = addrss[2];
+                    }
+                } else {
+                    data.provinceId = '';
+                    data.cityId = '';
+                    data.areaId = '';
+                }
+                that.$axios
+                    .post(api.exportDealerListExcel, data, {responseType: "blob"})
+                    .then(res => {
+                        var data = res.data;
+                        if (!data) {
+                            return;
+                        }
+                        let url = window.URL.createObjectURL(new Blob([data]));
+                        let link = document.createElement("a");
+                        link.style.display = "none";
+                        link.href = url;
+                        link.setAttribute("download", "会员列表.xlsx");
+                        document.body.appendChild(link);
+                        link.click();
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
             },
             //   重置表单
             resetForm(formName) {

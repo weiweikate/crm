@@ -44,7 +44,7 @@
                     </div>
                 </div>
                 <div class="center">
-                    <el-button @click="updateBasicInf">修改</el-button>
+                    <el-button v-if="p.updateDealerById" @click="updateBasicInf">修改</el-button>
                 </div>
                 <div class="right">
                     <div>
@@ -79,7 +79,7 @@
                     </div>
                 </div>
                 <div class="center">
-                    <el-button @click="updateAuthorInf">修改</el-button>
+                    <el-button v-if="p.updateDealerPermitById" @click="updateAuthorInf">修改</el-button>
                 </div>
                 <div class="clearfix"></div>
             </div>
@@ -166,6 +166,8 @@
     import editAuthor from './editAuthorInf'
     import icon from '../../../common/ico.vue';
     import * as api from '../../../../api/api';
+    import utils from '../../../../utils/index.js'
+    import * as pApi from '../../../../privilegeList/index.js';
 
     export default {
         components: {
@@ -173,6 +175,12 @@
         },
         data: function () {
             return {
+                // 权限控制
+                p:{
+                    updateDealerById:false,
+                    updateDealerPermitById:false,
+                },
+
                 dealer: {},
                 permit: {},
                 dynamicTags: ['标签一', '标签二', '标签三'],
@@ -189,9 +197,16 @@
             this.id =
                 this.$route.query.id ||
                 JSON.parse(sessionStorage.getItem("memberDetail").id);
-            this.getDetail()
+            this.getDetail();
+            this.pControl();
         },
         methods: {
+            // 权限控制
+            pControl() {
+                for (const k in this.p) {
+                    this.p[k] = utils.pc(pApi[k]);
+                }
+            },
             basicToast(msg) {
                 let that=this;
                 that.isShowEditBasic = msg;
@@ -210,7 +225,8 @@
             getDetail() {
                 let that = this;
                 let data = {
-                    id: that.id
+                    id: that.id,
+                    url:pApi.findDealerById
                 };
                 that.loading=true;
                 that.$axios

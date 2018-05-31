@@ -47,7 +47,7 @@
             </div>
             <el-form ref="exportForm" :inline="true" :model="form" class="search-area">
                 <el-form-item>
-                    <el-button @click="addInf" type="primary">发布通知/公告</el-button>
+                    <el-button v-if="p.addNotice" @click="addInf" type="primary">发布通知/公告</el-button>
                 </el-form-item>
             </el-form>
             <template>
@@ -83,18 +83,18 @@
                             <template v-if="scope.row.status==3">取消推送</template>
                         </template>
                     </el-table-column>
-                    <el-table-column label="操作">
+                    <el-table-column v-if="isShowOperate" label="操作">
                         <template slot-scope="scope">
-                            <el-button type="primary" size="small" @click="detailItem(scope.$index,scope.row)">查看详情
+                            <el-button type="primary" v-if="p.getNoticeDetailById" size="small" @click="detailItem(scope.$index,scope.row)">查看详情
                             </el-button>
                             <el-button type="warning" size="small" @click="upStatusItem(scope.row.id,2)"
-                                       v-if="scope.row.status==2">再次推送
+                                       v-if="scope.row.status==2&&p.updateNoticeStatus_1">再次推送
                             </el-button>
                             <el-button type="success" size="small" @click="upStatusItem(scope.row.id,3)"
-                                       v-if="scope.row.status==1">取消推送
+                                       v-if="scope.row.status==1&&p.updateNoticeStatus_2">取消推送
                             </el-button>
                             <el-button type="danger" size="small" @click="upStatusItem(scope.row.id,4)"
-                                       v-if="scope.row.status==3">删除
+                                       v-if="scope.row.status==3&&p.updateNoticeStatus_3">删除
                             </el-button>
                         </template>
                     </el-table-column>
@@ -138,13 +138,24 @@
     import * as api from '../../../api/api';
     import moment from 'moment'
     import {getList} from "../../../api/api";
-
+    import utils from '../../../utils/index.js'
+    import * as pApi from '../../../privilegeList/index.js';
     export default {
         components: {
             vBreadcrumb, icon, deleteToast
         },
         data() {
             return {
+                // 权限控制
+                p:{
+                    addNotice:false,
+                    updateNoticeStatus_1:false,
+                    updateNoticeStatus_2:false,
+                    updateNoticeStatus_3:false,
+                    getNoticeDetailById:false,
+                },
+                isShowOperate:true,
+
                 checked: [true, false],
                 tableData: [],
                 page: {
@@ -176,14 +187,22 @@
         created() {
             let winHeight = window.screen.availHeight - 520;
             this.height = winHeight;
-            this.getTable();
+            this.pControl();
         },
         activated() {
-            let winHeight = window.screen.availHeight - 520;
-            this.height = winHeight;
             this.getTable();
+            this.pControl();
         },
         methods: {
+            // 权限控制
+            pControl() {
+                for (const k in this.p) {
+                    this.p[k] = utils.pc(pApi[k]);
+                }
+                if (!this.p.updateNoticeStatus_1 &&!this.p.updateNoticeStatus_2 &&!this.p.updateNoticeStatus_3 && !this.p.getNoticeDetailById) {
+                    this.isShowOperate = false;
+                }
+            },
             getTable(){
                 let that=this;
                 let param={};
@@ -304,6 +323,12 @@
                     id: that.id,
                     status: that.status,
                 };
+                if(that.status==2){
+                    data.url=pApi.updateNoticeStatus_1
+                }
+                if(that.status==3){
+                    data.url=pApi.updateNoticeStatus_2
+                }
                 that.btnLoading=true;
                 that.$axios
                     .post(api.updateNoticeStatus, data)

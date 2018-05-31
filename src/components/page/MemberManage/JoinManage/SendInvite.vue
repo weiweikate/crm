@@ -118,7 +118,8 @@
     import vBreadcrumb from '../../../common/Breadcrumb.vue';
     import * as api from '../../../../api/api'
     import vChoosearea from '../../../common/chooseBrand.vue';
-    import moment from 'moment'
+    import moment from 'moment';
+    import * as pApi from '../../../../privilegeList/index.js';
 
     export default {
         components: {
@@ -352,6 +353,7 @@
                     that.$message.warning('请设置失效时间!');
                     return
                 }
+                data.url=pApi.addInvite;
                 that.btnLoading = true;
                 this.$axios
                     .post(api.addInvite, data)

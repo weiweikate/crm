@@ -66,7 +66,7 @@
     import vBreadcrumb from '../../../common/Breadcrumb.vue';
     import icon from '../../../common/ico.vue';
     import * as api from '../../../../api/api';
-
+    import * as pApi from '../../../../privilegeList/index.js';
     export default {
         components: {
             icon, vBreadcrumb,
@@ -90,7 +90,8 @@
             getDetail() {
                 let that = this;
                 let data = {
-                    id: that.id
+                    id: that.id,
+                    url:pApi.findInviteInfo
                 };
                 that.$axios
                     .post(api.findInviteInfo, data)

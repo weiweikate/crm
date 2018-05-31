@@ -114,8 +114,6 @@ export const getManageList='/mock/5aeac1c6c186102e067af3f3/test/getManageList';
     export const getSecondList='/admin/productCategory/queryProductCategoryFatherid';
     //添加品牌
     export const addBrand='/admin/brand/addBrand';
-    //获取产品分类列表
-    export const getProductClassifyList='/admin/productCategory/queryProductCategoryPageList';
     //修改品牌
     export const updateBrand='/admin/brand/updateBrand';
     //删除品牌
@@ -145,7 +143,7 @@ export const getManageList='/mock/5aeac1c6c186102e067af3f3/test/getManageList';
     //修改反馈详情
     export const updateFeedback='/admin/feedback/updateFeedback';
 
-    //经销商层级管理
+//经销商层级管理
     // 查询经销商层级列表
     export const getDealerLevelList='/admin/dealerLevel/getList';
     // 添加经销商层级
@@ -162,14 +160,16 @@ export const getManageList='/mock/5aeac1c6c186102e067af3f3/test/getManageList';
     export const getList='/admin/brand/getList';
     //发起——根据品牌获取品类
     export const getProductCategoryList='/admin/productCategory/queryProductCategoryByBrandId';
-    //发起经销商接口
+
+//经销商加盟管理
+    // 发起经销商接口
     export const addInvite='/admin/invite/addInvite';
     //经销商列表接口
     export const getInvitePageList='/admin/invite/queryInvitePageList';
     //查看用户邀请详情
     export const findInviteInfo='/admin/invite/findInviteInfo';
 
-    // 经销商会员管理
+// 经销商会员管理
         //会员列表
         export const getDealerPageList='/admin/dealer/queryDealerPageList';
         //会员详情
@@ -189,11 +189,11 @@ export const getManageList='/mock/5aeac1c6c186102e067af3f3/test/getManageList';
 
 
 // 公告通知
-// 公告列表
-export const getNoticeList='/admin/notice/queryNoticeList';
-// 公告详情
-export const getNoticeDetailById='/admin/notice/findNoticeDetailById';
-//发布通知/公告
-export const addNotice='/admin/notice/addNotice';
-// 修改公告/通知状态
-export const updateNoticeStatus='/admin/notice/updateNoticeStatus';
+    // 公告列表
+    export const getNoticeList='/admin/notice/queryNoticeList';
+    // 公告详情
+    export const getNoticeDetailById='/admin/notice/findNoticeDetailById';
+    //发布通知/公告
+    export const addNotice='/admin/notice/addNotice';
+    // 修改公告/通知状态
+    export const updateNoticeStatus='/admin/notice/updateNoticeStatus';

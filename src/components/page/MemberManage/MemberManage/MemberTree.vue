@@ -100,6 +100,7 @@
     import vBreadcrumb from '../../../common/Breadcrumb.vue';
     import icon from '../../../common/ico.vue';
     import * as api from '../../../../api/api';
+    import * as pApi from '../../../../privilegeList/index.js';
 
     export default {
         components: {
@@ -139,7 +140,8 @@
             getDetail() {
                 let that = this;
                 let data = {
-                    id: that.id
+                    id: that.id,
+                    url:pApi.findDealerTreeById
                 };
                 that.loading=true;
                 this.$axios

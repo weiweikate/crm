@@ -81,7 +81,7 @@
     import * as api from '../../../../api/api';
     import moment from 'moment';
     import region from '../../../common/Region';
-
+    import * as pApi from '../../../../privilegeList/index.js';
     export default {
         components: {
             vBreadcrumb, icon, region
@@ -164,7 +164,8 @@
             getDetail() {
                 let that = this;
                 let data = {
-                    id: that.id
+                    id: that.id,
+                    url:pApi.getNoticeDetailById
                 };
                 that.loading = true;
                 that.$axios

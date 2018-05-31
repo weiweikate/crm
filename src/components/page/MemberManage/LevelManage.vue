@@ -2,7 +2,7 @@
     <div class="level">
         <v-breadcrumb :nav="['会员管理','经销商层级管理']"></v-breadcrumb>
         <div class="table-block">
-            <el-button type="primary" style="margin-bottom: 20px" @click="addClassify">添加层级</el-button>
+            <el-button type="primary" v-if="p.addDealerLevel" style="margin-bottom: 20px" @click="addClassify">添加层级</el-button>
             <template>
                 <el-table v-loading="tableLoading" :data="tableData" :height="height" border style="width: 100%">
                     <el-table-column prop="id" label="层级ID" width="120"></el-table-column>
@@ -19,12 +19,12 @@
                             <template v-if="scope.row.autoUp == 2">否</template>
                         </template>
                     </el-table-column>
-                    <el-table-column label="操作">
+                    <el-table-column v-if="isShowOperate" label="操作">
                         <template slot-scope="scope">
                             <!--<el-button type="primary" size="small" @click="upSet(scope.$index,scope.row)">晋级设置</el-button>-->
                             <!--<el-button type="warning" size="small" @click="downSet(scope.$index,scope.row)">降级设置</el-button>-->
                             <!--<el-button type="primary" size="small" @click="priceLevel(scope.$index,scope.row)">价格阶层</el-button>-->
-                            <el-button type="warning" size="small" @click="editItem(scope.$index,scope.row)">编辑
+                            <el-button type="warning" v-if="p.updateDealerLevel" size="small" @click="editItem(scope.$index,scope.row)">编辑
                             </el-button>
                             <el-button type="danger" size="small" @click="delItem(scope.$index,scope.row.id)">删除
                             </el-button>
@@ -129,13 +129,21 @@
     import icon from '../../common/ico.vue';
     import deleteToast from "../../common/DeleteToast";
     import * as api from '../../../api/api';
-
+    import utils from '../../../utils/index.js'
+    import * as pApi from '../../../privilegeList/index.js';
     export default {
         components: {
             vBreadcrumb, icon, deleteToast
         },
         data() {
             return {
+                // 权限控制
+                p:{
+                    addDealerLevel:false,
+                    updateDealerLevel:false,
+                },
+                isShowOperate:true,
+
                 tableData: [],
                 page: {
                     currentPage: 1,
@@ -159,12 +167,6 @@
                     remark: ''
                 },
                 rules:{},
-                // priceLevelForm:{//价格层级表单
-                //     name:'',
-                //     level:'',
-                //     status:'0',
-                //     remarks:''
-                // },
                 title: '添加层级',
                 isShowDelToast: false,
                 delId: '',
@@ -178,9 +180,22 @@
         created() {
             let winHeight = window.screen.availHeight - 500;
             this.height = winHeight;
-            this.getList(this.page.currentPage)
+            this.pControl();
+        },
+        activated(){
+            this.getList(this.page.currentPage);
+            this.pControl();
         },
         methods: {
+            // 权限控制
+            pControl() {
+                for (const k in this.p) {
+                    this.p[k] = utils.pc(pApi[k]);
+                }
+                if (!this.p.updateDealerLevel) {
+                    this.isShowOperate = false;
+                }
+            },
             //取消
             cancel(){
                 this.addMask = false;
@@ -248,9 +263,11 @@
                 data.remark=this[formName].remark;
                 if (!this.isUp) {
                     url = api.addDealerLevel;
+                    data.url=pApi.addDealerLevel;
                 } else {
                     url = api.updateDealerLevel;
                     data.id = this.id;
+                    data.url=pApi.updateDealerLevel;
                 }
                 this.btnLoading = true;
                 this.$axios

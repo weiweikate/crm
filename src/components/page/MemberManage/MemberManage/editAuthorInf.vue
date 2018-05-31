@@ -55,7 +55,7 @@
 <script>
     import icon from "../../../common/ico";
     import * as api from '../../../../api/api'
-
+    import * as pApi from '../../../../privilegeList/index.js';
     export default {
         components: {
             icon
@@ -118,6 +118,7 @@
                 data.id = that.id;
                 data.dType = that.permit.d_type;
                 data.levelId = that.permit.level;
+                data.url=pApi.updateDealerPermitById;
                 if (that.oldId != that.permit.up_dealerid) {
                     data.upDealerid = that.permit.up_dealerid;
                 }

@@ -42,11 +42,12 @@
                 <el-form-item prop="levelId" label="用户层级" label-width="120">
                     <el-select v-model="exportForm.levelId" placeholder="全部层级">
                         <el-option label="全部层级" value=""></el-option>
-                        <el-option :label="item.name" :value="item.id" v-for="(item,index) in levelList" :key="index"></el-option>
+                        <el-option :label="item.name" :value="item.id" v-for="(item,index) in levelList"
+                                   :key="index"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item>
-                    <el-button @click="exportData" type="primary">导出</el-button>
+                    <el-button v-if="p.exportDealerListExcel" @click="exportData" type="primary">导出</el-button>
                 </el-form-item>
             </el-form>
             <template>
@@ -68,8 +69,9 @@
                     <el-table-column prop="addrPreFix" label="区域/省市区"></el-table-column>
                     <!--<el-table-column prop="style" label="渠道" width="100"></el-table-column>-->
                     <el-table-column label="下级" width="50">
-                        <template  slot-scope="scope">
-                            <span style="cursor: pointer" @click="toLower(scope.row.id)">{{scope.row.sub_level_num}}</span>
+                        <template slot-scope="scope">
+                            <span style="cursor: pointer"
+                                  @click="toLower(scope.row.id)">{{scope.row.sub_level_num}}</span>
                         </template>
                     </el-table-column>
                     <el-table-column label="状态">
@@ -79,12 +81,16 @@
                             <template v-if="scope.row.status==3">已关闭</template>
                         </template>
                     </el-table-column>
-                    <el-table-column label="操作">
+                    <el-table-column v-if="isShowOperate" label="操作">
                         <template slot-scope="scope">
-                            <el-button type="warning" size="small" @click="detailItem(scope.$index,scope.row)">详情
+                            <el-button type="warning" v-if="p.findDealerById" size="small" @click="detailItem(scope.$index,scope.row)">详情
                             </el-button>
-                            <el-button type="danger" v-if="scope.row.status!=3" size="small" @click="updateStatusItem(scope.$index,scope.row.id,1)">关闭</el-button>
-                            <el-button type="danger" v-if="scope.row.status==3" size="small" @click="updateStatusItem(scope.$index,scope.row.id,2)">开启</el-button>
+                            <el-button type="danger" v-if="scope.row.status!=3&&p.stopDealerById" size="small"
+                                       @click="updateStatusItem(scope.$index,scope.row.id,1)">关闭
+                            </el-button>
+                            <el-button type="danger" v-if="scope.row.status==3&&p.openDealerById" size="small"
+                                       @click="updateStatusItem(scope.$index,scope.row.id,2)">开启
+                            </el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -126,17 +132,27 @@
     import icon from '../../common/ico.vue';
     import region from '../../common/Region';
     import * as api from '../../../api/api';
-
+    import utils from '../../../utils/index.js'
+    import * as pApi from '../../../privilegeList/index.js';
     export default {
         components: {
             vBreadcrumb, icon, region
         },
         data() {
             return {
+                // 权限控制
+                p:{
+                    stopDealerById:false,
+                    openDealerById:false,
+                    exportDealerListExcel:false,
+                    findDealerById:false
+                },
+                isShowOperate:true,
+
                 tableData: [],
-                tableLoading:false,
-                btnLoading:false,
-                tipsMask:false,
+                tableLoading: false,
+                btnLoading: false,
+                tipsMask: false,
                 page: {
                     currentPage: 1,
                     totalPage: 0
@@ -149,7 +165,7 @@
                     code: '',
                     idCard: '',
                     phone: '',
-                    dType:'',
+                    dType: '',
                 },
                 exportForm: {
                     levelId: '',
@@ -157,44 +173,51 @@
                 selected: '',
                 address: [],
                 levelList: [],//用户层级列表
-                id:'',
-                info:'',
-                type:'',
-                btnTxt:''
+                id: '',
+                info: '',
+                type: '',
+                btnTxt: ''
             }
         },
         created() {
             let winHeight = window.screen.availHeight - 520;
             this.height = winHeight;
-            this.getList(this.page.currentPage);
-            this.getLevelList()
+            this.pControl();
         },
         activated() {
-            let winHeight = window.screen.availHeight - 520;
-            this.height = winHeight;
             this.getList(this.page.currentPage);
-            this.getLevelList()
+            this.getLevelList();
+            this.pControl();
         },
         methods: {
+            // 权限控制
+            pControl() {
+                for (const k in this.p) {
+                    this.p[k] = utils.pc(pApi[k]);
+                }
+                if (!this.p.stopDealerById &&!this.p.findDealerById && !this.p.openDealerById) {
+                    this.isShowOperate = false;
+                }
+            },
             //获取列表
             getList(val) {
                 let that = this;
                 let data = that.form;
-                data.page=val;
-                data.levelId=that.exportForm.levelId;
-                let addrss=that.address;
-                if(addrss && addrss[0]){
-                    data.provinceId=addrss[0];
-                    if(addrss[1]){
-                        data.cityId=addrss[1];
+                data.page = val;
+                data.levelId = that.exportForm.levelId;
+                let addrss = that.address;
+                if (addrss && addrss[0]) {
+                    data.provinceId = addrss[0];
+                    if (addrss[1]) {
+                        data.cityId = addrss[1];
                     }
-                    if(addrss[2]){
-                        data.areaId=addrss[2];
+                    if (addrss[2]) {
+                        data.areaId = addrss[2];
                     }
-                }else{
-                    data.provinceId='';
-                    data.cityId='';
-                    data.areaId='';
+                } else {
+                    data.provinceId = '';
+                    data.cityId = '';
+                    data.areaId = '';
                 }
                 that.tableLoading = true;
                 that.$axios
@@ -243,8 +266,8 @@
                 this.getList(val)
             },
             //跳到下级列表
-            toLower(id){
-                sessionStorage.setItem('memberId',id);
+            toLower(id) {
+                sessionStorage.setItem('memberId', id);
                 this.$router.push({path: '/lowerMemberManage'})
             },
             //详情
@@ -253,43 +276,45 @@
                 this.$router.push({path: '/memberDetail', query: {id: row.id}})
             },
             //关闭,开启
-            updateStatusItem(index, id,num) {
-                let that=this;
-                that.id=id;
-                if(num==1){
-                    that.info='是否确认关闭？';
-                    that.type='关闭';
-                    that.btnTxt='确认关闭'
-                }else{
-                    that.info='是否确认开启？';
-                    that.type='开启';
-                    that.btnTxt='确认开启'
+            updateStatusItem(index, id, num) {
+                let that = this;
+                that.id = id;
+                if (num == 1) {
+                    that.info = '是否确认关闭？';
+                    that.type = '关闭';
+                    that.btnTxt = '确认关闭'
+                } else {
+                    that.info = '是否确认开启？';
+                    that.type = '开启';
+                    that.btnTxt = '确认开启'
                 }
                 that.tipsMask = true;
             },
             oprSure() {
-                let that=this;
-                let data={
-                    id:that.id
+                let that = this;
+                let data = {
+                    id: that.id
                 };
-                let url='';
-                if(that.type=='关闭'){
-                    url=api.stopDealerById
-                }else{
-                    url=api.openDealerById
+                let url = '';
+                if (that.type == '关闭') {
+                    url = api.stopDealerById;
+                    data.url=pApi.stopDealerById
+                } else {
+                    url = api.openDealerById;
+                    data.url=pApi.openDealerById
                 }
-                that.btnLoading=true;
+                that.btnLoading = true;
                 that.$axios
                     .post(url, data)
                     .then(res => {
                         that.btnLoading = false;
-                        if(res.data.code == 200){
+                        if (res.data.code == 200) {
                             that.getList(that.page.currentPage);
                             that.tipsMask = false;
-                        }else{
+                        } else {
                             that.$message.warning(res.data.msg);
                             that.tipsMask = false;
-                            that.btnLoading=false;
+                            that.btnLoading = false;
                         }
                     })
                     .catch(err => {
@@ -299,26 +324,27 @@
             },
             //导出
             exportData() {
-                let that=this;
+                let that = this;
                 let data = that.form;
-                data.page=that.page.currentPage;
-                data.levelId=that.exportForm.levelId;
-                let addrss=that.address;
-                if(addrss && addrss[0]){
-                    data.provinceId=addrss[0];
-                    if(addrss[1]){
-                        data.cityId=addrss[1];
+                data.page = that.page.currentPage;
+                data.levelId = that.exportForm.levelId;
+                data.url = pApi.exportDealerListExcel;
+                let addrss = that.address;
+                if (addrss && addrss[0]) {
+                    data.provinceId = addrss[0];
+                    if (addrss[1]) {
+                        data.cityId = addrss[1];
                     }
-                    if(addrss[2]){
-                        data.areaId=addrss[2];
+                    if (addrss[2]) {
+                        data.areaId = addrss[2];
                     }
-                }else{
-                    data.provinceId='';
-                    data.cityId='';
-                    data.areaId='';
+                } else {
+                    data.provinceId = '';
+                    data.cityId = '';
+                    data.areaId = '';
                 }
                 that.$axios
-                    .post(api.exportDealerListExcel, data, { responseType: "blob" })
+                    .post(api.exportDealerListExcel, data, {responseType: "blob"})
                     .then(res => {
                         var data = res.data;
                         if (!data) {
@@ -353,7 +379,7 @@
 </script>
 
 <style lang="less">
-    .member{
+    .member {
         /*表格样式*/
         .table-block {
             padding: 20px 20px 60px;
@@ -447,7 +473,6 @@
         }
 
     }
-
 
 
 </style>

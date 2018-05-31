@@ -14,7 +14,7 @@
                 </el-form>
             </el-card>
         <div class="table-block">
-            <el-button @click="sendInvite" style="margin-bottom: 20px" type="primary">发起邀请</el-button>
+            <el-button v-if="p.addInvite" @click="sendInvite" style="margin-bottom: 20px" type="primary">发起邀请</el-button>
             <template>
                 <el-table v-loading="tableLoading" :data="tableData" :height="height" border style="width: 100%">
                     <el-table-column prop="id" label="邀请记录ID"></el-table-column>
@@ -25,7 +25,7 @@
                         <template slot-scope="scope">{{scope.row.create_time|formatDate}}</template>
                     </el-table-column>
                     <el-table-column prop="adminUser" label="发起者"></el-table-column>
-                    <el-table-column label="操作">
+                    <el-table-column v-if="p.findInviteInfo" label="操作">
                         <template slot-scope="scope">
                             <el-button type="warning" size="small" @click="detailItem(scope.$index,scope.row)">详情</el-button>
                             <!--<el-button type="danger" size="small" @click="watchItem(scope.$index,scope.row.id)">查看邀请</el-button>-->
@@ -52,13 +52,20 @@
     import vBreadcrumb from '../../common/Breadcrumb.vue';
     import icon from '../../common/ico.vue';
     import * as api from '../../../api/api';
-
+    import utils from '../../../utils/index.js'
+    import * as pApi from '../../../privilegeList/index.js';
     export default {
         components: {
             vBreadcrumb,icon
         },
         data() {
             return {
+                // 权限控制
+                p:{
+                    addInvite:false,
+                    findInviteInfo:false
+                },
+
                 tableData:[],
                 tableLoading:false,
                 page:{
@@ -76,12 +83,19 @@
         created(){
             let winHeight=window.screen.availHeight-520;
             this.height=winHeight;
-            this.getList(this.page.currentPage)
+            this.pControl();
         },
         activated(){
-            this.getList(this.page.currentPage)
+            this.getList(this.page.currentPage);
+            this.pControl();
         },
         methods: {
+            // 权限控制
+            pControl() {
+                for (const k in this.p) {
+                    this.p[k] = utils.pc(pApi[k]);
+                }
+            },
             //获取列表
             getList(val) {
                 let that = this;

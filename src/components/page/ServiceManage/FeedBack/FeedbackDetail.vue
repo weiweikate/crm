@@ -41,8 +41,8 @@
                         处理人：{{username}}
                     </div>
                     <div style="margin-top: 30px" v-if="detail.status==1">
-                        <el-button type="primary" v-loading="btnLoading" @click="update">确认回复</el-button>
-                        <el-button type="success" v-loading="btnLoading" @click="update">修改问题类型</el-button>
+                        <el-button type="primary" v-if="p.updateFeedback" v-loading="btnLoading" @click="update">确认回复</el-button>
+                        <el-button type="success" v-if="p.updateFeedback" v-loading="btnLoading" @click="update">修改问题类型</el-button>
                         <el-button @click="cancel">取消</el-button>
                     </div>
                 </div>
@@ -122,6 +122,8 @@
     import icon from '../../../common/ico.vue';
     import * as api from '../../../../api/api';
     import moment from 'moment'
+    import utils from '../../../../utils/index.js'
+    import * as pApi from '../../../../privilegeList/index.js';
 
     export default {
         components: {
@@ -129,6 +131,11 @@
         },
         data() {
             return {
+                // 权限控制
+                p:{
+                    updateFeedback:false,
+                },
+
                 list: [],
                 detail:{},
                 id:'',
@@ -150,13 +157,21 @@
             this.getDetail();
             this.username = localStorage.getItem("ms_username");
             this.userId = localStorage.getItem("ms_userID");
+            this.pControl();
         },
         methods: {
+            // 权限控制
+            pControl() {
+                for (const k in this.p) {
+                    this.p[k] = utils.pc(pApi[k]);
+                }
+            },
             //获取详情
             getDetail(){
               let that=this;
               let data={
-                  id:that.id
+                  id:that.id,
+                  url:pApi.feedbackDetail
               };
               that.loading=true;
               that.$axios
@@ -202,7 +217,8 @@
                 let params={
                     id:that.id,
                     typeKey:that.item.type_key,
-                    replyContent:that.detail.reply_content
+                    replyContent:that.detail.reply_content,
+                    url:pApi.updateFeedback
                 };
                 that.btnLoading=true;
                 that.$axios
