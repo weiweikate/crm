@@ -48,7 +48,8 @@
                 </div>
                 <div class="right">
                     <div>
-                        <img class="img" :src="dealer.head_img?dealer.head_img:'src/assets/images/logo.png'" alt="">
+                        <img class="img" v-if="dealer.head_img" :src="dealer.head_img" alt="">
+                        <img class="img" src="../../../../assets/images/logo.png" alt="">
                     </div>
                     <div>
                         <el-button type="primary" @click="toLowerAgent">下级代理({{dealer.sub_level_num}})</el-button>

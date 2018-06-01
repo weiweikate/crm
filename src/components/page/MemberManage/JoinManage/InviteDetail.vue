@@ -38,7 +38,8 @@
                 <div v-if="list.length>0">
                     <div class="succ-item" v-for="item in list">
                         <div class="left">
-                            <img :src="item.head_img?item.head_img:'src/assets/images/logo.png'" alt="">
+                            <img v-if="item.head_img" :src="item.head_img" alt="">
+                            <img v-else src="../../../../assets/images/logo.png" alt="">
                         </div>
                         <div class="center">
                             <div>{{item.nickname}}</div>

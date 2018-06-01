@@ -31,7 +31,8 @@
                     </div>
                     <div class="detail-title">图片：</div>
                     <div>
-                        <img :src="detail.original_img?detail.original_img:'/src/assets/images/logo.png'" alt="">
+                        <img v-if="detail.original_img" :src="detail.original_img" alt="">
+                        <img v-else src="../../../../assets/images/logo.png" alt="">
                     </div>
                     <div class="detail-title">回复：</div>
                     <div>
@@ -41,8 +42,8 @@
                         处理人：{{username}}
                     </div>
                     <div style="margin-top: 30px" v-if="detail.status==1">
-                        <el-button type="primary" v-if="p.updateFeedback" v-loading="btnLoading" @click="update('reply')">确认回复</el-button>
-                        <el-button type="success" v-if="p.updateFeedback_2" v-loading="btnLoading" @click="update('update')">修改问题类型</el-button>
+                        <el-button type="primary" v-if="p.updateFeedback_2" v-loading="btnLoading" @click="update('reply')">确认回复</el-button>
+                        <el-button type="success" v-if="p.updateFeedback" v-loading="btnLoading" @click="update('update')">修改问题类型</el-button>
                         <el-button @click="cancel">取消</el-button>
                     </div>
                 </div>

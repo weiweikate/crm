@@ -47,7 +47,7 @@
                     <el-input v-model="addForm.name" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="类目图标" :label-width="formLabelWidth" class="icon-area">
-                    <el-input v-model="addForm.img" auto-complete="off"></el-input>
+                    <el-input readonly v-model="addForm.img" auto-complete="off"></el-input>
                     <el-upload class="icon-uploader"
                                action="/commonAPI/ossClient/aliyunOSSUploadImage"
                                :on-success="handleAvatarSuccess">
@@ -75,7 +75,7 @@
                     <el-input v-model="form.name" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="类目图标" :label-width="formLabelWidth" class="icon-area">
-                    <el-input v-model="form.img" auto-complete="off"></el-input>
+                    <el-input readonly v-model="form.img" auto-complete="off"></el-input>
                     <el-upload class="icon-uploader"
                                action="/commonAPI/ossClient/aliyunOSSUploadImage"
                                :on-success="handleAvatarSuccess">
