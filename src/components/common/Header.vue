@@ -28,7 +28,8 @@
                     <span class="btn-bell-badge" v-if="message"></span>
                 </div> -->
                 <!-- 用户头像 -->
-                <div class="user-avator"><img :src="face"></div>
+                <div v-if="face" class="user-avator"><img :src="face"></div>
+                <div v-else class="user-avator"><img src="../../assets/images/avatar.jpg"></div>
                 <!-- 用户名下拉菜单 -->
                 <el-dropdown class="user-name" trigger="click" @command="handleCommand">
                     <span class="el-dropdown-link">
@@ -57,7 +58,7 @@ export default {
       collapse: false,
       fullscreen: false,
       face: "",
-      name: "linxin",
+      name: "请登陆",
       message: 2
     };
   },

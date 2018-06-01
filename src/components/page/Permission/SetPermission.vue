@@ -46,8 +46,8 @@
                 </el-form-item>
             </el-form>
             <span slot="footer" class="dialog-footer">
-                <el-button @click="isShowaddToask = false">取 消</el-button>
                 <el-button :loading="btnLoading" type="primary" @click="confirmAddModule('addModuleForm')">确 定</el-button>
+                <el-button @click="isShowaddToask = false">取 消</el-button>
             </span>
         </el-dialog>
         <el-dialog title="添加权限" width='30%' :visible.sync="isShowPermission">
@@ -126,7 +126,7 @@ export default {
           { required: true, message: "请输入权限名称", trigger: "blur" }
         ],
         belongModule: [
-          { required: true, message: "请输入所属模块名称", trigger: "blur" }
+          { required: true, message: "请先添加二级模块", trigger: "blur" }
         ]
       }
     };
@@ -134,10 +134,10 @@ export default {
   created() {
     let winHeight = window.screen.availHeight - 360;
     this.height = winHeight;
-    // this.pControl();
+    this.pControl();
   },
   activated() {
-    // this.pControl();
+    this.pControl();
     this.getList();
     this.getFirstList();
   },
@@ -236,7 +236,7 @@ export default {
         }else{
           this.btnLoading = false;
           this.isShowaddToask = false;
-          this.$message.error(res.data.msg);
+          this.$message.error(res.data.data);
         }
       })
       .catch(err=>{
@@ -277,8 +277,8 @@ export default {
           let data = {};
           data.parentId = this.addPermissionForm.parentId;
           data.name = this.addPermissionForm.perName;
-          data.url = this.addPermissionForm.url;
-          data.uri = pApi.addPrivilege;
+          data.uri = this.addPermissionForm.url;
+          data.url = pApi.addPrivilege;
           this.btnLoading = true;
           this.$axios
             .post(api.addPrivilege, data)

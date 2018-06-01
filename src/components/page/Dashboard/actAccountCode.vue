@@ -81,12 +81,10 @@ export default {
       },1000)
       let data = {};
       data.phone = this.form.phone;
-      console.log(data)
       this.$axios.post(api.sendUpdatePwdCode,data)
       .then(res=>{
         if(res.data.code == 200){
           this.$message.success('已发送验证码');
-          alert(res.data.data);
         }else{
           this.$message.warning(res.data.msg);
         }
@@ -98,7 +96,7 @@ export default {
   }
 };
 </script>
-<style lang="less" scoped>
+<style lang="less">
 .pwd-mask {
   display: flex;
   align-items: center;
@@ -136,12 +134,20 @@ export default {
         position: relative;
         margin: 40px 0 0 75px;
         width: 380px;
+        .el-input__inner {
+            height: 50px;
+            border-radius: 8px;
+        }
+        .el-input--prefix .el-input__inner{
+          padding-left: 30px;
+        }
         .inp-ico {
           font-size: 20px;
           margin-top: 15px;
         }
         .code-btn {
           width: 92px;
+          line-height: 100%;
           position: absolute;
           top: 10px;
           left: 270px;

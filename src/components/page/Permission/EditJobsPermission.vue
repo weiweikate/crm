@@ -44,7 +44,7 @@
 <script>
 import breadcrumb from "../../common/Breadcrumb";
 import * as api from "../../../api/api.js";
-import * as pApi from '../../../privilegeList/index.js';
+import * as pApi from "../../../privilegeList/index.js";
 export default {
   components: {
     breadcrumb
@@ -52,11 +52,32 @@ export default {
   data() {
     return {
       nav: ["权限管理", "岗位权限管理", "编辑岗位"],
-      checkAllUser: [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],
+      checkAllUser: [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
       isIndeterminateUser: false,
-      checkedUser: [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]],
+      checkedUser: [[], [], [], [], [], [], [], [], [], [], [], [], [], [], []],
       userManList: [],
-      getUserPriList:[],
+      getUserPriList: [],
       department: [],
       id: "",
       form: {
@@ -73,58 +94,35 @@ export default {
       }
     };
   },
+  created(){
+    this.getCreatedMsg();
+  },
   activated() {
-    this.getDepartmentList();
-    this.getRoleList();
-    this.checkAllUser = [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],
-    this.id =
-      this.$route.params.userId || sessionStorage.getItem("editJobsPermission");
-    this.$axios
-      .post(api.findRoleById, { id: this.id })
-      .then(res => {
-        if (res.data.code == 200) {
-          this.form.department = [];
-          this.getUserPriList = [];
-          this.form.name = res.data.data.name;
-          res.data.data.deptmentRoleList.forEach((v, k) => {
-            this.form.department.push(v.deptmentId);
-          });
-          res.data.data.rolePrivilegeList.forEach((v,k)=>{
-            this.getUserPriList.push(v.privilegeId);
-          })
-          this.assemblyData();
-        } else {
-          this.$message.warning(res.data.msg);
-        }
-      })
-      .catch(err => {
-        console.log(err);
-      });
-      
+    this.getCreatedMsg();
   },
   methods: {
     // 提交表单
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-            let data = {};
-            let role = [];
-            this.checkedUser.forEach((v,k)=>{
-              v.forEach((val)=>{
-                role.push(val);
-              })
-            })
-            data.role = role.join(',');
-            data.id = this.id;
-            data.name = this.form.name;
-            data.department = this.form.department.join(',');
-            data.url = pApi.updateRole;
+          let data = {};
+          let role = [];
+          this.checkedUser.forEach((v, k) => {
+            v.forEach(val => {
+              role.push(val);
+            });
+          });
+          data.role = role.join(",");
+          data.id = this.id;
+          data.name = this.form.name;
+          data.department = this.form.department.join(",");
+          data.url = pApi.updateRole;
           this.$axios
             .post(api.updateRole, data)
             .then(res => {
               if (res.data.code == 200) {
                 this.$message.success(res.data.data);
-                this.$router.push('/jobsPermissionMange');
+                this.$router.push("/jobsPermissionMange");
               } else {
                 this.$message.warning(res.data.msg);
               }
@@ -145,45 +143,45 @@ export default {
     },
 
     // 组装权限列表数据
-    assemblyData(){
+    assemblyData() {
       let that = this;
       this.checkedUser = [];
-      for(let i=0;i<this.userManList.length+1;i++){
+      for (let i = 0; i < this.userManList.length + 1; i++) {
         this.checkedUser.push([]);
       }
-      this.userManList.forEach((v1,k1)=>{
+      this.userManList.forEach((v1, k1) => {
         let arrLength = 0;
-        v1.value.forEach((v2,k2)=>{
-          v2.value.forEach((v3,k3)=>{
-            arrLength ++;
-            if(that.getUserPriList.indexOf(v3.id) != -1){
+        v1.value.forEach((v2, k2) => {
+          v2.value.forEach((v3, k3) => {
+            arrLength++;
+            if (that.getUserPriList.indexOf(v3.id) != -1) {
               that.checkedUser[k1].push(v3.id);
             }
-          })
-        })
-        if(arrLength == that.checkedUser[k1].length){
+          });
+        });
+        if (arrLength == that.checkedUser[k1].length) {
           that.checkAllUser[k1] = true;
         }
-      })
+      });
     },
 
     // 全选用户管理
-    handleCheckAllChangeUser(val,k) {
+    handleCheckAllChangeUser(val, k) {
       let tmp = [];
       this.userManList[k].value.forEach(function(v) {
-        v.value.forEach(function (val) {  
+        v.value.forEach(function(val) {
           tmp.push(val.id);
-        })
+        });
       });
       this.checkedUser[k] = val ? tmp : [];
     },
-    handleCheckedUserChange(value,k) {
+    handleCheckedUserChange(value, k) {
       let itemTmp = [];
       let checkedCount = value.length;
       this.userManList[k].value.forEach(function(v) {
-        v.value.forEach(function (val) {  
+        v.value.forEach(function(val) {
           itemTmp.push(val.value);
-        })
+        });
       });
       this.checkAllUser[k] = checkedCount == itemTmp.length;
       this.$set(this.checkAllUser, k, this.checkAllUser[k]);
@@ -212,6 +210,57 @@ export default {
             res.data.data.forEach((v, k) => {
               this.department.push({ label: v.name, value: v.id });
             });
+          } else {
+            this.$message.warning(res.data.msg);
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+    // created
+    getCreatedMsg() {
+      this.getDepartmentList();
+      this.getRoleList();
+      (this.checkAllUser = [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]),
+        (this.id =
+          this.$route.params.userId ||
+          sessionStorage.getItem("editJobsPermission"));
+      this.$axios
+        .post(api.findRoleById, { id: this.id })
+        .then(res => {
+          if (res.data.code == 200) {
+            this.form.department = [];
+            this.getUserPriList = [];
+            this.form.name = res.data.data.name;
+            res.data.data.deptmentRoleList.forEach((v, k) => {
+              this.form.department.push(v.deptmentId);
+            });
+            res.data.data.rolePrivilegeList.forEach((v, k) => {
+              this.getUserPriList.push(v.privilegeId);
+            });
+            this.assemblyData();
           } else {
             this.$message.warning(res.data.msg);
           }

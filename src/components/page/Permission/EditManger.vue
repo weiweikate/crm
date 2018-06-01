@@ -13,7 +13,7 @@
                     </el-form-item>
                     <div class="avatar">
                         <img v-if="form.face" :src="form.face">
-                        <img v-else src="../../../assets/images/logo.png" alt="">
+                        <img v-else src="../../../assets/images/avatar.jpg" alt="">
                         <el-upload
                                 :action="uploadImg"
                                 :show-file-list="false"
@@ -103,35 +103,11 @@ export default {
       }
     };
   },
+  mounted(){
+    // this.getCreatedMsg();
+  },
   activated(){
-    this.uploadImg = api.addImg;
-    this.getRoleList();
-    this.getDepartmentList();
-    this.getJobList();
-    this.checkAllUser = [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false];
-    this.id = this.$route.params.id || sessionStorage.getItem("editManger");
-    this.$axios
-    .post(api.findAdminUserbyId, {id:this.id})
-    .then(res => {
-        if(res.data.code == 200){
-          this.getUserPriList = [];
-          this.form.username = res.data.data.name;
-          this.form.phone = res.data.data.telephone;
-          this.form.jobId = res.data.data.jobId;
-          this.form.departmentId = res.data.data.deptmentId;
-          this.form.superior = res.data.data.immediateSuperior;
-          this.form.face = res.data.data.face;
-          res.data.data.adminUserPrivilegeList.forEach((v,k)=>{
-            this.getUserPriList.push(v.privilegeId);
-          })
-          this.assemblyData();
-        }else{
-          this.$message.warning(res.data.msg);
-        }
-    })
-    .catch(err => {
-        console.log(err);
-    });
+    this.getCreatedMsg();
   },
   methods: {
     //提交表单
@@ -287,6 +263,38 @@ export default {
         .catch(err => {
           console.log(err);
         });
+    },
+    // created
+    getCreatedMsg(){
+      this.uploadImg = api.addImg;
+      this.getRoleList();
+      this.getDepartmentList();
+      this.getJobList();
+      this.checkAllUser = [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false];
+      this.id = this.$route.params.id || sessionStorage.getItem("editManger");
+      this.$axios
+      .post(api.findAdminUserbyId, {id:this.id})
+      .then(res => {
+          if(res.data.code == 200){
+            this.getUserPriList = [];
+            this.form.username = res.data.data.name;
+            this.form.phone = res.data.data.telephone;
+            this.form.jobId = res.data.data.jobId;
+            this.form.departmentId = res.data.data.deptmentId;
+            this.form.superior = res.data.data.immediateSuperior;
+            this.form.face = res.data.data.face;
+            res.data.data.adminUserPrivilegeList.forEach((v,k)=>{
+              this.getUserPriList.push(v.privilegeId);
+            })
+            console.log(this.getUserPriList.length);
+            this.assemblyData();
+          }else{
+            this.$message.warning(res.data.msg);
+          }
+      })
+      .catch(err => {
+          console.log(err);
+      });
     }
   }
 };

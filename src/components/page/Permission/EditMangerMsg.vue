@@ -19,7 +19,7 @@
                         :action="uploadImg"
                         :show-file-list="false"
                         :on-success="uploadAvatar">
-                        <img v-if="face == ''" src="../../../assets/images/logo.png" alt="">
+                        <img v-if="face == ''" src="../../../assets/images/avatar.jpg" alt="">
                         <img v-else :src="face" alt="">
                     </el-upload>
                     <el-button type="primary" class='edit-btn' @click='editPwd'>登陆密码修改</el-button>
@@ -230,7 +230,6 @@ export default {
       .then(res=>{
         if(res.data.code == 200){
           this.$message.success('已发送验证码');
-          alert(res.data.data);
         }else{
           this.$message.warning(res.data.msg);
         }
@@ -295,6 +294,13 @@ export default {
           right: 92px;
           border-radius: 10px;
       }
+      .el-input--prefix .el-input__inner {
+            padding-left: 30px;
+        }
+        .el-input__inner {
+            height: 50px;
+            border-radius: 8px;
+        }
   }
   .el-dialog__header {
     border-bottom: 1px solid #ccc;

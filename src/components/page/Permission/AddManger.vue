@@ -13,7 +13,7 @@
                     </el-form-item>
                     <div class="avatar">
                         <img v-if="form.face" :src="form.face">
-                        <img v-else src="../../../assets/images/logo.png" alt="">
+                        <img v-else src="../../../assets/images/avatar.jpg" alt="">
                         <el-upload
                                 :action="uploadImg"
                                 :show-file-list="false"
@@ -101,6 +101,7 @@ export default {
     };
   },
   activated(){
+    this.form = {};
     this.uploadImg = api.addImg;
     this.getRoleList();
     this.getDepartmentList();

@@ -42,17 +42,17 @@
                     </div>
                     <div class="left-wrap">
                         <div class='left-content'>
-                            <div class="ico-wrap"></div>
+                            <div class="ico-wrap"><img src="../../assets/images/icon-1.png" alt=""></div>
                             <span class='l-title'>待反馈问题</span>
                             <span class="l-content">666666</span>
                         </div>
                         <div class='left-content'>
-                            <div class="ico-wrap"></div>
+                            <div class="ico-wrap"><img src="../../assets/images/icon-2.png" alt=""></div>
                             <span class='l-title'>待处理晋升审核</span>
                             <span class="l-content">666666</span>
                         </div>
                         <div class='left-content'>
-                            <div class="ico-wrap"></div>
+                            <div class="ico-wrap"><img src="../../assets/images/icon-3.png" alt=""></div>
                             <span class='l-title'>待审核产品</span>
                             <span class="l-content">666666</span>
                         </div>
