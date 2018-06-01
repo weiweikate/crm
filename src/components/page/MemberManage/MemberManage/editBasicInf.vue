@@ -42,8 +42,8 @@
                         </div>
                     </div>
                     <div class="right">
-                        <img :src="img?img:'src/assets/images/logo.png'" alt="">
-                        <!--<img v-else src="../../../../assets/images/logo.png" alt="">-->
+                        <img v-if="img" :src="img" alt="">
+                        <img v-else src="../../../../assets/images/logo.png" alt="">
                         <el-upload
                                 action="/commonAPI/ossClient/aliyunOSSUploadImage"
                                 :show-file-list="false"

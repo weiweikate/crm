@@ -29,7 +29,8 @@
                 </div>
                 <div class="first-child jump" v-show="dealerAndUp.checked" @click="toDetail(dealerAndUp.id)">
                     <div class="img-area">
-                        <img :src="dealerAndUp.up_head_img?dealerAndUp.up_head_img:'src/assets/images/logo.png'" alt="">
+                        <img v-if="dealerAndUp.up_head_img" :src="dealerAndUp.up_head_img" alt="">
+                        <img v-else src="../../../../assets/images/logo.png" alt="">
                     </div>
                     <div class="tree-detail-area">
                         <div>用户名：{{dealerAndUp.up_realname}}</div>
@@ -42,7 +43,8 @@
             <div class="first-title" :class="dealerAndUp.up_realname?'line':''">
                 <div class="first-child">
                     <div class="img-area">
-                        <img :src="dealerAndUp.head_img?dealerAndUp.head_img:'src/assets/images/logo.png'" alt="">
+                        <img v-if="dealerAndUp.head_img" :src="dealerAndUp.head_img" alt="">
+                        <img v-else src="../../../../assets/images/logo.png" alt="">
                     </div>
                     <div class="tree-detail-area">
                         <div>用户名：{{dealerAndUp.realname}}</div>
@@ -69,7 +71,8 @@
                             <div>
                                 <div v-for="(direct,index) in firstList">
                                     <div class="direct-item" @click="toDetail(direct.id)">
-                                        <img :src="direct.head_img?direct.head_img:'src/assets/images/logo.png'" alt="">
+                                        <img v-if="direct.head_img" :src="direct.head_img" alt="">
+                                        <img v-else src="../../../../assets/images/logo.png" alt="">
                                         <span>用户名：{{direct.realname}}</span>
                                         <span>用户ID：{{direct.id}}</span><span>授权号：{{direct.code}}</span>
                                     </div>
