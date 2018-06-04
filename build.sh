@@ -34,5 +34,5 @@ fi
 rm -rf $ROOTPATH/*
 
 echo 'start ' $MODULE_NAME ' server'
-cp -rf ../$MODULE_NAME/* $ROOTPATH/
+cp -rf ../$MODULE_NAME/dist/* $ROOTPATH/
 echo $MODULE_NAME Start Success!
