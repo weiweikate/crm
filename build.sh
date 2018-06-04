@@ -6,9 +6,9 @@ MODULE_NAME=${2}
 echo 'get params 1:' $PROJECT_NAME 'get params 2:' $MODULE_NAME
 
 echo 'create workspace start'
-ROOTPATH=/usr/local/jure_project/$PROJECT_NAME/$MODULE_NAME
+ROOTPATH=/usr/local/jure_project/$PROJECT_NAME/web/$MODULE_NAME
 echo $ROOTPATH
-BACKUPSPATH=/usr/local/jure_project/backups/$PROJECT_NAME/$MODULE_NAME
+BACKUPSPATH=/usr/local/jure_project/backups/$PROJECT_NAME/web/$MODULE_NAME
 echo $BACKUPSPATH
 if [ ! -d $ROOTPATH ];
 then
