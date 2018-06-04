@@ -103,6 +103,7 @@
                     page: val,
                     initiator:that.form.initiator
                 };
+                data.url=pApi.getInvitePageList;
                 that.tableLoading = true;
                 that.$axios
                     .post(api.getInvitePageList, data)

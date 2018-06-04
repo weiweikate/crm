@@ -81,49 +81,49 @@ export default new Router({
                     name:'levelManage',
                     path: '/levelManage',
                     component: resolve => require(['../components/page/MemberManage/LevelManage.vue'], resolve),
-                    meta: { title: '经销商层级管理' }
+                    meta: { title: '经销商层级管理',url:'/admin/dealerLevel/getList' }
                 },
                 {
                     name:'joinManage',
                     path: '/joinManage',
                     component: resolve => require(['../components/page/MemberManage/JoinManage.vue'], resolve),
-                    meta: { title: '经销商加盟管理' }
+                    meta: { title: '经销商加盟管理',url:'/admin/invite/queryInvitePageList' }
                 },
                 {
                     name:'memberManage',
                     path: '/memberManage',
                     component: resolve => require(['../components/page/MemberManage/MemberManage.vue'], resolve),
-                    meta: { title: '经销商会员管理' }
+                    meta: { title: '经销商会员管理',url:'/admin/dealer/queryDealerPageList' }
                 },
                 {
                     name:'lowerMemberManage',
                     path: '/lowerMemberManage',
                     component: resolve => require(['../components/page/MemberManage/MemberManage/LowerMemberManage.vue'], resolve),
-                    meta: { title: '下级代理' }
+                    meta: { title: '下级代理',url:'/admin/dealer/queryDealerPageList' }
                 },
                 {
                     name:'memberDetail',
                     path: '/memberDetail',
                     component: resolve => require(['../components/page/MemberManage/MemberManage/MemberDetail.vue'], resolve),
-                    meta: { title: '会员详情' }
+                    meta: { title: '会员详情',url:'/admin/dealer/findDealerById' }
                 },
                 {
                     name:'memberTree',
                     path: '/memberTree',
                     component: resolve => require(['../components/page/MemberManage/MemberManage/MemberTree.vue'], resolve),
-                    meta: { title: '会员树状图' }
+                    meta: { title: '会员树状图',url:'/admin/dealer/findDealerTreeById' }
                 },
                 {
                     name:'sendInvite',
                     path: '/sendInvite',
                     component: resolve => require(['../components/page/MemberManage/JoinManage/SendInvite.vue'], resolve),
-                    meta: { title: '邀请发起' }
+                    meta: { title: '邀请发起',url:'/admin/invite/addInvite' }
                 },
                 {
                     name:'inviteDetail',
                     path: '/inviteDetail',
                     component: resolve => require(['../components/page/MemberManage/JoinManage/InviteDetail.vue'], resolve),
-                    meta: { title: '邀请详情' }
+                    meta: { title: '邀请详情',url:'/admin/invite/findInviteInfo' }
                 },
                 {
                     name:'inviteLink',
@@ -136,31 +136,31 @@ export default new Router({
                     name:'noticeInformManage',
                     path: '/noticeInformManage',
                     component: resolve => require(['../components/page/ServiceManage/NoticeInformManage.vue'], resolve),
-                    meta: { title: '公告通知管理' }
+                    meta: { title: '公告通知管理',url:'/admin/notice/queryNoticeList' }
                 },
                 {
                     name:'addNoticeInform',
                     path: '/addNoticeInform',
                     component: resolve => require(['../components/page/ServiceManage/NoticeInformManage/AddNoticeInform.vue'], resolve),
-                    meta: { title: '发布通知/公告' }
+                    meta: { title: '发布通知/公告',url:'/admin/notice/addNotice' }
                 },
                 {
                     name:'noticeInformDetail',
                     path: '/noticeInformDetail',
                     component: resolve => require(['../components/page/ServiceManage/NoticeInformManage/NoticeInformDetail.vue'], resolve),
-                    meta: { title: '通知/公告详情' }
+                    meta: { title: '通知/公告详情',url:'/admin/notice/findNoticeDetailById' }
                 },
                 {
                     name:'feedBack',
                     path: '/feedBack',
                     component: resolve => require(['../components/page/ServiceManage/FeedBack.vue'], resolve),
-                    meta: { title: '问题反馈' }
+                    meta: { title: '问题反馈',url:'/admin/feedback/queryFeedbackList' }
                 },
                 {
                     name:'feedDetail',
                     path: '/feedDetail',
                     component: resolve => require(['../components/page/ServiceManage/FeedBack/FeedbackDetail.vue'], resolve),
-                    meta: { title: '问题详情' }
+                    meta: { title: '问题详情',url:'/admin/feedback/findFeedbackByid' }
                 },
                 // 溯源管理
                 {

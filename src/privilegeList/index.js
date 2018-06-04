@@ -93,6 +93,8 @@
         // 删除品牌
         export const deleteBrand='/admin/brand/deleteBrand';
 //经销商层级管理
+        // 查询经销商层级列表
+        export const getDealerLevelList='/admin/dealerLevel/getList';
         // 添加经销商层级
         export const addDealerLevel='/admin/dealerLevel/addDealerLevel';
         // 修改经销商层级
@@ -101,12 +103,16 @@
         export const deleteDealerLevelById='/admin/dealerLevel/deleteDealerLevelById';
 
 //经销商加盟管理
+        //经销商列表接口
+        export const getInvitePageList='/admin/invite/queryInvitePageList';
         //发起经销商接口
         export const addInvite='/admin/invite/addInvite';
         //查看用户邀请详情
         export const findInviteInfo='/admin/invite/findInviteInfo';
 
 // 经销商会员管理
+    //会员列表
+    export const getDealerPageList='/admin/dealer/queryDealerPageList';
     //会员详情
     export const findDealerById='/admin/dealer/findDealerById';
     //修改授权信息
@@ -123,6 +129,8 @@
     export const findDealerTreeById='/admin/dealer/findDealerTreeById';
 
 // 公告通知
+    // 公告列表
+    export const getNoticeList='/admin/notice/queryNoticeList';
     //发布通知/公告
     export const addNotice='/admin/notice/addNotice';
     // 公告详情
@@ -135,6 +143,8 @@
     export const updateNoticeStatus_3='/admin/notice/updateNoticeStatus_3';
 
 // 问题反馈
+    // 反馈列表
+    export const feedbackList='/admin/feedback/queryFeedbackList';
     // 问题详情
     export const feedbackDetail='/admin/feedback/findFeedbackByid';
     //修改问题类型

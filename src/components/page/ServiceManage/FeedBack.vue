@@ -173,6 +173,7 @@
                     beginTime:that.form.date?moment(that.form.date[0]).format('YYYY-MM-DD'):'',
                     endTime:that.form.date?moment(that.form.date[1]).format('YYYY-MM-DD'):'',
                 };
+                data.url=pApi.feedbackList;
                 that.tableLoading = true;
                 that.$axios
                     .post(api.feedbackList, data)

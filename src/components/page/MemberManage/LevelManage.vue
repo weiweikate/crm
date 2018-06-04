@@ -208,6 +208,7 @@
             getList(val) {
                 let that = this;
                 let data = {};
+                data.url=pApi.getDealerLevelList;
                 that.tableLoading = true;
                 that.$axios
                     .post(api.getDealerLevelList, data)

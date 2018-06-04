@@ -221,6 +221,7 @@
                     data.cityId = '';
                     data.areaId = '';
                 }
+                data.url=pApi.getDealerPageList;
                 that.tableLoading = true;
                 that.$axios
                     .post(api.getDealerPageList, data)
