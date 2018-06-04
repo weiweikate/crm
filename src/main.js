@@ -34,7 +34,7 @@ router.beforeEach((to, from, next) => {
     }else if(privilege.indexOf(to.meta.url) == -1 && to.path != '/404' && to.path != '/login'){
         // 权限控制
         next('/404');
-    }else if(localStorage.getItem('ms_hadFirstLogin') == 1 && to.path !== '/dashboard' && to.path !== '/login'){
+    }else if(localStorage.getItem('ms_hadFirstLogin') == 1 && to.path !== '/dashboard' && to.path !== '/login' && to.path !== '/404'){
         next('/dashboard');
     }else{
         // 简单的判断IE10及以下不进入富文本编辑器，该组件不兼容

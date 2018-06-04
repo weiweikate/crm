@@ -241,7 +241,7 @@ export default new Router({
                     path: '/editMangerMsg',
                     component: resolve => require(['../components/page/Permission/EditMangerMsg.vue'], resolve),
                     meta: { title: '管理员基础信息修改',url:'/editMangerMsg' }
-                }
+                },
             ]
         },
         {
@@ -250,13 +250,13 @@ export default new Router({
             component: resolve => require(['../components/page/Login.vue'], resolve)
         },
         {
+            path: '*',
+            redirect: '/404'
+        },
+        {
             name:'404',
             path: '/404',
             component: resolve => require(['../components/page/404.vue'], resolve)
         },
-        {
-            path: '*',
-            redirect: '/404'
-        }
     ]
 })
