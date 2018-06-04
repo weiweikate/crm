@@ -52,16 +52,16 @@
             </el-form>
             <template>
                 <el-table :data="tableData" :height="height" border style="width: 100%">
-                    <el-table-column prop="id" label="ID" width="60"></el-table-column>
-                    <el-table-column prop="n_type" label="类型" width="80">
+                    <el-table-column prop="id" label="ID" width="60" align="center"></el-table-column>
+                    <el-table-column prop="n_type" label="类型" width="80" align="center">
                         <template slot-scope="scope">
                             <template v-if="scope.row.n_type==1">公告</template>
                             <template v-if="scope.row.n_type==2">通知</template>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="title" label="标题"></el-table-column>
-                    <el-table-column prop="push_way" label="推送用户"></el-table-column>
-                    <el-table-column label="推送区域">
+                    <el-table-column prop="title" label="标题" align="center"></el-table-column>
+                    <el-table-column prop="push_way" label="推送用户" align="center"></el-table-column>
+                    <el-table-column label="推送区域" align="center">
                         <template slot-scope="scope">
                             <template v-if="scope.row.push_country==1">全国</template>
                             <template v-if="scope.row.push_country==2">国外</template>
@@ -70,20 +70,20 @@
                             </template>
                         </template>
                     </el-table-column>
-                    <el-table-column label="推送时间">
+                    <el-table-column label="推送时间" align="center">
                         <template slot-scope="scope">
                             <template>{{scope.row.order_time|formatDate}}</template>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="name" label="发布者" width="80"></el-table-column>
-                    <el-table-column prop="status" label="状态">
+                    <el-table-column prop="name" label="发布者" width="80" align="center"></el-table-column>
+                    <el-table-column prop="status" label="状态" align="center">
                         <template slot-scope="scope">
                             <template v-if="scope.row.status==1">待推送</template>
                             <template v-if="scope.row.status==2">已推送</template>
                             <template v-if="scope.row.status==3">取消推送</template>
                         </template>
                     </el-table-column>
-                    <el-table-column v-if="isShowOperate" label="操作">
+                    <el-table-column v-if="isShowOperate" label="操作" align="center">
                         <template slot-scope="scope">
                             <el-button type="primary" v-if="p.getNoticeDetailById" size="small" @click="detailItem(scope.$index,scope.row)">查看详情
                             </el-button>

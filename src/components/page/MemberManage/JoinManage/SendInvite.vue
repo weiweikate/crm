@@ -179,6 +179,8 @@
         },
         activated() {
             let that = this;
+            that.form={};
+            that.num=-1;
             that.getLevelList();//加载邀请层级列表
             // that.getStatusONList();//加载授权渠道列表
         },
@@ -345,10 +347,18 @@
                    that.$message.warning('请选择邀请层级!');
                    return
                }
+                if(!data.inviteType){
+                    that.$message.warning('请选择经销商类型!');
+                    return
+                }
                if(that.form.invalidType==1&&!data.clickTimes){
                    that.$message.warning('请输入链接打开次数!');
                    return
                }
+                if(!data.invalidType){
+                    that.$message.warning('请设置邀请有效期!');
+                    return
+                }
                 if(that.form.invalidType==2&&!data.invalidTime){
                     that.$message.warning('请设置失效时间!');
                     return

@@ -50,24 +50,24 @@
         <div class="table-block">
             <template>
                 <el-table v-loading="tableLoading" :data="tableData" :height="height" border style="width: 100%">
-                    <el-table-column prop="id" label="ID" width="60"></el-table-column>
-                    <el-table-column prop="nickname" label="用户"></el-table-column>
-                    <el-table-column label="类型">
+                    <el-table-column prop="id" label="ID" width="60" align="center"></el-table-column>
+                    <el-table-column prop="nickname" label="用户" align="center"></el-table-column>
+                    <el-table-column label="类型" align="center">
                         <template slot-scope="scope">
                             <template v-if="scope.row.d_type == 1">网信经销商</template>
                             <template v-if="scope.row.d_type == 2">供货经销商</template>
                             <template v-if="scope.row.d_type == 3">网红经销商</template>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="remark" label="层级"></el-table-column>
-                    <el-table-column prop="phone" label="联系电话"></el-table-column>
-                    <el-table-column prop="address" label="所在区域"></el-table-column>
-                    <el-table-column label="反馈时间">
+                    <el-table-column prop="remark" label="层级" align="center"></el-table-column>
+                    <el-table-column prop="phone" label="联系电话" align="center"></el-table-column>
+                    <el-table-column prop="address" label="所在区域" align="center"></el-table-column>
+                    <el-table-column label="反馈时间" align="center">
                         <template slot-scope="scope">
                             {{scope.row.create_time|formatDate}}
                         </template>
                     </el-table-column>
-                    <el-table-column label="问题类型" width="100">
+                    <el-table-column label="问题类型" width="100" align="center">
                         <template slot-scope="scope">
                             <template v-if="scope.row.type_key == 1">账户问题</template>
                             <template v-if="scope.row.type_key == 2">营销问题</template>
@@ -75,14 +75,14 @@
                             <template v-if="scope.row.type_key == 4">推广机制</template>
                         </template>
                     </el-table-column>
-                    <el-table-column label="状态" width="100">
+                    <el-table-column label="状态" width="100" align="center">
                         <template slot-scope="scope">
                             <template v-if="scope.row.status == 1">待处理</template>
                             <template v-if="scope.row.status == 2">已处理</template>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="adminName" label="处理人"></el-table-column>
-                    <el-table-column v-if="p.feedbackDetail" label="操作">
+                    <el-table-column prop="adminName" label="处理人" align="center"></el-table-column>
+                    <el-table-column v-if="p.feedbackDetail" label="操作" align="center">
                         <template slot-scope="scope">
                             <el-button type="primary" size="small" @click="detailItem(scope.$index,scope.row)">查看详情
                             </el-button>

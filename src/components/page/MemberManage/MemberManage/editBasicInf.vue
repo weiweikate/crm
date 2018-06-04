@@ -118,7 +118,7 @@
             },
             textPhone(){
                 let that=this;
-                let reg=/^1(3|4|5|7|8)\d{9}$/;
+                let reg=/^1[3-8]\d{9}$/;
                 if (!reg.test(that.dealer.phone)) {
                     that.$message.warning('请输入正确的手机号格式!');
                     that.phone=false;

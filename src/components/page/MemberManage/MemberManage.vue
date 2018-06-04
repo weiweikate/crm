@@ -52,38 +52,39 @@
             </el-form>
             <template>
                 <el-table v-loading="tableLoading" :data="tableData" :height="height" border style="width: 100%">
-                    <el-table-column prop="id" label="用户ID" width="60"></el-table-column>
-                    <el-table-column prop="nickname" label="用户昵称"></el-table-column>
-                    <el-table-column prop="phone" label="手机号"></el-table-column>
-                    <el-table-column label="授权层级" width="100">
+                    <el-table-column prop="id" label="用户ID" width="60" align="center"></el-table-column>
+                    <el-table-column prop="nickname" label="用户昵称" align="center"></el-table-column>
+                    <el-table-column prop="phone" label="手机号" align="center"></el-table-column>
+                    <el-table-column label="授权层级" width="100" align="center">
                         <template slot-scope="scope">{{scope.row.levelName}}</template>
                     </el-table-column>
-                    <el-table-column prop="day_count" label="本日登录" width="80"></el-table-column>
-                    <el-table-column prop="month_count" label="本月登录" width="80"></el-table-column>
-                    <el-table-column label="最近登录时间">
+                    <el-table-column prop="day_count" label="本日登录" width="80" align="center"></el-table-column>
+                    <el-table-column prop="month_count" label="本月登录" width="80" align="center"></el-table-column>
+                    <el-table-column label="最近登录时间" align="center">
                         <template slot-scope="scope">
                             <template>{{scope.row.last_logintime|formatDate}}</template>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="code" label="授权码" width="100"></el-table-column>
-                    <el-table-column prop="addrPreFix" label="区域/省市区"></el-table-column>
+                    <el-table-column prop="code" label="授权码" width="100" align="center"></el-table-column>
+                    <el-table-column prop="addrPreFix" label="区域/省市区" align="center"></el-table-column>
                     <!--<el-table-column prop="style" label="渠道" width="100"></el-table-column>-->
-                    <el-table-column label="下级" width="50">
+                    <el-table-column label="下级" width="50" align="center">
                         <template slot-scope="scope">
                             <span style="cursor: pointer"
                                   @click="toLower(scope.row.id)">{{scope.row.sub_level_num}}</span>
                         </template>
                     </el-table-column>
-                    <el-table-column label="状态">
+                    <el-table-column label="状态" align="center">
                         <template slot-scope="scope">
                             <template v-if="scope.row.status==1">待激活</template>
                             <template v-if="scope.row.status==2">正常</template>
                             <template v-if="scope.row.status==3">已关闭</template>
                         </template>
                     </el-table-column>
-                    <el-table-column v-if="isShowOperate" label="操作">
+                    <el-table-column v-if="isShowOperate" label="操作" align="center">
                         <template slot-scope="scope">
-                            <el-button type="warning" v-if="p.findDealerById" size="small" @click="detailItem(scope.$index,scope.row)">详情
+                            <el-button type="warning" v-if="p.findDealerById" size="small"
+                                       @click="detailItem(scope.$index,scope.row)">详情
                             </el-button>
                             <el-button type="danger" v-if="scope.row.status!=3&&p.stopDealerById" size="small"
                                        @click="updateStatusItem(scope.$index,scope.row.id,1)">关闭
@@ -143,13 +144,13 @@
         data() {
             return {
                 // 权限控制
-                p:{
-                    stopDealerById:false,
-                    openDealerById:false,
-                    exportDealerListExcel:false,
-                    findDealerById:false
+                p: {
+                    stopDealerById: false,
+                    openDealerById: false,
+                    exportDealerListExcel: false,
+                    findDealerById: false
                 },
-                isShowOperate:true,
+                isShowOperate: true,
 
                 tableData: [],
                 tableLoading: false,
@@ -197,7 +198,7 @@
                 for (const k in this.p) {
                     this.p[k] = utils.pc(pApi[k]);
                 }
-                if (!this.p.stopDealerById &&!this.p.findDealerById && !this.p.openDealerById) {
+                if (!this.p.stopDealerById && !this.p.findDealerById && !this.p.openDealerById) {
                     this.isShowOperate = false;
                 }
             },
@@ -221,7 +222,7 @@
                     data.cityId = '';
                     data.areaId = '';
                 }
-                data.url=pApi.getDealerPageList;
+                data.url = pApi.getDealerPageList;
                 that.tableLoading = true;
                 that.$axios
                     .post(api.getDealerPageList, data)
@@ -301,10 +302,10 @@
                 let url = '';
                 if (that.type == '关闭') {
                     url = api.stopDealerById;
-                    data.url=pApi.stopDealerById
+                    data.url = pApi.stopDealerById
                 } else {
                     url = api.openDealerById;
-                    data.url=pApi.openDealerById
+                    data.url = pApi.openDealerById
                 }
                 that.btnLoading = true;
                 that.$axios
@@ -357,8 +358,8 @@
                         let link = document.createElement("a");
                         link.style.display = "none";
                         link.href = url;
-                        let time=moment(new Date()).format('YYYYMMDDHHmmss');
-                        link.setAttribute("download", "会员列表"+time+".xlsx");
+                        let time = moment(new Date()).format('YYYYMMDDHHmmss');
+                        link.setAttribute("download", "会员列表" + time + ".xlsx");
                         document.body.appendChild(link);
                         link.click();
                     })

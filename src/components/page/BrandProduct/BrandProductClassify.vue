@@ -5,20 +5,20 @@
             <el-button v-if="p.addProductCategory_1" type="primary" style="margin-bottom: 20px" @click="addClassify">添加一级类目</el-button>
             <template>
                 <el-table :data="tableData" :height="height" border style="width: 100%">
-                    <el-table-column prop="id" label="ID" width="180"></el-table-column>
-                    <el-table-column prop="name" label="品类"></el-table-column>
-                    <el-table-column label="图标" width="180">
+                    <el-table-column prop="id" label="ID" width="180" align="center"></el-table-column>
+                    <el-table-column prop="name" label="品类" align="center"></el-table-column>
+                    <el-table-column label="图标" width="180" align="center">
                         <template slot-scope="scope">
                             <img :src="scope.row.img" alt="">
                         </template>
                     </el-table-column>
-                    <el-table-column prop="status" label="状态">
+                    <el-table-column prop="status" label="状态" align="center">
                         <template slot-scope="scope">
                             <template v-if="scope.row.status == 1">启用</template>
                             <template v-if="scope.row.status == 2">禁用</template>
                         </template>
                     </el-table-column>
-                    <el-table-column v-if="isShowOperate" label="操作">
+                    <el-table-column v-if="isShowOperate" label="操作" align="center">
                         <template slot-scope="scope">
                             <el-button v-if="p.addProductCategory_2" type="primary" size="small" @click="toSecondClassify(scope.$index,scope.row)">
                                 二级类目

@@ -23,23 +23,23 @@
             <el-button v-if="p.addBrand" type="primary" style="margin-bottom: 20px" @click="addBrand">添加品牌</el-button>
             <template>
                 <el-table v-loading="tableLoading" :data="tableData" :height="height" border style="width: 100%">
-                    <el-table-column prop="id" label="ID" width="100"></el-table-column>
-                    <el-table-column prop="name" label="品牌名称"></el-table-column>
-                    <el-table-column prop="area" label="品牌区域"></el-table-column>
-                    <el-table-column prop="category" label="品牌分类"></el-table-column>
-                    <el-table-column label="品牌LOGO" width="180">
+                    <el-table-column prop="id" label="ID" width="100" align="center"></el-table-column>
+                    <el-table-column prop="name" label="品牌名称" align="center"></el-table-column>
+                    <el-table-column prop="area" label="品牌区域" align="center"></el-table-column>
+                    <el-table-column prop="category" label="品牌分类" align="center"></el-table-column>
+                    <el-table-column label="品牌LOGO" width="180" align="center">
                         <template slot-scope="scope">
                             <img :src="scope.row.original_img" alt="">
                         </template>
                     </el-table-column>
                     <!--<el-table-column prop="name" label="产品数" width="180"></el-table-column>-->
-                    <el-table-column label="状态" width="180">
+                    <el-table-column label="状态" width="180" align="center">
                         <template slot-scope="scope">
                             <template v-if="scope.row.status == 1">启用</template>
                             <template v-if="scope.row.status == 2">停用</template>
                         </template>
                     </el-table-column>
-                    <el-table-column v-if="isShowOperate" label="操作">
+                    <el-table-column v-if="isShowOperate" label="操作" align="center">
                         <template slot-scope="scope">
                             <!--<el-button type="primary" size="small" @click="toBrand(scope.$index,scope.row)">品牌页</el-button>-->
                             <el-button  v-if="p.updateBrand" type="warning" size="small" @click="editItem(scope.$index,scope.row.id)">编辑

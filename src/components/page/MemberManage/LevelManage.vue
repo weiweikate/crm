@@ -5,21 +5,21 @@
             <el-button type="primary" v-if="p.addDealerLevel" style="margin-bottom: 20px" @click="addClassify">添加层级</el-button>
             <template>
                 <el-table v-loading="tableLoading" :data="tableData" :height="height" border style="width: 100%">
-                    <el-table-column prop="id" label="层级ID" width="120"></el-table-column>
-                    <el-table-column prop="name" label="名称"></el-table-column>
-                    <el-table-column label="层级" width="120">
+                    <el-table-column prop="id" label="层级ID" width="120" align="center"></el-table-column>
+                    <el-table-column prop="name" label="名称" align="center"></el-table-column>
+                    <el-table-column label="层级" width="120" align="center">
                         <template slot-scope="scope">
                             {{scope.row.level}}级
                         </template>
                     </el-table-column>
-                    <el-table-column prop="remark" label="备注说明"></el-table-column>
-                    <el-table-column label="是否自动晋级" width="120">
+                    <el-table-column prop="remark" label="备注说明" align="center"></el-table-column>
+                    <el-table-column label="是否自动晋级" width="120" align="center">
                         <template slot-scope="scope">
                             <template v-if="scope.row.autoUp == 1">是</template>
                             <template v-if="scope.row.autoUp == 2">否</template>
                         </template>
                     </el-table-column>
-                    <el-table-column v-if="isShowOperate" label="操作">
+                    <el-table-column v-if="isShowOperate" label="操作" align="center">
                         <template slot-scope="scope">
                             <!--<el-button type="primary" size="small" @click="upSet(scope.$index,scope.row)">晋级设置</el-button>-->
                             <!--<el-button type="warning" size="small" @click="downSet(scope.$index,scope.row)">降级设置</el-button>-->

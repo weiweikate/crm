@@ -52,35 +52,35 @@
             </el-form>
             <template>
                 <el-table v-loading="tableLoading" :data="tableData" :height="height" border style="width: 100%">
-                    <el-table-column prop="id" label="用户ID" width="60"></el-table-column>
-                    <el-table-column prop="nickname" label="用户昵称"></el-table-column>
-                    <el-table-column prop="phone" label="手机号"></el-table-column>
-                    <el-table-column label="授权层级" width="100">
+                    <el-table-column prop="id" label="用户ID" width="60" align="center"></el-table-column>
+                    <el-table-column prop="nickname" label="用户昵称" align="center"></el-table-column>
+                    <el-table-column prop="phone" label="手机号" align="center"></el-table-column>
+                    <el-table-column label="授权层级" width="100" align="center">
                         <template slot-scope="scope">{{scope.row.levelName}}级</template>
                     </el-table-column>
-                    <el-table-column prop="day_count" label="本日登录" width="80"></el-table-column>
-                    <el-table-column prop="month_count" label="本月登录" width="80"></el-table-column>
-                    <el-table-column label="最近登录时间">
+                    <el-table-column prop="day_count" label="本日登录" width="80" align="center"></el-table-column>
+                    <el-table-column prop="month_count" label="本月登录" width="80" align="center"></el-table-column>
+                    <el-table-column label="最近登录时间" align="center">
                         <template slot-scope="scope">
                             <template>{{scope.row.last_logintime|formatDate}}</template>
                         </template>
                     </el-table-column>
-                    <el-table-column prop="CODE" label="授权码" width="100"></el-table-column>
-                    <el-table-column prop="addrPreFix" label="区域/省市区"></el-table-column>
+                    <el-table-column prop="CODE" label="授权码" width="100" align="center"></el-table-column>
+                    <el-table-column prop="addrPreFix" label="区域/省市区" align="center"></el-table-column>
                     <!--<el-table-column prop="style" label="渠道" width="100"></el-table-column>-->
-                    <el-table-column label="下级" width="50">
+                    <el-table-column label="下级" width="50" align="center">
                         <template  slot-scope="scope">
                             <span style="cursor: pointer" @click="toLower(scope.row.id)">{{scope.row.sub_level_num}}</span>
                         </template>
                     </el-table-column>
-                    <el-table-column label="状态">
+                    <el-table-column label="状态" align="center">
                         <template slot-scope="scope">
                             <template v-if="scope.row.status==1">待激活</template>
                             <template v-if="scope.row.status==2">正常</template>
                             <template v-if="scope.row.status==3">已关闭</template>
                         </template>
                     </el-table-column>
-                    <el-table-column v-if="isShowOperate" label="操作">
+                    <el-table-column v-if="isShowOperate" label="操作" align="center">
                         <template slot-scope="scope">
                             <el-button type="warning" size="small" @click="detailItem(scope.$index,scope.row)">详情
                             </el-button>

@@ -17,15 +17,15 @@
             <el-button v-if="p.addInvite" @click="sendInvite" style="margin-bottom: 20px" type="primary">发起邀请</el-button>
             <template>
                 <el-table v-loading="tableLoading" :data="tableData" :height="height" border style="width: 100%">
-                    <el-table-column prop="id" label="邀请记录ID"></el-table-column>
-                    <el-table-column prop="levelName" label="邀请层级"></el-table-column>
+                    <el-table-column prop="id" label="邀请记录ID" align="center"></el-table-column>
+                    <el-table-column prop="levelName" label="邀请层级" align="center"></el-table-column>
                     <!--<el-table-column prop="dayLogin" label="授权渠道"></el-table-column>-->
                     <!--<el-table-column prop="monthLogin" label="邀请代理品牌"></el-table-column>-->
-                    <el-table-column prop="lastLoginTime" label="邀请时间">
+                    <el-table-column prop="lastLoginTime" label="邀请时间" align="center">
                         <template slot-scope="scope">{{scope.row.create_time|formatDate}}</template>
                     </el-table-column>
-                    <el-table-column prop="adminUser" label="发起者"></el-table-column>
-                    <el-table-column v-if="p.findInviteInfo" label="操作">
+                    <el-table-column prop="adminUser" label="发起者" align="center"></el-table-column>
+                    <el-table-column v-if="p.findInviteInfo" label="操作" align="center">
                         <template slot-scope="scope">
                             <el-button type="warning" size="small" @click="detailItem(scope.$index,scope.row)">详情</el-button>
                             <!--<el-button type="danger" size="small" @click="watchItem(scope.$index,scope.row.id)">查看邀请</el-button>-->
