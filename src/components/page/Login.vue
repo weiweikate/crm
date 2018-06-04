@@ -99,6 +99,7 @@ export default {
               if (res.data.code == 200) {
                 localStorage.setItem("ms_username", res.data.data.name);
                 localStorage.setItem("ms_userID", res.data.data.id);
+                localStorage.setItem("ms_userPhone", res.data.data.telephone);
                 localStorage.setItem("ms_hadFirstLogin", res.data.data.hadFirstLogin);
                 this.getUserPriList(res.data.data.id);
                 this.btnLoading = false;
@@ -151,7 +152,7 @@ export default {
     },
     // tab切换
     tabClick(params) {
-      
+
     },
     // 获取权限列表
     getUserPriList(id) {

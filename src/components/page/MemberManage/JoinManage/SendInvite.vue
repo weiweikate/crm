@@ -86,7 +86,7 @@
                         <!--<div class="clearfix"></div>-->
                         <div class="title-item">邀请有效期</div>
                         <el-form-item class="valid-area">
-                            <el-radio-group v-model="form.invalidType">
+                            <el-radio-group @change="changeStyle" v-model="form.invalidType">
                                 <el-radio label="1">
                                     链接打开次数
                                     <el-input class="small-inp" v-model="form.clickTimes"></el-input>
@@ -97,6 +97,7 @@
                                     <el-date-picker
                                             v-model="form.invalidTime"
                                             type="datetime"
+                                            :disabled="dateDisabled"
                                             placeholder="请选择失效时间">
                                     </el-date-picker>
                                 </el-radio>
@@ -174,7 +175,8 @@
                 num: -1,//选择的层级
                 tabNum: 0,//渠道选项卡
                 tabId: '',
-                btnLoading: false
+                btnLoading: false,
+                dateDisabled:true
             };
         },
         activated() {
@@ -192,6 +194,14 @@
             brandsId(brandsId) {
                 this.form.brands = brandsId.join(',');
                 console.log(this.form.brands)
+            },
+            //推送方式
+            changeStyle(){
+                if(this.form.invalidType==1){
+                    this.dateDisabled=true
+                }  else{
+                    this.dateDisabled=false
+                }
             },
             //获取邀请层级列表
             getLevelList() {

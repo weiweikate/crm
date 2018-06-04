@@ -28,6 +28,9 @@
         export const deleteCodeTemplate = '/admin/securityCodeTemplate/deleteById';
         // 失效模板
         export const loseCodeTemplate = '/admin/securityCodeTemplate/loseById';
+    // 防伪码模板
+        // 防伪码参数列表
+        export const getAllCategoryBrand = '/admin/categoryBrand/getAllCategoryBrand';
 // 权限管理
     // 管理员账号管理
         // 管理员账号管理列表

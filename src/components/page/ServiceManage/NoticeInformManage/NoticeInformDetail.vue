@@ -82,6 +82,7 @@
     import moment from 'moment';
     import region from '../../../common/Region';
     import * as pApi from '../../../../privilegeList/index.js';
+    import xss from 'xss'
     export default {
         components: {
             vBreadcrumb, icon, region
@@ -175,6 +176,7 @@
                             that.form = res.data.data;
                             that.title = res.data.data.title;
                             that.form.name = res.data.data.create_admin;
+                            that.form.content=xss(that.form.content);
                             let reginArr=[];
                             reginArr.push(res.data.data.province_id,res.data.data.city_id,res.data.data.area_id);
                             that.address=reginArr;

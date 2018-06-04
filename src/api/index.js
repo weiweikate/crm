@@ -24,7 +24,8 @@ axios.interceptors.request.use(config => {
   //   receiveData.sessionId = sessionId;
   //   receiveData.sessionPwd = sessionPwd;
   // }
-  if(config.data.url == undefined){
+
+  if(config.url == undefined){
     receiveData.url = config.url;
   }
   if(config.method == 'post'){

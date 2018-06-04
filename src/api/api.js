@@ -54,6 +54,10 @@ export const getManageList='/mock/5aeac1c6c186102e067af3f3/test/getManageList';
     export const rootsDelCodeTplList = '/admin/securityCodeTemplate/deleteById';
     // 根据id失效防伪码模板
     export const loseById = '/admin/securityCodeTemplate/loseById';
+    // 防伪码参数列表
+    export const getAllCategoryBrand = '/admin/categoryBrand/getAllCategoryBrand';
+    // 管理员防伪码参数短信
+    export const sendSecurityCodeCode = '/commonAPI/phoneCode/sendSecurityCodeCode';
 
 // 权限管理
     // 查询部门列表

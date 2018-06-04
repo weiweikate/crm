@@ -185,7 +185,7 @@ export default new Router({
                     name:'rootsCodeParams',
                     path: '/rootsCodeParams',
                     component: resolve => require(['../components/page/RootsMange/RootsCodeParams.vue'], resolve),
-                    meta: { title: '防伪码参数设置' }
+                    meta: { title: '防伪码参数设置',url:'/admin/categoryBrand/getAllCategoryBrand'}
                 },
                 // 权限管理
                 {

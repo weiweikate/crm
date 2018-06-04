@@ -90,6 +90,7 @@
     import moment from 'moment'
     import utils from '../../../../utils/index'
     import * as pApi from '../../../../privilegeList/index.js';
+    // import xss from 'xss'
     export default {
         components: {
             vBreadcrumb, icon, region
@@ -345,7 +346,7 @@
                 params.nType=that.form.nType;
                 params.pushCountry=that.form.pushCountry;
                 params.pushWay=that.form.pushWay;
-                params.content=that.form.content;
+                // params.content=xss(that.form.content);
                 params.createAdmin=that.form.createAdmin;
                 params.original_img=that.form.original_img;
                 params.small_img=that.form.small_img;
