@@ -25,15 +25,15 @@ Vue.filter('formatDate',function (value) {
 
 //使用钩子函数对路由进行权限跳转
 router.beforeEach((to, from, next) => {
-    let privilege = JSON.parse(localStorage.getItem('privilegeList'));
+    let privilege = JSON.parse(localStorage.getItem('privilegeList')) || [];
     const role = localStorage.getItem('ms_username');
     if(!role && to.path !== '/login'){
         localStorage.clear();
         sessionStorage.clear();
         next('/login');
-    }else if(to.meta.permission){
-        // 如果是管理员权限则可进入，这里只是简单的模拟管理员权限而已
-        role === 'admin' ? next() : next('/404');
+    }else if(privilege.indexOf(to.meta.url) == -1 && to.path != '/404' && to.path != '/login'){
+        // 权限控制
+        next('/404');
     }else if(localStorage.getItem('ms_hadFirstLogin') == 1 && to.path !== '/dashboard' && to.path !== '/login'){
         next('/dashboard');
     }else{

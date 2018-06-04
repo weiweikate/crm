@@ -1,5 +1,9 @@
+// 系统首页
+        export const dashboard = '/dashboard';
 // 授权管理
     // 添加渠道类目
+        // 查看渠道类目管理列表
+        export const channelItemManage = '/channelItemManage';
         // 添加一级渠道类目
         export const addPermitChannel_1 = '/admin/permitChannel/addPermitChannel_1';
         // 编辑一级渠道类目
@@ -14,6 +18,8 @@
         export const updatePermitChannel_3 = '/admin/permitChannel/updatePermitChannel_3'
 // 溯源管理
     // 防伪码模板
+        // 查看防伪码模板列表
+        export const securityCodeTemplate = '/admin/securityCodeTemplate/getAll'
         // 添加模板
         export const addCodeTemplate = '/admin/securityCodeTemplate/add';
         // 编辑模板
@@ -24,6 +30,8 @@
         export const loseCodeTemplate = '/admin/securityCodeTemplate/loseById';
 // 权限管理
     // 管理员账号管理
+        // 管理员账号管理列表
+        export const manageList = '/manageList';
         // 新建管理员
         export const addAdminUser = '/admin/adminUser/addAdminUser'
         // 编辑管理员
@@ -37,6 +45,8 @@
         // 账号删除
         export const deleteAdminUser = '/admin/adminUser/deleteAdminUser'
     // 岗位权限管理
+        // 岗位权限管理列表
+        export const jobsPermissionMange = '/jobsPermissionMange';
         // 添加岗位
         export const addRole = '/admin/role/addRole';
         // 编辑岗位
@@ -44,15 +54,23 @@
         // 删除岗位
         export const deleteRole = '/admin/role/deleteRole';
     // 权限设置
+        // 权限管理列表
+        export const setPermission = '/setPermission';
         // 新增功能模块
         export const addFunctionModule = '/admin/privilege/addFunctionModule';
         // 添加权限
         export const addPrivilege = '/admin/privilege/addPrivilege';
     // 修改信息
+        // 管理员基础信息修改
+        export const editMangerMsg = '/editMangerMsg';
         export const updateAdminUserFace = '/admin/adminUser/updateAdminUserFace'
         export const updateAdminUserPassword = '/admin/adminUser/updateAdminUserPassword';
 // 品牌产品管理
     // 产品分类管理
+        // 查看一级类目列表
+        export const queryProductCategoryPageList_1 = '/admin/productCategory/queryProductCategoryPageList_1';
+        // 查看二级类目列表
+        export const queryProductCategoryPageList_2 = '/admin/productCategory/queryProductCategoryPageList_2';
         // 添加一级类目
         export const addProductCategory_1 = '/admin/productCategory/addProductCategory';
         // 编辑一级类目
@@ -66,6 +84,8 @@
         // 删除二级类目
         export const deleteProductCategory_2 = '/admin/productCategory/deleteProductCategory_2';
     // 品牌管理
+        // 查看品牌列表
+        export const queryBrandPageList = '/admin/brand/queryBrandPageList';
         // 添加品牌
         export const addBrand = '/admin/brand/addBrand';
         // 编辑品牌
@@ -121,3 +141,8 @@
     export const updateFeedback='/admin/feedback/updateFeedback';
     //回复
     export const updateFeedback_2='/admin/feedback/updateFeedback_2';
+
+    
+    
+    
+    

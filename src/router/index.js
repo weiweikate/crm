@@ -18,69 +18,63 @@ export default new Router({
                     name:'dashboard',
                     path: '/dashboard',
                     component: resolve => require(['../components/page/Dashboard.vue'], resolve),
-                    meta: { title: '系统首页' }
+                    meta: { title: '系统首页',url:'/dashboard' }
                 },
                 // 授权管理
                 {
                     name:'channelItemManage',
                     path: '/channelItemManage',
                     component: resolve => require(['../components/page/Authorization/ChannelItemManage.vue'], resolve),
-                    meta: { title: '渠道类目管理' }
+                    meta: { title: '渠道类目管理',url:'/channelItemManage' }
                 },
                 {
                     name:'secondChannel',
                     path: '/secondChannel',
                     component: resolve => require(['../components/page/Authorization/SecondChannel.vue'], resolve),
-                    meta: { title: '二级渠道' }
+                    meta: { title: '二级渠道',url:'/admin/permitChannel/addPermitChannel_2' }
                 },
                 {
                     name:'certificateUse',
                     path: '/certificateUse',
                     component: resolve => require(['../components/page/Authorization/CertificateUse.vue'], resolve),
-                    meta: { title: '授权证书模板' }
+                    meta: { title: '授权证书模板',url:'/certificateUse' }
                 },
                 {
                     name:'contractReview',
                     path: '/contractReview',
                     component: resolve => require(['../components/page/Authorization/ContractReview.vue'], resolve),
-                    meta: { title: '续约审核' }
-                },
-                {
-                    name:'form',
-                    path: '/form',
-                    component: resolve => require(['../components/page/BaseForm.vue'], resolve),
-                    meta: { title: '基本表单' }
+                    meta: { title: '续约审核',url:'/contractReview' }
                 },
                 // 品牌产品管理
                 {
                     name:'brandProductClassify',
                     path: '/brandProductClassify',
                     component: resolve => require(['../components/page/BrandProduct/BrandProductClassify.vue'], resolve),
-                    meta: { title: '产品分类管理' }
+                    meta: { title: '产品分类管理',url:'/admin/productCategory/queryProductCategoryPageList_1' }
                 },
                 {
                     name:'secondClassify',
                     path: '/secondClassify',
                     component: resolve => require(['../components/page/BrandProduct/SecondClassify.vue'], resolve),
-                    meta: { title: '二级类目' }
+                    meta: { title: '二级类目',url:'/admin/productCategory/queryProductCategoryPageList_2' }
                 },
                 {
                     name:'brandManage',
                     path: '/brandManage',
                     component: resolve => require(['../components/page/BrandProduct/BrandManage.vue'], resolve),
-                    meta: { title: '品牌管理' }
+                    meta: { title: '品牌管理',url:'/admin/brand/queryBrandPageList' }
                 },
                 {
                     name:'addBrand',
                     path: '/addBrand',
                     component: resolve => require(['../components/page/BrandProduct/BrandManage/AddBrand.vue'], resolve),
-                    meta: { title: '添加品牌' }
+                    meta: { title: '添加品牌',url:'/admin/brand/addBrand' }
                 },
                 {
                     name:'editBrand',
                     path: '/editBrand',
                     component: resolve => require(['../components/page/BrandProduct/BrandManage/EditBrand.vue'], resolve),
-                    meta: { title: '编辑品牌' }
+                    meta: { title: '编辑品牌',url:'/admin/brand/updateBrand' }
                 },
                 // 会员管理
                 {
@@ -185,7 +179,7 @@ export default new Router({
                     name:'rootsCodeTpl',
                     path: '/rootsCodeTpl',
                     component: resolve => require(['../components/page/RootsMange/RootsCodeTpl.vue'], resolve),
-                    meta: { title: '防伪码模板' }
+                    meta: { title: '防伪码模板',url:'/admin/securityCodeTemplate/getAll' }
                 },
                 {
                     name:'rootsCodeParams',
@@ -198,62 +192,56 @@ export default new Router({
                     name:'manageList',
                     path: '/manageList',
                     component: resolve => require(['../components/page/Permission/ManageList.vue'], resolve),
-                    meta: { title: '账号管理' }
+                    meta: { title: '账号管理',url:'/manageList' }
                 },
                 {
                     name:'addManger',
                     path: '/addManger',
                     component: resolve => require(['../components/page/Permission/AddManger.vue'], resolve),
-                    meta: { title: '添加管理员' }
+                    meta: { title: '添加管理员',url:'/admin/adminUser/addAdminUser' }
                 },
                 {
                     name:'editManger',
                     path: '/editManger',
                     component: resolve => require(['../components/page/Permission/EditManger.vue'], resolve),
-                    meta: { title: '编辑管理员' }
+                    meta: { title: '编辑管理员',url:'/admin/adminUser/updateAdminUser' }
                 },
                 {
                     name:'showMangeLog',
                     path: '/showMangeLog',
                     component: resolve => require(['../components/page/Permission/ShowMangeLog.vue'], resolve),
-                    meta: { title: '操作日志' }
+                    meta: { title: '操作日志',url:'/admin/logAdminuser/getPage' }
                 },
                 {
                     name:'jobsPermissionMange',
                     path: '/jobsPermissionMange',
                     component: resolve => require(['../components/page/Permission/JobsPermissionMange.vue'], resolve),
-                    meta: { title: '岗位权限管理' }
+                    meta: { title: '岗位权限管理',url:'/jobsPermissionMange' }
                 },
                 {
                     name:'addJobsPermission',
                     path: '/addJobsPermission',
                     component: resolve => require(['../components/page/Permission/AddJobsPermission.vue'], resolve),
-                    meta: { title: '添加岗位权限' }
+                    meta: { title: '添加岗位权限',url:'/admin/role/addRole' }
                 },
                 {
                     name:'editJobsPermission',
                     path: '/editJobsPermission',
                     component: resolve => require(['../components/page/Permission/EditJobsPermission.vue'], resolve),
-                    meta: { title: '编辑岗位权限' }
+                    meta: { title: '编辑岗位权限',url:'/admin/role/updateRole' }
                 },
                 {
                     name:'setPermission',
                     path: '/setPermission',
                     component: resolve => require(['../components/page/Permission/SetPermission.vue'], resolve),
-                    meta: { title: '权限设置' }
+                    meta: { title: '权限设置',url:'/setPermission' }
                 },
                 {
                     name:'editMangerMsg',
                     path: '/editMangerMsg',
                     component: resolve => require(['../components/page/Permission/EditMangerMsg.vue'], resolve),
-                    meta: { title: '管理员基础信息修改' }
-                },
-                {
-                    name:'editor',
-                    path: '/editor',
-                    component: resolve => require(['../components/page/editor.vue'], resolve),
-                    meta: { title: 'editor' }
-                },
+                    meta: { title: '管理员基础信息修改',url:'/editMangerMsg' }
+                }
             ]
         },
         {

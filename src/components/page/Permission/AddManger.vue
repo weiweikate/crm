@@ -268,7 +268,7 @@ export default {
     .collapse-item {
       float: left;
       width: 90%;
-      height: 45px;
+      height: auto;
       border: 1px solid #ccc;
       border-radius: 10px;
       line-height: 38px;
