@@ -273,7 +273,7 @@ export default {
       this.checkAllUser = [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false];
       this.id = this.$route.params.id || sessionStorage.getItem("editManger");
       this.$axios
-      .post(api.findAdminUserbyId, {id:this.id})
+      .post(api.findAdminUserbyId, {id:this.id,url:pApi.updateAdminUser})
       .then(res => {
           if(res.data.code == 200){
             this.getUserPriList = [];
@@ -286,7 +286,6 @@ export default {
             res.data.data.adminUserPrivilegeList.forEach((v,k)=>{
               this.getUserPriList.push(v.privilegeId);
             })
-            console.log(this.getUserPriList.length);
             this.assemblyData();
           }else{
             this.$message.warning(res.data.msg);

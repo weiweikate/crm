@@ -85,7 +85,8 @@ export default {
     getList(val) {
       let that = this;
       let data = {
-        page: val
+        page: val,
+        url:pApi.jobsPermissionMange
       };
       this.tableLoading = true;
       this.$axios

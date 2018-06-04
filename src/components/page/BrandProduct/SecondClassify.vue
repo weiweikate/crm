@@ -186,7 +186,8 @@
                 let that = this;
                 let data = {
                     page: val,
-                    fatherid: this.id
+                    fatherid: this.id,
+                    url:pApi.queryProductCategoryPageList_2
                 };
                 this.$axios
                     .post(api.getCategoryList, data)

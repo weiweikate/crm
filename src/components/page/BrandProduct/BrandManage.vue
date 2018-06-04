@@ -134,6 +134,7 @@
                     page: val,
                     status:that.form.status,
                     name:that.form.name,
+                    url:pApi.queryBrandPageList
                 };
                 that.tableLoading = true;
                 that.$axios

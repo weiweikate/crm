@@ -186,7 +186,7 @@ export default {
       let that = this;
       this.tableLoading = true;
       this.$axios
-        .post(api.rootsGetCodeTplList, {})
+        .post(api.rootsGetCodeTplList, {url:pApi.securityCodeTemplate})
         .then(res => {
           that.tableLoading = false;
           if (res.data.code == 200) {

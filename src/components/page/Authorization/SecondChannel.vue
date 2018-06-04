@@ -116,7 +116,8 @@ export default {
     getList() {
       let that = this;
       let data = {
-        fatherid: this.id
+        fatherid: this.id,
+        url:pApi.addPermitChannel_2
       };
       this.tableLoading = true;
       this.$axios

@@ -105,7 +105,7 @@ export default {
     getList() {
       this.tableLoading = true;
       this.$axios
-        .post(api.permitChannelGetList, {fatherid:0})
+        .post(api.permitChannelGetList, {fatherid:0,url:pApi.channelItemManage})
         .then(res => {
           this.tableLoading = false;
           if(res.data.code == 200){

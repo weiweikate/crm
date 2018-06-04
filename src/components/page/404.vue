@@ -1,6 +1,6 @@
 <template>
   <div class="error-page">
-      <div class="error-code">4<span>0</span>4</div>
+      <div class="error-code">权限<span>不够</span></div>
       <div class="error-desc">啊哦~ 你所访问的页面不存在</div>
       <div class="error-handle">
           <router-link to="/dashboard">
@@ -35,7 +35,7 @@ export default {
     }
     .error-code{
         line-height: 1;
-        font-size: 250px;
+        font-size: 160px;
         font-weight: bolder;
         color: #2d8cf0;
     }

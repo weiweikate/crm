@@ -158,6 +158,7 @@ export default {
       data.page = val;
       data.name = this.form.name;
       data.phone = this.form.phone;
+      data.url = pApi.manageList;
       this.tableLoading = true;
       this.$axios
         .post(api.getMangerList, data)
