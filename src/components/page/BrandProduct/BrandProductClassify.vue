@@ -1,6 +1,6 @@
 <template>
     <div class="brand-product">
-        <v-breadcrumb :nav="['品牌产品管理','品牌分类管理']"></v-breadcrumb>
+        <v-breadcrumb :nav="['品牌产品管理','产品分类管理']"></v-breadcrumb>
         <div class="table-block">
             <el-button v-if="p.addProductCategory_1" type="primary" style="margin-bottom: 20px" @click="addClassify">添加一级类目</el-button>
             <template>

@@ -58,6 +58,12 @@ export const getManageList='/mock/5aeac1c6c186102e067af3f3/test/getManageList';
     export const getAllCategoryBrand = '/admin/categoryBrand/getAllCategoryBrand';
     // 管理员防伪码参数短信
     export const sendSecurityCodeCode = '/commonAPI/phoneCode/sendSecurityCodeCode';
+    // 新增参数
+    export const addCategoryBrandCode = '/admin/categoryBrand/addCategoryBrandCode';
+    // 生成防伪码全码
+    export const productAllCode = '/securityCode/securityCode/productAllCode';
+    // 失效编码
+    export const loseCategoryBrandCode = '/admin/categoryBrand/loseCategoryBrandCode';
 
 // 权限管理
     // 查询部门列表
@@ -116,6 +122,7 @@ export const getManageList='/mock/5aeac1c6c186102e067af3f3/test/getManageList';
     export const getBrandList='/admin/brand/queryBrandPageList';
     export const getFirstList='/admin/productCategory/queryProductCategoryName';
     export const getSecondList='/admin/productCategory/queryProductCategoryFatherid';
+    export const queryCategoryBrandCid='admin/categoryBrand/queryCategoryBrandCid';
     //添加品牌
     export const addBrand='/admin/brand/addBrand';
     //修改品牌

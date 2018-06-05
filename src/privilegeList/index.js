@@ -28,9 +28,15 @@
         export const deleteCodeTemplate = '/admin/securityCodeTemplate/deleteById';
         // 失效模板
         export const loseCodeTemplate = '/admin/securityCodeTemplate/loseById';
-    // 防伪码模板
+    // 防伪码参数设置
         // 防伪码参数列表
         export const getAllCategoryBrand = '/admin/categoryBrand/getAllCategoryBrand';
+        // 新增参数
+        export const addCategoryBrandCode = '/admin/categoryBrand/addCategoryBrandCode';
+        // 生成防伪码全码
+        export const productAllCode = '/securityCode/securityCode/productAllCode';
+        // 失效编码
+        export const loseCategoryBrandCode = '/admin/categoryBrand/loseCategoryBrandCode';
 // 权限管理
     // 管理员账号管理
         // 管理员账号管理列表

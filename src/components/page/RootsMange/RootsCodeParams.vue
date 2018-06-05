@@ -2,18 +2,18 @@
     <div class="code-params">
         <breadcrumb :nav='nav'></breadcrumb>
         <el-card>
-            <el-button type='primary' @click="addCodeParams">添加防伪码参数</el-button>
+            <el-button type='primary' @click="addCodeParams" v-if="p.addCategoryBrandCode">添加防伪码参数</el-button>
             <el-table v-loading="tableLoading" class="w-table" stripe :data="tableData" :height="height" border
                       style="width: 100%">
                 <el-table-column prop="id" label="编号" width="180" align="center"></el-table-column>
                 <el-table-column prop="productName" label="产品分类" align="center"></el-table-column>
                 <el-table-column prop="brandName" label="产品品牌" align="center"></el-table-column>
                 <el-table-column prop="code" label="设置参数" align="center"></el-table-column>
-                <el-table-column label="操作" align="center">
+                <el-table-column v-if="isShowOperate" label="操作" align="center">
                     <template slot-scope="scope">
-                        <el-button type="primary" v-if="scope.row.status==1" @click='createCode(scope.row)'>生成备码
+                        <el-button type="primary" v-if="p.productAllCode&&scope.row.code&&scope.row.status==1" @click='createCode(scope.row)'>生成备码
                         </el-button>
-                        <el-button type="danger" v-if="scope.row.status==1||scope.row.status==3"
+                        <el-button type="danger" v-if="p.loseCategoryBrandCode&&scope.row.code&&scope.row.status==1||scope.row.status==3"
                                    @click='lostFunc(scope.row)'>失效
                         </el-button>
                     </template>
@@ -30,14 +30,14 @@
             <!--</el-pagination>-->
             <!--</div>-->
         </el-card>
-        <el-dialog title="选择分类和品牌（非多选、单选、关选）" :visible.sync="isShowDialog" width="40%">
+        <el-dialog title="选择分类和品牌" :visible.sync="isShowDialog" width="40%">
             <div style="overflow:hidden">
                 <div class="check-area">
                     <div class="title">选择一级类目</div>
                     <div>
                         <ul v-loading="loading">
-                            <li v-for="(v,k) in firstList" :key="k" :class="itemIndex == v.value?'selected':''"
-                                @click="chooseItem(v.value)">{{v.label}}
+                            <li v-for="(v,k) in firstList" :key="k" :class="firstIndex == k?'selected':''"
+                                @click="getSecond(k,v.id)">{{v.name}}
                             </li>
                         </ul>
                     </div>
@@ -46,8 +46,8 @@
                     <div class="title">选择二级类目</div>
                     <div>
                         <ul v-loading="loading">
-                            <li v-for="(v,k) in secondList" :key="k" :class="itemIndex == v.value?'selected':''"
-                                @click="chooseItem(v.value)">{{v.label}}
+                            <li v-for="(v,k) in secondList" :key="k" :class="secondIndex == k?'selected':''"
+                                @click="getBrand(k,v.id)">{{v.name}}
                             </li>
                         </ul>
                     </div>
@@ -56,8 +56,8 @@
                     <div class="title">选择品牌</div>
                     <div>
                         <ul v-loading="loading">
-                            <li v-for="(v,k) in brandList" :key="k" :class="itemIndex == v.value?'selected':''"
-                                @click="chooseItem(v.value)">{{v.label}}
+                            <li v-for="(v,k) in brandList" :key="k" :class="thirdIndex == k?'selected':''"
+                                @click="chooseItem(k,v.id)">{{v.name}}
                             </li>
                         </ul>
                     </div>
@@ -71,14 +71,14 @@
             </div>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="isShowDialog = false">取 消</el-button>
-                <el-button type="primary" @click="confirmCreateCode('diaForm')">确 定</el-button>
+                <el-button type="primary" @click="confirmAdd()">确 定</el-button>
             </div>
         </el-dialog>
         <el-dialog title="生成备码" :visible.sync="isShowCreateCode" width="30%">
-            <div style="width:100%;text-align:center;font-size:16px">已向{{phone}}发送验证码，请输入验证码才可以进行生成操作</div>
+            <div style="width:100%;text-align:center;font-size:16px" v-if="sended">已向{{phone}}发送验证码，请输入验证码才可以进行生成操作</div>
             <div style="width:100%;">
-                <el-input style="width:210px;margin:5% 0 0 12%" placeholder="请输入验证码"></el-input>
-                <el-button @click="getCode" class="code-btn" type="primary" v-if="code">获取验证码</el-button>
+                <el-input style="width:210px;margin:5% 0 0 12%" v-model="telephoneCode" v-if="sended" placeholder="请输入验证码"></el-input>
+                <el-button @click="getCode('create')" class="code-btn" type="primary" v-if="code">获取验证码</el-button>
                 <el-button class="code-btn" type="primary" v-else>{{codeTime}}s</el-button>
             </div>
             <div slot="footer" class="dialog-footer">
@@ -87,9 +87,9 @@
             </div>
         </el-dialog>
         <el-dialog title="失效操作" :visible.sync="isShowlostFunc" width="30%">
-            <div style="width:100%;text-align:center;font-size:16px">已向176****6863发送验证码，请输入验证码才可以进行生成操作</div>
+            <div style="width:100%;text-align:center;font-size:16px" v-if="sended1">已向{{phone}}发送验证码，请输入验证码才可以进行生成操作</div>
             <div style="width:100%;">
-                <el-input style="width:210px;margin:5% 0 0 12%" placeholder="请输入验证码"></el-input>
+                <el-input style="width:210px;margin:5% 0 0 12%" v-model="telephoneCode1" v-if="sended1" placeholder="请输入验证码"></el-input>
                 <el-button @click="getCode('lost')" class="code-btn" type="primary" v-if="code1">获取验证码</el-button>
                 <el-button class="code-btn" type="primary" v-else>{{codeTime1}}s</el-button>
             </div>
@@ -104,6 +104,7 @@
     import breadcrumb from "../../common/Breadcrumb";
     import * as api from "../../../api/api.js";
     import * as pApi from '../../../privilegeList/index.js';
+    import utils from '../../../utils/index.js'
 
     export default {
         components: {
@@ -111,6 +112,14 @@
         },
         data() {
             return {
+                // 权限控制
+                p:{
+                    addCategoryBrandCode:false,
+                    productAllCode:false,
+                    loseCategoryBrandCode:false,
+                },
+                isShowOperate:true,
+
                 nav: ["溯源管理", "防伪码参数设置"],
                 loading: false,
                 tableLoading: false,
@@ -123,44 +132,44 @@
                 code: true,
                 codeTime1: 0,
                 code1: true,
-                itemIndex: 0,
-                setParams: '',
-                firstList: [
-                    {
-                        label: '美妆护肤1',
-                        value: '1'
-                    },
-                ],
-                secondList: [
-                    {
-                        label: '美妆护肤1',
-                        value: '1'
-                    },
-                ],
-                brandList: [
-                    {
-                        label: '美妆护肤1',
-                        value: '1'
-                    },
-                ],
+                telephoneCode: '',
+                telephoneCode1: '',
+                sended:false,
+                sended1:false,
+                productCode:'',
+                firstIndex: -1,
+                secondIndex: -1,
+                thirdIndex: -1,
+                setParams: '',//参数
+                firstList: [],
+                secondList: [],
+                brandList: [],
                 tableData: [],
                 page: {
                     currentPage: 1,
                     totalPage: 0
                 },
-                rules: {
-                    templateName: [
-                        {required: true, message: "请输入模板名称", trigger: "blur"}
-                    ]
-                }
+                id:'',
+                cId:'',//产品id
+                bId:''//品牌id
             };
         },
         created() {
             let winHeight = window.screen.availHeight - 360;
             this.height = winHeight;
             this.getList();
+            this.pControl()
         },
         methods: {
+            // 权限控制
+            pControl() {
+                for (const k in this.p) {
+                    this.p[k] = utils.pc(pApi[k]);
+                }
+                if (!this.p.productAllCode &&!this.p.loseCategoryBrandCode) {
+                    this.isShowOperate = false;
+                }
+            },
             //获取列表
             getList() {
                 let that = this;
@@ -198,53 +207,157 @@
             // 添加防伪码参数
             addCodeParams() {
                 this.isShowDialog = true;
-
+                this.getFirst();
+                this.secondList=[];
+                this.brandList=[];
+                this.firstIndex=-1;
+                this.secondIndex=-1;
+                this.thirdIndex=-1;
+                this.setParams='';
             },
-
-            // 选择
-            chooseItem(index) {
-                this.itemIndex = 0;
-                this.itemIndex = index;
+            confirmAdd(){
+                let that=this;
+                if(!that.cId){
+                    that.$message.warning('请选择品类!');
+                    return
+                }
+                if(!that.bId){
+                    that.$message.warning('请选择品牌!');
+                    return
+                }
+                if(!that.setParams){
+                    that.$message.warning('请设置参数!');
+                    return
+                }
+                let params={};
+                params.cId=that.cId;
+                params.bId=that.bId;
+                params.code=that.setParams;
+                params.url=pApi.addCategoryBrandCode;
+                that.$axios
+                    .post(api.addCategoryBrandCode, params)
+                    .then(res => {
+                        if (res.data.code == 200) {
+                            that.$message.success(res.data.msg);
+                            that.getList();
+                        } else {
+                            that.$message.warning(res.data.msg);
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+                that.isShowDialog = false;
+            },
+            // 选择品牌
+            chooseItem(index,id) {
+                this.thirdIndex = index;
+                this.bId=id;
             },
 
             // 生成备码
             createCode(row) {
-                console.log(row);
                 this.isShowCreateCode = true;
+                this.productCode=row.code;
+                this.sended=false;
+                this.codeTime=0;
+                this.telephoneCode='';
                 this.phone = localStorage.getItem('ms_userPhone')
             },
             confirmCreateCode() {
-                this.isShowCreateCode = false;
+                let that = this;
+                if (!that.telephoneCode) {
+                    that.$message.warning('手机验证码为空!');
+                    return
+                }
+                let param={};
+                param.telephoneCode=that.telephoneCode;
+                param.url=pApi.productAllCode;
+                param.productCode=that.productCode;
+                that.$axios.post(api.productAllCode, param)
+                    .then(res => {
+                        if (res.data.code == 200) {
+                            that.$message.success(res.data.msg);
+                            that.getList();
+                        } else {
+                            that.$message.warning(res.data.msg);
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+                that.isShowCreateCode = false;
             },
 
             // 失效
             lostFunc(row) {
-                console.log(row);
                 this.isShowlostFunc = true;
+                this.id=row.id;
+                this.sended1=false;
+                this.codeTime1=0;
+                this.telephoneCode1='';
+                this.phone = localStorage.getItem('ms_userPhone')
             },
             confirmlostFunc() {
-                this.isShowlostFunc = false;
+                let that = this;
+                if (!that.telephoneCode1) {
+                    that.$message.warning('手机验证码为空!');
+                    return
+                }
+                let param={};
+                param.telephoneCode=that.telephoneCode1;
+                param.url=pApi.loseCategoryBrandCode;
+                param.id=that.id;
+                that.$axios.post(api.loseCategoryBrandCode, param)
+                    .then(res => {
+                        if (res.data.code == 200) {
+                            that.$message.success(res.data.msg);
+                            that.getList();
+                        } else {
+                            that.$message.warning(res.data.msg);
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    });
+                that.isShowlostFunc = false;
             },
 
             // 获取验证码
-            getCode() {
+            getCode(type) {
                 let that = this;
-                this.code = false;
-                this.codeTime = 60;
-                let timer = setInterval(function () {
-                    that.codeTime--;
-                    if (that.codeTime <= 0) {
-                        that.code = true;
-                        clearInterval(timer);
-                    }
-                }, 1000);
+                if(type=='create'){
+                    that.code = false;
+                    that.codeTime = 60;
+                    let timer = setInterval(function () {
+                        that.codeTime--;
+                        if (that.codeTime <= 0) {
+                            that.code = true;
+                            clearInterval(timer);
+                        }
+                    }, 1000);
+                }else{
+                    this.code1 = false;
+                    that.codeTime1 = 60;
+                    let timer1 = setInterval(function () {
+                        that.codeTime1--;
+                        if (that.codeTime1 <= 0) {
+                            that.code1 = true;
+                            clearInterval(timer1);
+                        }
+                    }, 1000);
+                }
                 let data = {};
                 data.phone = that.phone;
                 this.$axios.post(api.sendSecurityCodeCode, data)
                     .then(res => {
                         if (res.data.code == 200) {
                             this.$message.success('已发送验证码');
-                            alert(res.data.data);
+                            if(type=='create'){
+                                that.sended=true;
+                            }else{
+                                that.sended1=true;
+                            }
                         } else {
                             this.$message.warning(res.data.msg);
                         }
@@ -253,6 +366,76 @@
                         console.log(err);
                     })
             },
+            //一级类目
+            getFirst() {
+                let that = this;
+                let data = {};
+                that.$axios
+                    .post(api.getFirstList, data)
+                    .then(res => {
+                        if (res.data.code == 200) {
+                            that.firstList = res.data.data;
+                        } else {
+                            that.$message.warning(res.data.msg);
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err);
+                    })
+            },
+            //二级类目
+            getSecond(index, id) {
+                let that = this;
+                that.firstIndex=index;
+                that.secondIndex=-1;
+                that.thirdIndex=-1;
+                that.brandList=[];
+                let data = {
+                    fatherid: id,
+                };
+                that.loading = true;
+                that.$axios
+                    .post(api.getSecondList, data)
+                    .then(res => {
+                        that.loading = false;
+                        if (res.data.code == 200) {
+                            that.secondList = res.data.data;
+                        } else {
+                            that.$message.warning(res.data.msg);
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        that.loading = false;
+                    });
+
+            },
+            //品牌
+            getBrand(index, id) {
+                let that = this;
+                that.secondIndex=index;
+                that.cId=id;
+                that.bId='';
+                let data = {
+                    cId: id,
+                };
+                that.loading = true;
+                that.$axios
+                    .post(api.queryCategoryBrandCid, data)
+                    .then(res => {
+                        that.loading = false;
+                        if (res.data.code == 200) {
+                            that.brandList = res.data.data;
+                        } else {
+                            that.$message.warning(res.data.msg);
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err);
+                        that.loading = false;
+                    });
+
+            }
         }
     };
 </script>
