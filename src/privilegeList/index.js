@@ -19,10 +19,16 @@
 // 溯源管理
     // 防伪码管理
         // 查看防伪码管理列表
-        export const getRecordPage = '/securityCode/securityCodeRecord/getRecordPage'
+        export const getRecordPage = '/securityCode/securityCodeRecord/getRecordPage';
+        // 生成防伪码
+        export const productionSecurityCode = '/securityCode/securityCodeRecord/productionSecurityCode'
+        // 导出防伪码
+        export const exportSecurityCode = '/securityCode/securityCodeRecord/exportSecurityCode';
+        // 修改防伪码状态
+        export const updateCodeStatus = '/securityCode/securityCodeRecord/updateStatus';
     // 防伪码查询
         // 防伪码查询列表
-        export const aa = ''
+        // export const aa = ''
     // 防伪码模板
         // 查看防伪码模板列表
         export const securityCodeTemplate = '/admin/securityCodeTemplate/getAll'
