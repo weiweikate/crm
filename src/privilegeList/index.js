@@ -20,6 +20,9 @@
     // 防伪码管理
         // 查看防伪码管理列表
         export const getRecordPage = '/securityCode/securityCodeRecord/getRecordPage'
+    // 防伪码查询
+        // 防伪码查询列表
+        export const aa = ''
     // 防伪码模板
         // 查看防伪码模板列表
         export const securityCodeTemplate = '/admin/securityCodeTemplate/getAll'

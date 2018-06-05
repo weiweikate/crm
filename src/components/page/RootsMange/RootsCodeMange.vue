@@ -40,7 +40,7 @@
               <el-table-column prop="brandName" label="产品品牌" align="center"></el-table-column>
               <el-table-column label="导出时间" align="center">
                 <template slot-scope="scope">
-                  {{scope.createTime | formatDate}}
+                  {{scope.row.createTime | formatDate}}
                 </template>
               </el-table-column>
               <el-table-column prop="productNum" label="导出数量" align="center"></el-table-column>
@@ -132,6 +132,7 @@ export default {
     return {
       nav: ["溯源管理", "防伪码管理"],
       isShowDialog: false,
+      exportBtn:false,
       level: [
         {
           label: "全部",
@@ -376,7 +377,6 @@ export default {
       let that = this;  
       let data = {};
       this.productList = [];
-      that.diaForm.productBrand = '';
       data.cId = id;
       this.$axios.post(api.queryCategoryBrandCid,data)
       .then(res=>{
