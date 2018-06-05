@@ -183,6 +183,7 @@
             // this.form.pushType='1';
             // this.form.pushCountry='3';
             this.getLevelList();
+            this.ajax=false;
             this.username = localStorage.getItem("ms_username");
             this.userId = localStorage.getItem("ms_userID");
             this.form.createAdmin = localStorage.getItem("ms_userID");
@@ -242,7 +243,7 @@
                 console.log(this.uploadType);
                 if (this.uploadType === "image") {
                     this.$message.warning('正在上传');
-                    return this.$axios("/commonAPI/ossClient/aliyunOSSUploadImage").then(res => {
+                    return this.$axios(api.addImg).then(res => {
                         this.uploadData = {
                             key: `image/${suffix.join(".")}_${new Date().getTime()}.${ext}`,
                             token: res.data
@@ -346,7 +347,8 @@
                 params.nType=that.form.nType;
                 params.pushCountry=that.form.pushCountry;
                 params.pushWay=that.form.pushWay;
-                params.content=xss(that.form.content);
+                // params.content=xss(that.form.content);
+                params.content=that.form.content;
                 params.createAdmin=that.form.createAdmin;
                 params.original_img=that.form.original_img;
                 params.small_img=that.form.small_img;
@@ -402,8 +404,8 @@
         computed: {
             qnLocation() {
                 return location.protocol === "http:"
-                    ? "/commonAPI/ossClient/aliyunOSSUploadImage"
-                    : "/commonAPI/ossClient/aliyunOSSUploadImage";
+                    ? api.addImg
+                    : api.addImg;
             }
         },
         // 页面加载后执行 为编辑器的图片图标和视频图标绑定点击事件
