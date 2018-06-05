@@ -48,7 +48,7 @@
             </div>
             <el-form ref="exportForm" :inline="true" :model="form" class="search-area">
                 <el-form-item>
-                    <el-button v-if="p.addNotice" @click="addInf" type="primary">发布通知/公告</el-button>
+                    <el-button v-if="p.addNotice" @click="addInf" type="primary">发布公告/通知</el-button>
                 </el-form-item>
             </el-form>
             <template>
