@@ -1,6 +1,7 @@
 .login-wrap {
   display: flex;
   align-items: center;
+  background: url("../../../../static/img/bg.jpg");
   justify-content: center;
   position: relative;
   width: 100%;
@@ -109,3 +110,4 @@
   font-size: 30px;
   color: #fff;
 }
+/*# sourceMappingURL=login.css.map */

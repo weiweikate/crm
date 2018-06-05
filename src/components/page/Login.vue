@@ -1,6 +1,6 @@
 <template>
     <div class="login-wrap">
-        <div class="ms-title">CRM系统后台登陆</div>
+        <div class="ms-title">CRM系统后台登录</div>
         <div class="ms-login">
             <el-tabs class="tab" v-model="loginType" type="card" @tab-click="tabClick">
                 <el-tab-pane label="账号登录" name="first">
@@ -39,8 +39,8 @@
                         </div>
                     </el-form>
                 </el-tab-pane>
-                <!-- <el-tab-pane label="扫码登陆" name="third">
-                    <div style="width:100%;text-align:center">扫码登陆暂未开通，敬请期待！</div>
+                <!-- <el-tab-pane label="扫码登录" name="third">
+                    <div style="width:100%;text-align:center">扫码登录暂未开通，敬请期待！</div>
                 </el-tab-pane> -->
             </el-tabs>
         </div>
@@ -165,7 +165,7 @@ export default {
               privilegeList.push(v.url);
             });
             localStorage.setItem('privilegeList',JSON.stringify(privilegeList));
-            this.$message.success("登陆成功！");
+            this.$message.success("登录成功！");
             this.$router.push("/dashboard");
           }else{
               this.$message.warning(res.data.msg);
