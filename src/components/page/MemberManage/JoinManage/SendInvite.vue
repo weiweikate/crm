@@ -98,6 +98,7 @@
                                             v-model="form.invalidTime"
                                             type="datetime"
                                             :disabled="dateDisabled"
+                                            :picker-options="pickerOptions"
                                             placeholder="请选择失效时间">
                                     </el-date-picker>
                                 </el-radio>
@@ -176,7 +177,12 @@
                 tabNum: 0,//渠道选项卡
                 tabId: '',
                 btnLoading: false,
-                dateDisabled:true
+                dateDisabled:true,
+                pickerOptions: {
+                    disabledDate(time) {
+                        return time.getTime() < new Date() - 8.64e7;
+                    }
+                },
             };
         },
         activated() {
