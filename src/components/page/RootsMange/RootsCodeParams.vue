@@ -75,7 +75,7 @@
             </div>
         </el-dialog>
         <el-dialog title="生成备码" :visible.sync="isShowCreateCode" width="30%">
-            <div style="width:100%;text-align:center;font-size:16px" v-if="sended">已向{{phone}}发送验证码，请输入验证码才可以进行生成操作</div>
+            <div style="width:100%;text-align:center;font-size:16px" v-if="sended">已向{{showPhone}}发送验证码，请输入验证码才可以进行生成操作</div>
             <div style="width:100%;">
                 <el-input style="width:210px;margin:5% 0 0 12%" v-model="telephoneCode" v-if="sended" placeholder="请输入验证码"></el-input>
                 <el-button @click="getCode('create')" class="code-btn" type="primary" v-if="code">获取验证码</el-button>
@@ -87,7 +87,7 @@
             </div>
         </el-dialog>
         <el-dialog title="失效操作" :visible.sync="isShowlostFunc" width="30%">
-            <div style="width:100%;text-align:center;font-size:16px" v-if="sended1">已向{{phone}}发送验证码，请输入验证码才可以进行生成操作</div>
+            <div style="width:100%;text-align:center;font-size:16px" v-if="sended1">已向{{showPhone}}发送验证码，请输入验证码才可以进行生成操作</div>
             <div style="width:100%;">
                 <el-input style="width:210px;margin:5% 0 0 12%" v-model="telephoneCode1" v-if="sended1" placeholder="请输入验证码"></el-input>
                 <el-button @click="getCode('lost')" class="code-btn" type="primary" v-if="code1">获取验证码</el-button>
@@ -128,6 +128,7 @@
                 isShowCreateCode: false,
                 isShowlostFunc: false,
                 phone: '',
+                showPhone:'',
                 codeTime: 0,
                 code: true,
                 codeTime1: 0,
@@ -158,7 +159,8 @@
             let winHeight = window.screen.availHeight - 360;
             this.height = winHeight;
             this.getList();
-            this.pControl()
+            this.pControl();
+            this.showPhone=localStorage.getItem('ms_userPhone').substring(0,3)+'****'+localStorage.getItem('ms_userPhone').substring(7);
         },
         methods: {
             // 权限控制
@@ -297,7 +299,7 @@
                 this.sended1=false;
                 this.codeTime1=0;
                 this.telephoneCode1='';
-                this.phone = localStorage.getItem('ms_userPhone')
+                this.phone = localStorage.getItem('ms_userPhone').substring(0,3)+'****'+localStorage.getItem('ms_userPhone').substring(7)
             },
             confirmlostFunc() {
                 let that = this;
