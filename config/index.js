@@ -19,13 +19,6 @@ module.exports = {
         assetsSubDirectory: "static",
         assetsPublicPath: "/",
         proxyTable: {
-            "/securityCode": {
-                target: url_3,
-                changeOrigin: true,
-                pathRewrite: {
-                    "^/securityCode": url_3 + "/securityCode"
-                }
-            },
             "/admin": {
                 target: url_1,
                 changeOrigin: true,
