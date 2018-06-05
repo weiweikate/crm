@@ -133,7 +133,7 @@ export const getManageList='/mock/5aeac1c6c186102e067af3f3/test/getManageList';
     export const getBrandList='/admin/brand/queryBrandPageList';
     export const getFirstList='/admin/productCategory/queryProductCategoryName';
     export const getSecondList='/admin/productCategory/queryProductCategoryFatherid';
-    export const queryCategoryBrandCid='admin/categoryBrand/queryCategoryBrandCid';
+    // export const queryCategoryBrandCid='admin/categoryBrand/queryCategoryBrandCid';
     //添加品牌
     export const addBrand='/admin/brand/addBrand';
     //修改品牌
