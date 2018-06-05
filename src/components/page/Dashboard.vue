@@ -26,7 +26,7 @@
                             <div class="ocontent">66</div>
                         </div>
                         <div class="top-card-content">
-                            <div class="otitle"><icon class="icon" ico='icon-yubeifeiyong' /> 本日自动续费</div>
+                            <div class="otitle"><icon class="icon" ico='icon-yubeifeiyong' /> 本日自动续约</div>
                             <div class="ocontent">66</div>
                         </div>
                     </div>

@@ -3,15 +3,15 @@
         <div class="ms-title">CRM系统后台登陆</div>
         <div class="ms-login">
             <el-tabs class="tab" v-model="loginType" type="card" @tab-click="tabClick">
-                <el-tab-pane label="账号登陆" name="first">
+                <el-tab-pane label="账号登录" name="first">
                     <el-form :model="form1" :rules="rules" ref="form1" label-width="0px">
                         <el-form-item prop="phone">
-                            <el-input class="login-inp" size="large" placeholder="请输入登陆手机号" v-model="form1.phone">
+                            <el-input class="login-inp" size="large" placeholder="请输入登录手机号" v-model="form1.phone">
                                 <icon slot="prefix" class="login-ico" ico="icon-zhucedengluyonghuming"></icon>
                             </el-input>
                         </el-form-item>
                         <el-form-item prop="password" style="margin-top:-40px">
-                            <el-input class="login-inp" type="password" size="large" placeholder="请输入登陆密码" v-model="form1.password">
+                            <el-input class="login-inp" type="password" size="large" placeholder="请输入登录密码" v-model="form1.password">
                                 <icon slot="prefix" class="login-ico" ico="icon-3denglumima"></icon>
                             </el-input>
                         </el-form-item>
@@ -20,10 +20,10 @@
                         </div>
                     </el-form>
                 </el-tab-pane>
-                <el-tab-pane label="手机验证登陆" name="second">
+                <el-tab-pane label="手机验证登录" name="second">
                     <el-form :model="form2" :rules="rules" ref="form2" label-width="0px">
                         <el-form-item prop="phone">
-                            <el-input class="login-inp" size="large" placeholder="请输入登陆手机号" v-model="form2.phone">
+                            <el-input class="login-inp" size="large" placeholder="请输入登录手机号" v-model="form2.phone">
                                 <icon slot="prefix" class="login-ico" ico="icon-zhucedengluyonghuming"></icon>
                             </el-input>
                         </el-form-item>
@@ -71,10 +71,10 @@ export default {
       },
       rules: {
         phone: [
-          { required: true, message: "请输入登陆手机号", trigger: "blur" }
+          { required: true, message: "请输入登录手机号", trigger: "blur" }
         ],
         password: [
-          { required: true, message: "请输入登陆密码", trigger: "blur" }
+          { required: true, message: "请输入登录密码", trigger: "blur" }
         ],
         code: [{ required: true, message: "请输入验证码", trigger: "blur" }]
       }
