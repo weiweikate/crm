@@ -40,7 +40,6 @@
         export const productAllCode = '/securityCode/securityCode/productAllCode';
         // 失效编码
         export const loseCategoryBrandCode = '/admin/categoryBrand/loseCategoryBrandCode';
-        export const loseCategoryBrandCode1 = '/admin/categoryBrand/loseCategoryBrandCode';
 // 权限管理
     // 管理员账号管理
         // 管理员账号管理列表

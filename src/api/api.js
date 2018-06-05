@@ -64,7 +64,6 @@ export const getManageList='/mock/5aeac1c6c186102e067af3f3/test/getManageList';
     export const productAllCode = '/securityCode/securityCode/productAllCode';
     // 失效编码
     export const loseCategoryBrandCode = '/admin/categoryBrand/loseCategoryBrandCode';
-    export const loseCategoryBrandCode1 = '/admin/categoryBrand/loseCategoryBrandCode';
 
     // 获取防伪码管理列表
     export const getRecordPage = '/securityCode/securityCodeRecord/getRecordPage';
