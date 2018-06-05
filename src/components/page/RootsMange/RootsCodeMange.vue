@@ -33,7 +33,7 @@
             </el-form>
         </el-card>
         <el-card class="con-card">
-          <el-button type="primary" @click="createCode">生成防伪码</el-button>
+          <el-button v-if="p.productionSecurityCode" type="primary" @click="createCode">生成防伪码</el-button>
           <el-table v-loading="tableLoading" class="w-table" stripe :data="tableData" :height="height" border style="width: 100%">
               <el-table-column prop="id" label="方位记录ID" width="100" align="center"></el-table-column>
               <el-table-column prop="categoryId" label="产品类型" align="center"></el-table-column>
@@ -58,11 +58,11 @@
               <el-table-column prop="inWareHouseNum" label="已入库" width="70"  align="center"></el-table-column>
               <el-table-column prop="noWareHouseNum" label="未入库" width="70" align="center"></el-table-column>
               <el-table-column prop="outWareHouseNum" label="已出库" width="70"  align="center"></el-table-column>
-              <el-table-column label="操作"  width="250" align="center">
+              <el-table-column v-if="isShowOperate" label="操作"  width="250" align="center">
                 <template slot-scope="scope">
-                  <el-button @click="importCode(scope.row)" size="mini" type="primary">导出防伪码</el-button>
-                  <el-button v-if="scope.row.status == 0" @click="updateCodeStatus(scope.row,'1')" size="mini" type="primary">待确认</el-button>
-                  <el-button v-if="scope.row.status == 1" @click="updateCodeStatus(scope.row,'2')" size="mini" type="primary">确认入库</el-button>
+                  <el-button v-if="p.exportSecurityCode" @click="importCode(scope.row)" size="mini" type="primary">导出防伪码</el-button>
+                  <el-button v-if="scope.row.status == 0 && p.updateCodeStatus" @click="updateCodeStatus(scope.row,'1')" size="mini" type="primary">待确认</el-button>
+                  <el-button v-if="scope.row.status == 1 && p.updateCodeStatus" @click="updateCodeStatus(scope.row,'2')" size="mini" type="primary">确认入库</el-button>
                 </template>
               </el-table-column>
           </el-table>
@@ -123,6 +123,8 @@
 <script>
 import breadcrumb from "../../common/Breadcrumb";
 import * as api from "../../../api/api.js";
+import * as pApi from '../../../privilegeList/index.js'
+import utils from '../../../utils/index.js';
 import moment from 'moment';
 export default {
   components: {
@@ -130,6 +132,14 @@ export default {
   },
   data() {
     return {
+      // 权限控制
+      p:{
+          productionSecurityCode:false,
+          exportSecurityCode:false,
+          updateCodeStatus:false,
+      },
+      isShowOperate:true,
+
       nav: ["溯源管理", "防伪码管理"],
       isShowDialog: false,
       exportBtn:false,
@@ -205,13 +215,24 @@ export default {
   created() {
     let winHeight = window.screen.availHeight - 500;
     this.height = winHeight;
+    this.pControl();
   },
   activated(){
+    this.pControl();
     this.getList(this.page.currentPage);
     this.getProductFirstName();
     this.getCodeTplList();
   },
   methods: {
+    // 权限控制
+    pControl() {
+        for (const k in this.p) {
+            this.p[k] = utils.pc(pApi[k]);
+        }
+        if (!this.p.exportSecurityCode && !this.p.updateCodeStatus) {
+            this.isShowOperate = false;
+        }
+    },
     //  获取数据
     getList(val) {
       let that = this;
@@ -221,6 +242,7 @@ export default {
       data.endTime = this.form.endTime == ''?'':moment(this.form.endTime).format('YYYY-MM-DD HH:mm:ss');
       data.status = this.form.status;
       data.page = val;  
+      data.url = pApi.getRecordPage;
       this.tableLoading = true;
       this.$axios
         .post(api.getRecordPage, data)
@@ -264,6 +286,7 @@ export default {
           data.productNum = this.diaForm.productNum;
           data.templateId = this.diaForm.tpl;
           data.remark = this.diaForm.note;
+          data.url = pApi.productionSecurityCode;
           this.$axios.post(api.productionSecurityCode,data)
           .then(res=>{
             if(res.data.code == 200){
@@ -299,6 +322,7 @@ export default {
       let data = {};
       data.productCode = row.productCode;
       data.recordId = row.id;
+      data.url = pApi.exportSecurityCode;
       this.$axios
       .post(api.exportSecurityCode, data, {responseType: "blob"})
       .then(res => {
@@ -320,6 +344,7 @@ export default {
       data.id = row.id;
       data.productCode = row.productCode;
       data.status = status;
+      data.url = pApi.updateCodeStatus;
       this.$axios.post(api.updateCodeStatus,data)
       .then(res=>{
         if(res.data.code ==200){
