@@ -26,7 +26,7 @@
                 </div>
             </div>
         </el-card>
-        <el-dialog title="登陆密码修改" width="30%" :visible.sync="isShowEditPwd">
+        <el-dialog title="登陆密码修改" width="600px" :visible.sync="isShowEditPwd">
             <div class="toask-wrap">
                 <el-form ref="form" :model="form" :rules="rules">
                     <el-form-item prop="phone">
@@ -288,6 +288,7 @@ export default {
   }
   .toask-wrap{
       position: relative;
+      width: 530px;
       .code-btn{
           position: absolute;
           top: 76px;

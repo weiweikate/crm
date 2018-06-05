@@ -17,6 +17,9 @@
         // 删除二级渠道类目
         export const updatePermitChannel_3 = '/admin/permitChannel/updatePermitChannel_3'
 // 溯源管理
+    // 防伪码管理
+        // 查看防伪码管理列表
+        export const getRecordPage = '/securityCode/securityCodeRecord/getRecordPage'
     // 防伪码模板
         // 查看防伪码模板列表
         export const securityCodeTemplate = '/admin/securityCodeTemplate/getAll'

@@ -167,7 +167,7 @@ export default new Router({
                     name:'rootsCodeMange',
                     path: '/rootsCodeMange',
                     component: resolve => require(['../components/page/RootsMange/RootsCodeMange.vue'], resolve),
-                    meta: { title: '溯源防伪码管理' }
+                    meta: { title: '溯源防伪码管理',url:'/securityCode/securityCodeRecord/getRecordPage' }
                 },
                 {
                     name:'rootsCodeQuery',

@@ -65,6 +65,17 @@ export const getManageList='/mock/5aeac1c6c186102e067af3f3/test/getManageList';
     // 失效编码
     export const loseCategoryBrandCode = '/admin/categoryBrand/loseCategoryBrandCode';
 
+    // 获取防伪码管理列表
+    export const getRecordPage = '/securityCode/securityCodeRecord/getRecordPage';
+    // 导出防伪码
+    export const exportSecurityCode = '/securityCode/securityCodeRecord/exportSecurityCode';
+    // 修改防伪码状态
+    export const updateCodeStatus = '/securityCode/securityCodeRecord/updateStatus';
+    // 获取防伪码模板列表
+    export const getAllgetAllActivety = '/admin/securityCodeTemplate/getAllActivety';
+    // 生成防伪码
+    export const productionSecurityCode = '/securityCode/securityCodeRecord/productionSecurityCode';
+
 // 权限管理
     // 查询部门列表
     export const queryDepartmentList = '/admin/role/queryDepartmentList';
@@ -131,6 +142,8 @@ export const getManageList='/mock/5aeac1c6c186102e067af3f3/test/getManageList';
     export const deleteBrand='/admin/brand/deleteBrand';
     //根据ID查找详情
     export const findBrandById='/admin/brand/findBrandById';
+    // 根据类目查询品牌列表
+    export const queryCategoryBrandCid = 'admin/categoryBrand/queryCategoryBrandCid';
 
 
 //上传图片、文件、音乐

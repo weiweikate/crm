@@ -4,6 +4,7 @@
 
 const path = require("path");
 let baseURL = "http://172.16.10.253";
+// let baseURL = "http://172.16.10.28";
 // let baseURL = "http://116.62.188.92";
 // let baseURL = "http://172.16.10.51";
 // let baseURL = "http://172.16.10.54";
@@ -18,6 +19,13 @@ module.exports = {
         assetsSubDirectory: "static",
         assetsPublicPath: "/",
         proxyTable: {
+            "/securityCode": {
+                target: url_3,
+                changeOrigin: true,
+                pathRewrite: {
+                    "^/securityCode": url_3 + "/securityCode"
+                }
+            },
             "/admin": {
                 target: url_1,
                 changeOrigin: true,
