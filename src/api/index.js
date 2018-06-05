@@ -24,6 +24,7 @@ axios.interceptors.request.use(config => {
     //   receiveData.sessionId = sessionId;
     //   receiveData.sessionPwd = sessionPwd;
     // }
+    console.log(111)
     if (config.url != '/commonAPI/ossClient/aliyunOSSUploadImage') {
         if (config.data.url == undefined) {
             receiveData.url = config.url;
