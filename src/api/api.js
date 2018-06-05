@@ -59,6 +59,9 @@ export const getManageList='/mock/5aeac1c6c186102e067af3f3/test/getManageList';
     // 管理员防伪码参数短信
     export const sendSecurityCodeCode = '/commonAPI/phoneCode/sendSecurityCodeCode';
 
+    // 获取防伪码管理列表
+    export const getRecordPage = '/securityCode/securityCodeRecord/getRecordPage'
+
 // 权限管理
     // 查询部门列表
     export const queryDepartmentList = '/admin/role/queryDepartmentList';

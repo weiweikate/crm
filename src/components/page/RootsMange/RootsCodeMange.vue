@@ -2,18 +2,30 @@
     <div>
         <breadcrumb :nav='nav'></breadcrumb>
         <el-card>
-            <el-form ref="form" :model="form" inline label-width="80px">
-              <el-form-item prop="code" label="防伪码">
-                <el-input v-model="form.cod"></el-input>
-              </el-form-item>
-              <el-form-item prop="no" label="授权号">
-                <el-input v-model="form.no"></el-input>
-              </el-form-item>
+            <el-form ref="form" :model="form" inline label-width="120px">
                 <el-form-item prop="status" label="用户层级">
                     <el-select v-model="form.status" placeholder="请选择">
                         <el-option v-for="(v,k) in level" :label="v.label" :value="v.value" :key="k"></el-option>
                     </el-select>
                 </el-form-item>
+                <el-form-item prop="beginTime" label="操作开始时间">
+                <el-date-picker
+                  v-model="form.beginTime"
+                  type="datetime"
+                  placeholder="请选择开始时间"
+                  default-time="00:00:00" 
+                  >
+                </el-date-picker>
+              </el-form-item>
+              <el-form-item prop="endTime" label="操作结束时间">
+                <el-date-picker
+                  v-model="form.endTime"
+                  type="datetime"
+                  placeholder="请选择结束时间"
+                  default-time="00:00:00"
+                  >
+                </el-date-picker>
+              </el-form-item>
                 <el-form-item label=" ">
                     <el-button type="primary">搜索</el-button>
                     <el-button @click="resetForm('form')">重置</el-button>
@@ -24,15 +36,24 @@
           <el-button type="primary" @click="createCode">生成防伪码</el-button>
           <el-table v-loading="tableLoading" class="w-table" stripe :data="tableData" :height="height" border style="width: 100%">
               <el-table-column prop="id" label="方位记录ID" width="100" align="center"></el-table-column>
-              <el-table-column prop="name" label="产品类型" align="center"></el-table-column>
-              <el-table-column prop="status" label="产品品牌" align="center"></el-table-column>
-              <el-table-column prop="name" label="导出时间" align="center"></el-table-column>
-              <el-table-column prop="status" label="导出数量" align="center"></el-table-column>
-              <el-table-column prop="name" label="生产厂家" align="center"></el-table-column>
-              <el-table-column prop="name" label="备注说明" align="center"></el-table-column>
-              <el-table-column prop="name" label="状态" align="center"></el-table-column>
-              <el-table-column prop="name" label="已入库" width="70"  align="center"></el-table-column>
-              <el-table-column prop="name" label="未入库" width="70" align="center"></el-table-column>
+              <el-table-column prop="categoryId" label="产品类型" align="center"></el-table-column>
+              <el-table-column prop="brandId" label="产品品牌" align="center"></el-table-column>
+              <el-table-column prop="createTime" label="导出时间" align="center"></el-table-column>
+              <el-table-column prop="productNum" label="导出数量" align="center"></el-table-column>
+              <el-table-column prop="remark" label="备注说明" align="center"></el-table-column>
+              <el-table-column prop="name" label="状态" align="center">
+                <template slot-scope="scope">
+                  <template v-if="scope.row.status == 0">待确认</template>
+                  <template v-else-if="scope.row.status == 1">未入库</template>
+                  <template v-else-if="scope.row.status == 2">已入库</template>
+                  <template v-else-if="scope.row.status == 3">已出库</template>
+                  <template v-else-if="scope.row.status == 8">正在生成 </template>
+                  <template v-else-if="scope.row.status == 9">已经生成</template>
+                </template>
+              </el-table-column>
+              <el-table-column prop="inWareHouseNum" label="已入库" width="70"  align="center"></el-table-column>
+              <el-table-column prop="noWareHouseNum" label="未入库" width="70" align="center"></el-table-column>
+              <el-table-column prop="outWareHouseNum" label="已出库" width="70"  align="center"></el-table-column>
               <el-table-column label="操作"  width="250" align="center">
                 <template slot-scope="scope">
                   <el-button size="mini" type="primary">导出防伪码</el-button>
@@ -115,29 +136,37 @@ export default {
       level: [
         {
           label: "全部",
-          value: "全部"
+          value: ""
         },
         {
           label: "待确认",
-          value: "待确认"
+          value: "0"
         },
         {
-          label: "待出库",
-          value: "待出库"
+          label: "未入库",
+          value: "1"
         },
         {
           label: "已入库",
-          value: "已入库"
+          value: "2"
         },
         {
           label: "已出库",
-          value: "已出库"
-        }
+          value: "3"
+        },
+        {
+          label: "正在生成",
+          value: "8"
+        },
+        {
+          label: "已经生成",
+          value: "9"
+        },
       ],
       form: {
-        code: "",
-        no: "",
-        status: ""
+        status: "",
+        beginTime:'',
+        endTime:''
       },
       diaForm: {
         productBrand: "",
@@ -167,6 +196,8 @@ export default {
   created() {
     let winHeight = window.screen.availHeight - 500;
     this.height = winHeight;
+  },
+  activated(){
     this.getList(this.page.currentPage);
   },
   methods: {
@@ -174,14 +205,19 @@ export default {
     getList(val) {
       let that = this;
       let data = {
+        beginTime:this.form.beginTime,
+        endTime:this.form.endTime,
+        status:this.form.status,
         page: val
       };
       this.tableLoading = true;
       this.$axios
-        .post(api.rootsGetCodeTplList, data)
+        .post(api.getRecordPage, data)
         .then(res => {
+          console.log(res.data)
           that.tableData = res.data.data.data;
           that.tableLoading = false;
+          that.page.totalPage = res.data.data.resultCount;
         })
         .catch(err => {
           console.log(err);

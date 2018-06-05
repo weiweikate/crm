@@ -10,6 +10,7 @@ let baseURL = "http://172.16.10.253";
 // let baseURL = "http://172.16.10.53";
 let url_1 = baseURL+':8101';
 let url_2 = baseURL+':8100';
+let url_3 = baseURL+':8188';
 
 module.exports = {
     dev: {
@@ -17,6 +18,13 @@ module.exports = {
         assetsSubDirectory: "static",
         assetsPublicPath: "/",
         proxyTable: {
+            "/securityCode": {
+                target: url_3,
+                changeOrigin: true,
+                pathRewrite: {
+                    "^/securityCode": url_3 + "/securityCode"
+                }
+            },
             "/admin": {
                 target: url_1,
                 changeOrigin: true,
