@@ -279,6 +279,7 @@
                         if (res.data.code == 200) {
                             that.$message.success(res.data.msg);
                             that.getList();
+                            console.log()
                         } else {
                             that.$message.warning(res.data.msg);
                         }
