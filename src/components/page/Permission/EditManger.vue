@@ -291,7 +291,9 @@ export default {
             res.data.data.adminUserPrivilegeList.forEach((v,k)=>{
               this.getUserPriList.push(v.privilegeId);
             })
-            this.assemblyData();
+            setTimeout(()=>{
+              this.assemblyData();
+            },500)
           }else{
             this.$message.warning(res.data.msg);
           }

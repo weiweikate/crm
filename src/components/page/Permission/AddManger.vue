@@ -78,7 +78,7 @@ export default {
     return {
       nav: ["权限管理", "创建账号"],
       checkAllUser: [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],
-      checkedUser: [[],[],[],[],[],[],[],[],[],[],],
+      checkedUser: [[],[],[],[],[],[],[],[],[],[],[]],
       uploadImg:'',
       userManList: [],
       department: [],
@@ -102,6 +102,9 @@ export default {
   },
   activated(){
     this.form = {};
+    this.checkedUser = [[],[],[],[],[],[],[],[],[],[],[]];
+    this.checkAllUser = [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false];
+    console.log(123);
     this.uploadImg = api.addImg;
     this.getRoleList();
     this.getDepartmentList();
