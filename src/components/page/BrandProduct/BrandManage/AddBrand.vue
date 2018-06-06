@@ -101,6 +101,7 @@
             this.form.area='';
             this.form.productcIds='';
             this.form.status='1';
+            console.log(111)
         },
         methods: {
             handlePreview(file) {
