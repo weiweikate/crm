@@ -84,12 +84,23 @@
                     ],
                     original_img: [
                         {required: true, message: "请上传品牌LOGO", trigger: "blur"}
+                    ],
+                    status:[
+                        {required: true, message: "是否启用", trigger: "blur"}
                     ]
                 },
                 isUp: false,//添加false，修改true
                 id: '',
                 addBrand:''
             }
+        },
+        activated(){
+            this.form.name='';
+            this.form.original_img='';
+            this.form.small_img='';
+            this.form.area='';
+            this.form.productcIds='';
+            this.form.status='1';
         },
         methods: {
             handlePreview(file) {
@@ -127,7 +138,7 @@
                             .then(res => {
                                 that.btnLoading = false;
                                 if (res.data.code == 200) {
-                                    that.$message.success(res.data.msg);
+                                    that.$message.success(res.data);
                                     setTimeout(function () {
                                         that.$router.push('/brandManage')
                                     }, 1000)

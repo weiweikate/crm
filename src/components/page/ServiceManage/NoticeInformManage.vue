@@ -95,7 +95,7 @@
                                        v-if="scope.row.status==1&&p.updateNoticeStatus_2">取消推送
                             </el-button>
                             <el-button type="danger" size="small" @click="upStatusItem(scope.row.id,4)"
-                                       v-if="scope.row.status==3&&p.updateNoticeStatus_3">删除
+                                       v-if="scope.row.status==3&&p.updateNoticeStatus_3" style="width: 80px"> 删除
                             </el-button>
                         </template>
                     </el-table-column>
