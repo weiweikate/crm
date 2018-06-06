@@ -84,6 +84,7 @@ export default {
     // 提交表单
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
+              console.log(valid)
         if (valid) {
           this.btnLoading = true;
           let data = this[formName];
