@@ -34,7 +34,7 @@ module.exports = {
                 target: url_3,
                 changeOrigin: true,
                 pathRewrite: {
-                    "^/commonAPI": url_3 + "/securityCode"
+                    "^/securityCode": url_3 + "/securityCode"
                 }
             }
         },
