@@ -218,6 +218,9 @@
             addClassify() {
                 this.title = "添加二级类目";
                 this.addMask = true;
+                this.addForm.name='';
+                this.addForm.img='';
+                this.addForm.status='1';
                 this.itype = "add";
             },
             //编辑
@@ -236,6 +239,14 @@
                 data.name = this[formName].name;
                 data.img = this[formName].img;
                 data.status = this[formName].status;
+                if(!data.name){
+                    this.$message.warning('请输入类目名称!');
+                    return
+                }
+                if(!data.img){
+                    this.$message.warning('请上传类目图标!');
+                    return
+                }
                 if (this.itype == "add") {
                     url = api.addCategory;
                     data.fatherid = this.id;

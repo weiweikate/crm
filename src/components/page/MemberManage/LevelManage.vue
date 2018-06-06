@@ -242,6 +242,10 @@
                 this.title = '添加层级';
                 this.addMask = true;
                 this.isUp = false;
+                this.addForm.name='';
+                this.addForm.level='';
+                this.addForm.autoUp='1';
+                this.addForm.remark='';
             },
             //编辑
             editItem(index, row) {

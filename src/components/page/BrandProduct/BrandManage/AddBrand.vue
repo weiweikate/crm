@@ -84,12 +84,18 @@
                     ],
                     original_img: [
                         {required: true, message: "请上传品牌LOGO", trigger: "blur"}
+                    ],
+                    status:[
+                        {required: true, message: "是否启用", trigger: "blur"}
                     ]
                 },
                 isUp: false,//添加false，修改true
                 id: '',
                 addBrand:''
             }
+        },
+        activated(){
+            this.form={};
         },
         methods: {
             handlePreview(file) {

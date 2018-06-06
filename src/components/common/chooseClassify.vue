@@ -83,13 +83,39 @@
                     this.search(this.value);
                 }
             }
+
         },
-        created() {
+        activated(){
             // 获取品牌列表并默认加载第一个品牌对于的品类列表
             let that = this;
             if(that.addOrUp != 'update'){
                 that.search(that.value);
+                that.chooseList=[];
+                that.tempChooseList=[];
+                that.value='';
+                that.brandList=[{
+                    allChecked:false
+                }];
+                that.brandName='';
+                that.brandId='';
+                that.delBrandId='';
+                that.classifyName=[];
+                that.brandIndex='0';
+                that.classifyId=[];
+                that.delClassifyId=[];
             }
+        },
+        created() {
+            // // 获取品牌列表并默认加载第一个品牌对于的品类列表
+            // let that = this;
+            // if(that.addOrUp != 'update'){
+            //     that.search(that.value);
+            // }else{
+            //     console.log(that.chooseList)
+            //     that.chooseList=[];
+            //     that.tempChooseList=[];
+            //     console.log(that.chooseList)
+            // }
         },
         methods: {
             //修改时获取原数据
