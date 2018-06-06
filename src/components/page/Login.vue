@@ -89,6 +89,7 @@ export default {
           let data = this[formName];
           let url;
           if (formName == "form1") {
+
             url = api.loginByPwd;
           } else {
             url = api.loginByCode;
