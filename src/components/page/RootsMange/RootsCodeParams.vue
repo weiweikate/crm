@@ -241,7 +241,7 @@
                     .post(api.addCategoryBrandCode, params)
                     .then(res => {
                         if (res.data.code == 200) {
-                            that.$message.success(res.data.msg);
+                            that.$message.success('添加成功!');
                             that.getList();
                         } else {
                             that.$message.warning(res.data.msg);
