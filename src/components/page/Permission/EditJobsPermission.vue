@@ -260,7 +260,10 @@ export default {
             res.data.data.rolePrivilegeList.forEach((v, k) => {
               this.getUserPriList.push(v.privilegeId);
             });
-            this.assemblyData();
+            let that=this;
+            setTimeout(function () {
+                that.assemblyData();
+            },500)
           } else {
             this.$message.warning(res.data.msg);
           }
